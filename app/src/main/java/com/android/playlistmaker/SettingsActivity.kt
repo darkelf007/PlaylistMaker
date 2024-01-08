@@ -14,8 +14,7 @@ class SettingsActivity : AppCompatActivity() {
         //кнопка назад на страницу main
         val buttonBackToMain = findViewById<Button>(R.id.button_backToMain)
         buttonBackToMain.setOnClickListener {
-            val displayIntent = Intent(this, MainActivity::class.java)
-            startActivity(displayIntent)
+            finish()
         }
     }
 }
