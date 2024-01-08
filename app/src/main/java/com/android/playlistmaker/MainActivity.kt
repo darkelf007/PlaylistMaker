@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         mediaButton.setOnClickListener(bottonClickListener)
         //ссылка на страницу настройки
         settingsButton.setOnClickListener {
-            val displayIntent = Intent(this, Settings::class.java)
+            val displayIntent = Intent(this, SettingsActivity::class.java)
             startActivity(displayIntent)
         }
     }
