@@ -6,17 +6,18 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import com.dental.playlistmaker.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val searchBotton = findViewById<Button>(R.id.button_search)
+        val searchButton = findViewById<Button>(R.id.button_search)
         val mediaButton =findViewById<Button>(R.id.button_media)
         val settingsButton  =findViewById<Button>(R.id.button_settings)
         //первый вариант
-        searchBotton.setOnClickListener{
+        searchButton.setOnClickListener{
             Toast.makeText(this@MainActivity, "Search!", Toast.LENGTH_SHORT).show()
         }
         //второй вариант
