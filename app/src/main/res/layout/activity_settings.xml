@@ -1,73 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SettingsActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".SettingsActivity"
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:orientation="vertical">
+        android:layout_height="56dp"
+        android:orientation="horizontal">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="56dp">
+        <Button
+            android:id="@+id/button_backToMain"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:backgroundTint="#FEFEFE"
+            android:visibility="visible"
+            app:icon="@drawable/arrow"
+            app:iconSize="24dp"
+            app:iconTint="#000000"
+            tools:outlineSpotShadowColor="#FEFEFE"
+            tools:visibility="visible" />
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="52dp"
-                android:layout_marginBottom="4dp">
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
 
-                    <Button
-                        android:id="@+id/button_backToMain"
-                        android:layout_width="48dp"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="#FEFEFE"
-                        android:visibility="visible"
-                        app:icon="@drawable/arrow"
-                        app:iconTint="#000000"
-                        tools:outlineSpotShadowColor="#FEFEFE"
-                        tools:visibility="visible" />
-
-                    <FrameLayout
-                        android:layout_width="208dp"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/textView2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginBottom="12dp"
-                            android:layout_weight="1"
-                            android:fontFamily="@font/yandexsanstextmedium"
-                            android:text="Настройки"
-                            android:textColor="@color/dark_blue"
-                            android:textSize="22sp" />
-                    </FrameLayout>
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1">
-
-                    </FrameLayout>
-
-                </LinearLayout>
-            </FrameLayout>
-        </FrameLayout>
+            android:layout_weight="1"
+            android:fontFamily="@font/yandexsanstextmedium"
+            android:text="@string/settings"
+            android:textColor="@color/dark_blue"
+            android:textSize="22sp" />
+    </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -76,12 +46,12 @@
 
             <TextView
                 android:id="@+id/textView4"
-                android:layout_width="84dp"
+                android:layout_width="@dimen/dp_0"
                 android:layout_height="match_parent"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="@dimen/dp_16"
                 android:layout_marginTop="21dp"
                 android:layout_weight="1"
-                android:text="Темная тема"
+                android:text="@string/dark_theme"
                 android:textColor="@color/dark_blue"
                 android:textSize="@dimen/small_text_size"
                 tools:fontFamily="@font/yandexsanstextmedium" />
@@ -89,23 +59,25 @@
             <Switch
                 android:id="@+id/switch3"
                 android:layout_width="56dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="61dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables">
 
             <TextView
                 android:id="@+id/textView8"
-                android:layout_width="84dp"
+                android:layout_width="@dimen/dp_0"
                 android:layout_height="match_parent"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="@dimen/dp_16"
                 android:layout_marginTop="21dp"
                 android:layout_weight="1"
-                android:text="Поделиться"
+                android:text="@string/to_share"
                 android:textColor="@color/dark_blue"
                 android:textSize="@dimen/small_text_size"
                 tools:fontFamily="@font/yandexsanstextmedium" />
@@ -123,16 +95,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="61dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables">
 
             <TextView
                 android:id="@+id/textView9"
-                android:layout_width="84dp"
+                android:layout_width="@dimen/dp_0"
                 android:layout_height="match_parent"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="@dimen/dp_16"
                 android:layout_marginTop="21dp"
                 android:layout_weight="1"
-                android:text="Написать в поддержку"
+                android:text="@string/write_to_support"
                 android:textColor="@color/dark_blue"
                 android:textSize="@dimen/small_text_size"
                 tools:fontFamily="@font/yandexsanstextmedium" />
@@ -150,16 +123,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="61dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables">
 
             <TextView
                 android:id="@+id/textView10"
-                android:layout_width="84dp"
+                android:layout_width="@dimen/dp_0"
                 android:layout_height="match_parent"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="@dimen/dp_16"
                 android:layout_marginTop="21dp"
                 android:layout_weight="1"
-                android:text="Пользовательское соглашение"
+                android:text="@string/user_areement"
                 android:textColor="@color/dark_blue"
                 android:textSize="@dimen/small_text_size"
                 tools:fontFamily="@font/yandexsanstextmedium" />
@@ -174,4 +148,3 @@
 
         </LinearLayout>
     </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
