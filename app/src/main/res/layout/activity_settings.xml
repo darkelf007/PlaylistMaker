@@ -10,141 +10,114 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="@dimen/dp_56"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/button_backToMain"
-            android:layout_width="48dp"
-            android:layout_height="match_parent"
-            android:backgroundTint="#FEFEFE"
-            android:visibility="visible"
+            android:layout_width="@dimen/dp_44"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_12"
+            android:backgroundTint="@color/white"
+            android:contentDescription="@string/button_back"
+            android:outlineProvider="none"
             app:icon="@drawable/arrow"
-            app:iconSize="24dp"
-            app:iconTint="#000000"
-            tools:outlineSpotShadowColor="#FEFEFE"
-            tools:visibility="visible" />
+            app:iconGravity="end"
+            app:iconPadding="@dimen/dp_52"
+            app:iconSize="@dimen/dp_24"
+            app:iconTint="@color/black" />
 
         <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
+            android:id="@+id/textSettings"
+            android:layout_width="@dimen/dp_0"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-
-
             android:layout_weight="1"
             android:fontFamily="@font/yandexsanstextmedium"
             android:text="@string/settings"
             android:textColor="@color/dark_blue"
-            android:textSize="22sp" />
-    </LinearLayout>
+            android:textSize="@dimen/text_size_22" />
 
+    </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="61dp"
+            android:layout_height="@dimen/dp_62"
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/selectTheme"
                 android:layout_width="@dimen/dp_0"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dp_16"
-                android:layout_marginTop="21dp"
                 android:layout_weight="1"
                 android:text="@string/dark_theme"
                 android:textColor="@color/dark_blue"
-                android:textSize="@dimen/small_text_size"
+                android:textSize="@dimen/text_size_16"
                 tools:fontFamily="@font/yandexsanstextmedium" />
 
             <Switch
-                android:id="@+id/switch3"
-                android:layout_width="56dp"
+                android:id="@+id/switchTheme"
+                android:layout_width="@dimen/dp_56"
                 android:layout_height="match_parent"
                 tools:ignore="UseSwitchCompatOrMaterialXml" />
 
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="61dp"
-            android:orientation="horizontal"
-            tools:ignore="UseCompoundDrawables">
-
+            android:layout_height="@dimen/dp_62"
+            android:orientation="horizontal">
             <TextView
-                android:id="@+id/textView8"
+                android:id="@+id/textToShare"
                 android:layout_width="@dimen/dp_0"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dp_16"
-                android:layout_marginTop="21dp"
+                android:layout_marginTop="@dimen/dp_22"
                 android:layout_weight="1"
                 android:text="@string/to_share"
                 android:textColor="@color/dark_blue"
-                android:textSize="@dimen/small_text_size"
-                tools:fontFamily="@font/yandexsanstextmedium" />
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="20dp"
-                android:layout_height="18dp"
-                android:layout_marginTop="19dp"
-                android:layout_marginEnd="12dp"
-                android:src="@drawable/light_mode" />
+                android:textSize="@dimen/text_size_16"
+                android:layout_marginEnd="@dimen/dp_12"
+                tools:fontFamily="@font/yandexsanstextmedium"
+                app:drawableRightCompat="@drawable/to_share" />
 
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="61dp"
-            android:orientation="horizontal"
-            tools:ignore="UseCompoundDrawables">
-
+            android:layout_height="@dimen/dp_62"
+            android:orientation="horizontal">
             <TextView
-                android:id="@+id/textView9"
+                android:id="@+id/textWriteToSupport"
                 android:layout_width="@dimen/dp_0"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dp_16"
-                android:layout_marginTop="21dp"
+                android:layout_marginTop="@dimen/dp_22"
                 android:layout_weight="1"
                 android:text="@string/write_to_support"
                 android:textColor="@color/dark_blue"
-                android:textSize="@dimen/small_text_size"
-                tools:fontFamily="@font/yandexsanstextmedium" />
-
-            <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="20dp"
-                android:layout_height="18dp"
-                android:layout_marginTop="19dp"
-                android:layout_marginEnd="12dp"
-                android:src="@drawable/group" />
+                android:textSize="@dimen/text_size_16"
+                android:layout_marginEnd="@dimen/dp_12"
+                tools:fontFamily="@font/yandexsanstextmedium"
+                app:drawableRightCompat="@drawable/group"/>
 
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="61dp"
+            android:layout_height="@dimen/dp_62"
             android:orientation="horizontal"
             tools:ignore="UseCompoundDrawables">
-
             <TextView
-                android:id="@+id/textView10"
+                android:id="@+id/textUserAgreement"
                 android:layout_width="@dimen/dp_0"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dp_16"
-                android:layout_marginTop="21dp"
+                android:layout_marginTop="@dimen/dp_22"
                 android:layout_weight="1"
-                android:text="@string/user_areement"
+                android:text="@string/user_agreement"
                 android:textColor="@color/dark_blue"
-                android:textSize="@dimen/small_text_size"
-                tools:fontFamily="@font/yandexsanstextmedium" />
-
-            <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="20dp"
-                android:layout_height="18dp"
-                android:layout_marginTop="19dp"
-                android:layout_marginEnd="12dp"
-                android:src="@drawable/button" />
+                android:textSize="@dimen/text_size_16"
+                android:layout_marginEnd="@dimen/dp_12"
+                tools:fontFamily="@font/yandexsanstextmedium"
+                app:drawableRightCompat="@drawable/button"/>
 
         </LinearLayout>
     </LinearLayout>
