@@ -15,11 +15,12 @@ class MainActivity : AppCompatActivity() {
         val searchButton = findViewById<Button>(R.id.button_search)
         val mediaButton =findViewById<Button>(R.id.button_media)
         val settingsButton  =findViewById<Button>(R.id.button_settings)
-        //первый вариант
+        //ссылка на страницу поиска
         searchButton.setOnClickListener{
-            Toast.makeText(this@MainActivity, "Search!", Toast.LENGTH_SHORT).show()
+            val displayIntent = Intent(this, SearchActivity::class.java)
+            startActivity(displayIntent)
         }
-        //второй вариант
+        //всплывающее окно
         val bottonClickListener: View.OnClickListener = object : View.OnClickListener {
             override fun onClick(v: View?) {
                 Toast.makeText(this@MainActivity, "Media!", Toast.LENGTH_SHORT).show()

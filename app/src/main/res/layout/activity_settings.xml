@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".SettingsActivity"
-    android:background="@color/white"
     android:orientation="vertical">
 
     <LinearLayout
@@ -16,17 +15,16 @@
 
         <Button
             android:id="@+id/button_backToMain"
+            style="@style/ButtonSettingsStyle"
             android:layout_width="@dimen/dp_44"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_12"
-            android:backgroundTint="@color/white"
             android:contentDescription="@string/button_back"
             android:outlineProvider="none"
             app:icon="@drawable/arrow"
             app:iconGravity="end"
             app:iconPadding="@dimen/dp_52"
-            app:iconSize="@dimen/dp_24"
-            app:iconTint="@color/black" />
+            app:iconSize="@dimen/dp_24" />
 
         <TextView
             android:id="@+id/textSettings"
@@ -35,7 +33,6 @@
             android:layout_weight="1"
             android:fontFamily="@font/yandexsanstextmedium"
             android:text="@string/settings"
-            android:textColor="@color/dark_blue"
             android:textSize="@dimen/text_size_22" />
 
     </LinearLayout>
@@ -51,18 +48,20 @@
                 android:layout_marginStart="@dimen/dp_16"
                 android:layout_weight="1"
                 android:text="@string/dark_theme"
-                android:textColor="@color/dark_blue"
                 android:textSize="@dimen/text_size_16"
-                tools:fontFamily="@font/yandexsanstextmedium" />
+                tools:fontFamily="@font/yandexsanstextmedium"/>
 
             <Switch
                 android:id="@+id/switchTheme"
                 android:layout_width="@dimen/dp_56"
                 android:layout_height="match_parent"
-                tools:ignore="UseSwitchCompatOrMaterialXml" />
+                tools:ignore="UseSwitchCompatOrMaterialXml"
+                android:configChanges="uiMode"
+                style="@style/SwitchStyle"/>
 
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/layoutToShare"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_62"
             android:orientation="horizontal">
@@ -74,33 +73,34 @@
                 android:layout_marginTop="@dimen/dp_22"
                 android:layout_weight="1"
                 android:text="@string/to_share"
-                android:textColor="@color/dark_blue"
                 android:textSize="@dimen/text_size_16"
                 android:layout_marginEnd="@dimen/dp_12"
                 tools:fontFamily="@font/yandexsanstextmedium"
-                app:drawableRightCompat="@drawable/to_share" />
+                app:drawableRightCompat="@drawable/to_share"/>
 
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/layoutTextWriteToSupport"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_62"
             android:orientation="horizontal">
+
             <TextView
                 android:id="@+id/textWriteToSupport"
                 android:layout_width="@dimen/dp_0"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dp_16"
                 android:layout_marginTop="@dimen/dp_22"
+                android:layout_marginEnd="@dimen/dp_12"
                 android:layout_weight="1"
                 android:text="@string/write_to_support"
-                android:textColor="@color/dark_blue"
                 android:textSize="@dimen/text_size_16"
-                android:layout_marginEnd="@dimen/dp_12"
-                tools:fontFamily="@font/yandexsanstextmedium"
-                app:drawableRightCompat="@drawable/group"/>
+                app:drawableRightCompat="@drawable/group"
+                tools:fontFamily="@font/yandexsanstextmedium" />
 
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/layoutUserAgreement"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_62"
             android:orientation="horizontal"
@@ -113,11 +113,10 @@
                 android:layout_marginTop="@dimen/dp_22"
                 android:layout_weight="1"
                 android:text="@string/user_agreement"
-                android:textColor="@color/dark_blue"
                 android:textSize="@dimen/text_size_16"
                 android:layout_marginEnd="@dimen/dp_12"
                 tools:fontFamily="@font/yandexsanstextmedium"
-                app:drawableRightCompat="@drawable/button"/>
+                app:drawableRightCompat="@drawable/button" />
 
         </LinearLayout>
     </LinearLayout>
