@@ -30,7 +30,6 @@
             android:id="@+id/textSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/yandexsanstextmedium"
             android:text="@string/settings"
             android:textSize="@dimen/text_size_22" />
 
@@ -48,8 +47,7 @@
             android:layout_gravity="center|start"
             android:layout_marginStart="@dimen/dp_16"
             android:text="@string/dark_theme"
-            android:textSize="@dimen/text_size_16"
-            tools:fontFamily="@font/yandexsanstextmedium" />
+            android:textSize="@dimen/text_size_16" />
 
         <Switch
             android:id="@+id/switchTheme"
@@ -75,7 +73,6 @@
                 android:text="@string/to_share"
                 android:textSize="@dimen/text_size_16"
                 android:layout_marginEnd="@dimen/dp_12"
-                tools:fontFamily="@font/yandexsanstextmedium"
                 app:drawableRightCompat="@drawable/to_share"/>
 
         </FrameLayout>
@@ -94,8 +91,7 @@
                 android:layout_marginEnd="@dimen/dp_12"
                 android:text="@string/write_to_support"
                 android:textSize="@dimen/text_size_16"
-                app:drawableRightCompat="@drawable/group"
-                tools:fontFamily="@font/yandexsanstextmedium" />
+                app:drawableRightCompat="@drawable/group" />
 
         </FrameLayout>
         <FrameLayout
@@ -113,8 +109,7 @@
                 android:layout_marginEnd="@dimen/dp_12"
                 android:text="@string/user_agreement"
                 android:textSize="@dimen/text_size_16"
-                app:drawableRightCompat="@drawable/button"
-                tools:fontFamily="@font/yandexsanstextmedium" />
+                app:drawableRightCompat="@drawable/button" />
 
         </FrameLayout>
 

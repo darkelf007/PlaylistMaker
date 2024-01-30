@@ -4,12 +4,14 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:textColor">@color/dark_blue</item>
         <item name="android:colorBackground">@color/white</item>
+        <item name="android:fontFamily">@font/yandexsanstextmedium</item>
     </style>
 
     <style name="Main.Activity.Theme" parent="Theme.Material3.Light.NoActionBar">
         <item name="android:navigationBarColor">@color/blue</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:colorBackground">@color/blue</item>
+        <item name="android:fontFamily">@font/yandexsanstextmedium</item>
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />

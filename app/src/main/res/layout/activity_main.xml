@@ -27,6 +27,9 @@
         style="@style/ButtonStyle"
         android:text="@string/search"
         app:cornerRadius="@dimen/dp_16"
+        android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginTop="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_16"
         app:icon="@drawable/search"
         app:iconGravity="textStart"
         app:iconTint="@color/dark_blue" />
@@ -36,6 +39,9 @@
         style="@style/ButtonStyle"
         android:text="@string/media"
         app:cornerRadius="@dimen/dp_16"
+        android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginTop="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_16"
         app:icon="@drawable/media"
         app:iconGravity="textStart"
         app:iconTint="@color/dark_blue" />
@@ -46,6 +52,9 @@
         android:layout_marginBottom="@dimen/dp_28"
         android:text="@string/settings"
         app:cornerRadius="@dimen/dp_16"
+        android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginTop="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_16"
         app:icon="@drawable/settings"
         app:iconGravity="textStart"
         app:iconTint="@color/dark_blue" />
