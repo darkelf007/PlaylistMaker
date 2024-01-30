@@ -5,7 +5,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import android.widget.LinearLayout
+import android.widget.FrameLayout
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,17 +17,17 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
         // Поделиться ссылкой
-        val linearLayout: LinearLayout = findViewById(R.id.layoutToShare)
+        val linearLayout: FrameLayout = findViewById(R.id.layoutToShare)
         linearLayout.setOnClickListener {
             showShareDialog()
         }
         // Написать в поддержку
-        val supportButton: LinearLayout = findViewById(R.id.layoutTextWriteToSupport)
+        val supportButton: FrameLayout = findViewById(R.id.layoutTextWriteToSupport)
         supportButton.setOnClickListener {
             sendSupportEmail()
         }
         // Пользовательское соглашение
-        val userAgreementButton: LinearLayout = findViewById(R.id.layoutUserAgreement)
+        val userAgreementButton: FrameLayout = findViewById(R.id.layoutUserAgreement)
         userAgreementButton.setOnClickListener {
             showUserAgreement()
         }

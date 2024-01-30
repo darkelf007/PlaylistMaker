@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.core.view.isVisible
 
 class SearchActivity : AppCompatActivity() {
     private var searchText: String = ""
@@ -36,7 +37,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton.visibility = clearButtonVisibility(s)
+                clearButton.isVisible = clearButtonVisibility(s)
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -61,14 +62,10 @@ class SearchActivity : AppCompatActivity() {
             getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
-    private fun clearButtonVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
+    private fun clearButtonVisibility(s: CharSequence?): Boolean {
+        return !s.isNullOrEmpty()
     }
-    companion object {
+    private companion object {
         const val SEARCH_ITEM = "SEARCH_ITEM"
     }
 }
