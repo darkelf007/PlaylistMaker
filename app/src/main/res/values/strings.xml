@@ -10,7 +10,7 @@
     <string name="button_back">Кнопка назад</string>
 
     <!-- SettingsActivity -->
-    <string name="email_student">dtalievanar@gmail.com</string>
+    <string name="email_student">"dtalievanar@gmail.com"</string>
     <string name="support_message">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="support_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="user_agreement_url">https://yandex.ru/legal/practicum_offer/</string>
