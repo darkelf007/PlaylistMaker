@@ -109,7 +109,7 @@
                 android:layout_marginEnd="@dimen/dp_12"
                 android:text="@string/user_agreement"
                 android:textSize="@dimen/text_size_16"
-                app:drawableRightCompat="@drawable/button" />
+                app:drawableRightCompat="@drawable/arrow_button" />
 
         </FrameLayout>
 
