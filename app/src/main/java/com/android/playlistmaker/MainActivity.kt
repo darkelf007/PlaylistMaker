@@ -8,7 +8,6 @@ import android.widget.Button
 import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -16,12 +15,11 @@ class MainActivity : AppCompatActivity() {
         val searchButton = findViewById<Button>(R.id.button_search)
         val mediaButton =findViewById<Button>(R.id.button_media)
         val settingsButton  =findViewById<Button>(R.id.button_settings)
-        //ссылка на страницу поиска
+        //первый вариант
         searchButton.setOnClickListener{
-            val displayIntent = Intent(this, SearchActivity::class.java)
-            startActivity(displayIntent)
+            Toast.makeText(this@MainActivity, "Search!", Toast.LENGTH_SHORT).show()
         }
-        //всплывающее окно
+        //второй вариант
         val bottonClickListener: View.OnClickListener = object : View.OnClickListener {
             override fun onClick(v: View?) {
                 Toast.makeText(this@MainActivity, "Media!", Toast.LENGTH_SHORT).show()

@@ -1,58 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/dp_62"
     android:orientation="horizontal"
+    android:layout_weight="1"
     android:theme="@style/Theme.PlaylistMaker">
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="@dimen/dp_48"
-        android:layout_height="@dimen/dp_48" />
+        android:id="@+id/track_album"
+        android:layout_width="@dimen/dp_46"
+        android:layout_height="@dimen/dp_46"
+        android:layout_marginStart="@dimen/dp_8"
+        android:layout_marginEnd="@dimen/dp_8"
+        android:layout_gravity="center"
+        />
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1">
 
         <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/track_name"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:ellipsize="end"
-            android:text="TextView" />
+            android:layout_weight="1"
+            android:gravity="bottom"
+            android:text="track_name" />
 
-    </FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
 
-    <FrameLayout
-        android:layout_width="@dimen/dp_20"
-        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textFontWeight="1" />
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/point" />
+                <TextView
+                    android:id="@+id/group_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/dp_14"
+                    android:textSize="11sp"
+                    android:text="group_name" />
 
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView" />
-    </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_14"
+                >
+
+                <ImageView
+                    android:id="@+id/point"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/dp_4"
+                    android:layout_marginEnd="@dimen/dp_4"
+                    android:src="@drawable/point" />
+
+            </FrameLayout>
+
+
+
+                <TextView
+                    android:id="@+id/track_length"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/dp_14"
+                    android:textSize="11sp"
+                    android:text="track_length" />
+
+
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:src="@drawable/arrow_button" />
+        android:id="@+id/track_arrow"
+        android:layout_width="@dimen/dp_24"
+        android:layout_height="@dimen/dp_24"
+        android:layout_gravity="center|end"
+        android:src="@drawable/arrow_button"
+        android:layout_marginEnd="@dimen/dp_8"
+        android:layout_marginStart="@dimen/dp_8"/>
 
 
 </LinearLayout>
