@@ -1,8 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    tools:context=".SettingsActivity"
+    android:theme="@style/Theme.PlaylistMaker">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_56"
+        android:gravity="center"
+        android:orientation="horizontal">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/button_backToMain"
+            style="@style/ButtonSettingsStyle"
+            android:layout_width="@dimen/dp_44"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_12"
+            android:contentDescription="@string/button_back"
+            android:outlineProvider="none"
+            app:icon="@drawable/arrow"
+            app:iconGravity="end"
+            app:iconPadding="@dimen/dp_52"
+            app:iconSize="@dimen/dp_24" />
+
+        <TextView
+            android:id="@+id/textSettings"
+            android:layout_width="@dimen/dp_0"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/yandexsanstextmedium"
+            android:text="@string/search"
+            android:textSize="@dimen/text_size_22"
+            />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/search_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/inputEditText"
+
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_36"
+            android:layout_weight="1"
+            android:drawableStart="@drawable/search_grey"
+            android:hint="@string/search"
+            android:inputType="text"
+            android:maxLines="1"
+            android:drawablePadding="8dp"
+            android:paddingStart="@dimen/dp_10"
+            android:textColor="@color/black"
+            android:textColorHint="@color/dark_grey"
+            android:background="@drawable/search_view_background"/>
+
+        <ImageView
+            android:id="@+id/clearIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|end"
+            android:paddingEnd="@dimen/dp_8"
+            android:src="@drawable/close_grey"
+            android:visibility="gone"/>
+    </FrameLayout>
+
+</LinearLayout>
