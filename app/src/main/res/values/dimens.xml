@@ -3,13 +3,16 @@
     <!-- text size -->
     <dimen name="text_size_22">22sp</dimen>
     <dimen name="text_size_16">16sp</dimen>
+    <dimen name="text_size_11">11sp</dimen>
     <!-- margin_value -->
     <dimen name="dp_16">16dp</dimen>
+    <dimen name="dp_14">14dp</dimen>
     <dimen name="dp_8">8dp</dimen>
     <dimen name="dp_84">84dp</dimen>
     <dimen name="dp_0">0dp</dimen>
     <dimen name="dp_4">4dp</dimen>
     <dimen name="dp_52">52dp</dimen>
+    <dimen name="dp_46">46dp</dimen>
     <dimen name="dp_56">56dp</dimen>
     <dimen name="dp_36">36dp</dimen>
     <dimen name="dp_12">12dp</dimen>
