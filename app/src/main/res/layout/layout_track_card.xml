@@ -12,7 +12,7 @@
         android:layout_height="@dimen/dp_46"
         android:layout_gravity="center"
         android:layout_marginStart="@dimen/dp_8"
-        android:layout_marginEnd="@dimen/dp_4" />
+        android:layout_marginEnd="@dimen/dp_8" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -73,7 +73,7 @@
         android:layout_width="@dimen/dp_24"
         android:layout_height="@dimen/dp_24"
         android:layout_gravity="center"
-        android:layout_marginStart="@dimen/dp_4"
+        android:layout_marginStart="@dimen/dp_8"
         android:layout_marginEnd="@dimen/dp_8"
         android:src="@drawable/arrow_button" />
 </LinearLayout>
