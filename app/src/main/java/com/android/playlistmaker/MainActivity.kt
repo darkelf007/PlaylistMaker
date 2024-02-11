@@ -14,10 +14,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val searchButton = findViewById<Button>(R.id.button_search)
-        val mediaButton =findViewById<Button>(R.id.button_media)
-        val settingsButton  =findViewById<Button>(R.id.button_settings)
+        val mediaButton = findViewById<Button>(R.id.button_media)
+        val settingsButton = findViewById<Button>(R.id.button_settings)
         //ссылка на страницу поиска
-        searchButton.setOnClickListener{
+        searchButton.setOnClickListener {
             val displayIntent = Intent(this, SearchActivity::class.java)
             startActivity(displayIntent)
         }
