@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.FrameLayout
+
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +34,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
     }
+
     private fun showUserAgreement() {
         val browseIntent = Intent(Intent.ACTION_VIEW)
         val userAgreementPath = getString(R.string.user_agreement_url)
@@ -52,6 +54,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(this)
         }
     }
+
     private fun showShareDialog() {
         val message = getString(R.string.share_Dialog)
         val shareIntent = Intent(Intent.ACTION_SEND)
