@@ -1,5 +1,7 @@
 package com.android.playlistmaker
 
+import android.content.res.Resources
+import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -7,7 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 
-class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class TrackViewHolder(itemView: View, private val resources: Resources) : RecyclerView.ViewHolder(itemView) {
+    val density = resources.displayMetrics.density
+    val pixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3f, resources.displayMetrics).toInt()
     private val trackNameView: TextView
     private val artistNameView: TextView
     val trackTimeView: TextView
@@ -28,7 +32,7 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .load(track.artworkUrl100)
             .centerCrop()
             .placeholder(R.drawable.placeholder)
-            .transform(RoundedCorners(8))
+            .transform(RoundedCorners(pixels))
             .into(artworkUrl100View)
     }
 }

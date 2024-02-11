@@ -58,7 +58,7 @@ class SearchActivity : AppCompatActivity() {
         tracksList.add(bee)
         tracksList.add(guns)
         tracksList.add(led)
-        recycler.adapter = TrackAdapter(tracksList)
+        recycler.adapter = TrackAdapter(tracksList,resources)
 
 
         val inputEditText = findViewById<EditText>(R.id.inputEditText)
