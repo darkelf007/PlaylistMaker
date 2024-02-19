@@ -160,6 +160,7 @@ class SearchActivity : AppCompatActivity() {
     private companion object {
         const val SEARCH_ITEM = "SEARCH_ITEM"
     }
+
     sealed class UiState {
         object List : UiState()
         object Empty : UiState()
@@ -175,6 +176,7 @@ class SearchActivity : AppCompatActivity() {
                 trackAdapter.notifyDataSetChanged()
                 recyclerView.isVisible = true
             }
+
             is UiState.Empty -> {
                 placeholderImage.isVisible = true
                 placeholderText.isVisible = true
@@ -186,6 +188,7 @@ class SearchActivity : AppCompatActivity() {
                 placeholderImage.setImageResource(R.drawable.not_found)
                 placeholderText.text = getString(R.string.not_found)
             }
+
             is UiState.Error -> {
                 placeholderImage.isVisible = true
                 placeholderText.isVisible = true
