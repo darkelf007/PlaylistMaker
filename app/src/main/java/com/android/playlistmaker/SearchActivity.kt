@@ -39,22 +39,15 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var updateButton: Button
     private lateinit var inputEditText: EditText
     private lateinit var downloadIcon: ViewGroup
+    private lateinit var clearButton: ImageView
+    private lateinit var backButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        //-------------------------------------------------------------------------------------------------------------------------------
-        trackAdapter = TrackAdapter(tracks, resources)
-        placeholderImage = findViewById(R.id.placeholderImage)
-        placeholderText = findViewById(R.id.placeholderText)
-        updateButton = findViewById(R.id.buttonUpdate)
-        inputEditText = findViewById(R.id.inputEditText)
-        val clearButton = findViewById<ImageView>(R.id.clearIcon)
-        val backButton = findViewById<Button>(R.id.button_backToMain)
-        downloadIcon = findViewById(R.id.download_icon_frame)
-        recyclerView = findViewById(R.id.track_list)
-        recyclerView.adapter = trackAdapter
-        //-------------------------------------------------------------------------------------------------------------------------------
+
+        initializingTheView()
+
         clearButton.setOnClickListener {
             placeholderImage.isVisible = false
             placeholderText.isVisible = false
@@ -110,45 +103,21 @@ class SearchActivity : AppCompatActivity() {
                                 trackAdapter.notifyDataSetChanged()
                                 tracks.addAll(response.body()?.results!!)
                                 recyclerView.isVisible = true
+                                setUiState(UiState.List)
                             } else {
-                                showMessage(getString(R.string.not_found))
+                                setUiState(UiState.Empty)
                             }
                         } else {
-                            showMessage(
-                                getString(R.string.net_error)
-                            )
+                            setUiState(UiState.Error)
                         }
                     }
 
                     override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
                         downloadIcon.isVisible = false
-                        showMessage(getString(R.string.net_error))
+                        setUiState(UiState.Error)
                     }
                 })
         }
-    }
-
-    private fun showMessage(text: String) {
-        if (text.isNotEmpty()) {
-            placeholderImage.isVisible = true
-            placeholderText.isVisible = true
-            downloadIcon.isVisible = false
-            trackAdapter.notifyDataSetChanged()
-            recyclerView.isVisible = false
-            tracks.clear()
-
-            if (text == getString(R.string.not_found)) {
-                updateButton.isVisible = false
-                placeholderImage.setImageResource(R.drawable.not_found)
-                placeholderText.text = text
-            } else {
-                placeholderImage.setImageResource(R.drawable.net_error)
-                placeholderText.text = text
-                updateButton.setOnClickListener { search() }
-                updateButton.isVisible = true
-            }
-        }
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -159,6 +128,19 @@ class SearchActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         searchText = savedInstanceState.getString(SEARCH_ITEM, "SEARCH_ITEM")
+    }
+
+    private fun initializingTheView() {
+        trackAdapter = TrackAdapter(tracks, resources)
+        placeholderImage = findViewById(R.id.placeholderImage)
+        placeholderText = findViewById(R.id.placeholderText)
+        updateButton = findViewById(R.id.buttonUpdate)
+        inputEditText = findViewById(R.id.inputEditText)
+        clearButton = findViewById(R.id.clearIcon)
+        backButton = findViewById(R.id.button_backToMain)
+        downloadIcon = findViewById(R.id.download_icon_frame)
+        recyclerView = findViewById(R.id.track_list)
+        recyclerView.adapter = trackAdapter
     }
 
     private fun Activity.hideKeyboard() {
@@ -177,5 +159,45 @@ class SearchActivity : AppCompatActivity() {
 
     private companion object {
         const val SEARCH_ITEM = "SEARCH_ITEM"
+    }
+    sealed class UiState {
+        object List : UiState()
+        object Empty : UiState()
+        object Error : UiState()
+    }
+
+    private fun setUiState(state: UiState) {
+        when (state) {
+            is UiState.List -> {
+                placeholderImage.isVisible = false
+                placeholderText.isVisible = false
+                updateButton.isVisible = false
+                trackAdapter.notifyDataSetChanged()
+                recyclerView.isVisible = true
+            }
+            is UiState.Empty -> {
+                placeholderImage.isVisible = true
+                placeholderText.isVisible = true
+                downloadIcon.isVisible = false
+                trackAdapter.notifyDataSetChanged()
+                recyclerView.isVisible = false
+                tracks.clear()
+                updateButton.isVisible = false
+                placeholderImage.setImageResource(R.drawable.not_found)
+                placeholderText.text = getString(R.string.not_found)
+            }
+            is UiState.Error -> {
+                placeholderImage.isVisible = true
+                placeholderText.isVisible = true
+                downloadIcon.isVisible = false
+                trackAdapter.notifyDataSetChanged()
+                recyclerView.isVisible = false
+                tracks.clear()
+                placeholderImage.setImageResource(R.drawable.net_error)
+                placeholderText.text = getString(R.string.net_error)
+                updateButton.setOnClickListener { search() }
+                updateButton.isVisible = true
+            }
+        }
     }
 }
