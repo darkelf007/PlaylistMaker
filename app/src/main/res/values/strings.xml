@@ -15,4 +15,11 @@
     <string name="support_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="user_agreement_url">https://yandex.ru/legal/practicum_offer/</string>
     <string name="share_Dialog">Привет, посетите нашу страничку: https://practicum.yandex.ru/android-developer/</string>
+
+    <!-- SearchActivity -->
+    <string name="not_found">Ничего не нашлось</string>
+    <string name="net_error">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="update">Обновить</string>
+    <string name="clear_history">Очистить историю</string>
+    <string name="you_were_searched">Вы искали</string>
 </resources>
