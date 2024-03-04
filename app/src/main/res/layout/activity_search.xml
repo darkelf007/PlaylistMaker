@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -90,7 +91,8 @@
         android:layout_height="match_parent"
         android:paddingHorizontal="@dimen/dp_16"
         android:paddingVertical="@dimen/dp_8"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/layout_track_card" />
 
     <ImageView
         android:id="@+id/placeholderImage"
@@ -112,7 +114,7 @@
         android:textSize="@dimen/text_size_19" />
 
     <Button
-        android:id="@+id/buttonUpdate"
+        android:id="@+id/button_update"
         style="@style/Search_placeholder_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -127,4 +129,56 @@
         android:visibility="gone"
         app:cornerRadius="@dimen/dp_54" />
 
+    <FrameLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+        <LinearLayout
+            android:id="@+id/search_history"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/dp_44"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/search_history_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/dp_52"
+                android:fontFamily="@font/yandexsanstextmedium"
+                android:gravity="center_horizontal"
+                android:text="@string/you_were_searched"
+                android:textSize="@dimen/text_size_19"
+                app:fontWeight="500" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/search_history_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_20"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/clear_search_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:backgroundTint="@color/button_background_color"
+            android:fontFamily="@font/yandexsanstextmedium"
+            android:gravity="center"
+            android:text="@string/clear_history"
+            android:textAllCaps="false"
+            android:textColor="@color/button_text_color"
+            android:textFontWeight="500"
+            android:textSize="@dimen/text_size_14"
+            android:visibility="gone"
+            app:cornerRadius="@dimen/dp_54" />
+    </FrameLayout>
 </LinearLayout>

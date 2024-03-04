@@ -2,6 +2,7 @@ package com.android.playlistmaker
 
 import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -31,7 +32,10 @@ class SearchActivity : AppCompatActivity() {
 
     private var searchText: String = ""
 
+    private val tracksHistory = ArrayList<Track>()
     private val tracks = ArrayList<Track>()
+
+    private lateinit var trackAdapterHistory: TrackAdapter
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var placeholderImage: ImageView
     private lateinit var placeholderText: TextView
@@ -41,11 +45,15 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var downloadIcon: ViewGroup
     private lateinit var clearButton: ImageView
     private lateinit var backButton: Button
+    private lateinit var searchHistory: SearchHistory
+    private lateinit var sharedPrefsHistory: SharedPreferences
+    private lateinit var recyclerViewHistory: RecyclerView
+    private lateinit var historyLayout: View
+    private lateinit var clearSearchButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-
         initializingTheView()
 
         clearButton.setOnClickListener {
@@ -61,6 +69,10 @@ class SearchActivity : AppCompatActivity() {
 
         backButton.setOnClickListener {
             finish()
+        }
+
+        inputEditText.setOnFocusChangeListener { _, hasFocus ->
+            setUiState(UiState.HistoryVisible)
         }
 
         inputEditText.setOnEditorActionListener { v, actionId, event ->
@@ -79,6 +91,7 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.isVisible = clearButtonVisibility(s)
+                setUiState(UiState.HistoryVisible)
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -86,6 +99,35 @@ class SearchActivity : AppCompatActivity() {
             }
         }
         inputEditText.addTextChangedListener(simpleTextWatcher)
+
+
+        searchHistory.read()?.let { tracksHistory.addAll(it) }
+        recyclerViewHistory.adapter = trackAdapterHistory
+        trackAdapterHistory.notifyDataSetChanged()
+
+        trackAdapterHistory.itemClickListener = { track ->
+        }
+
+        trackAdapter.itemClickListener = { track ->
+            if (tracksHistory.contains(track)) {
+                tracksHistory.remove(track)
+            }
+            tracksHistory.add(0, track)
+            if (tracksHistory.size == 10) {
+                tracksHistory.removeAt(9)
+            }
+            searchHistory.write(tracksHistory)
+            trackAdapterHistory.notifyDataSetChanged()
+
+        }
+
+        clearSearchButton.setOnClickListener {
+            searchHistory.clearHistory()
+            tracksHistory.clear()
+            historyLayout.visibility = View.GONE
+            clearSearchButton.visibility = View.GONE
+        }
+
     }
 
     private fun search() {
@@ -131,10 +173,16 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun initializingTheView() {
+        historyLayout = findViewById(R.id.search_history)
+        sharedPrefsHistory = getSharedPreferences(HISTORY_PREFERENCES, MODE_PRIVATE)
+        searchHistory = SearchHistory(sharedPrefsHistory)
+        recyclerViewHistory = findViewById(R.id.search_history_recycler_view)
+        clearSearchButton = findViewById(R.id.clear_search_history)
         trackAdapter = TrackAdapter(tracks, resources)
+        trackAdapterHistory = TrackAdapter(tracksHistory, resources)
         placeholderImage = findViewById(R.id.placeholderImage)
         placeholderText = findViewById(R.id.placeholderText)
-        updateButton = findViewById(R.id.buttonUpdate)
+        updateButton = findViewById(R.id.button_update)
         inputEditText = findViewById(R.id.inputEditText)
         clearButton = findViewById(R.id.clearIcon)
         backButton = findViewById(R.id.button_backToMain)
@@ -159,12 +207,14 @@ class SearchActivity : AppCompatActivity() {
 
     private companion object {
         const val SEARCH_ITEM = "SEARCH_ITEM"
+        const val HISTORY_PREFERENCES = "HISTORY_PREFERENCES"
     }
 
     sealed class UiState {
         object List : UiState()
         object Empty : UiState()
         object Error : UiState()
+        object HistoryVisible : UiState()
     }
 
     private fun setUiState(state: UiState) {
@@ -175,6 +225,8 @@ class SearchActivity : AppCompatActivity() {
                 updateButton.isVisible = false
                 trackAdapter.notifyDataSetChanged()
                 recyclerView.isVisible = true
+                historyLayout.visibility = View.GONE
+                clearSearchButton.visibility = View.GONE
             }
 
             is UiState.Empty -> {
@@ -185,8 +237,8 @@ class SearchActivity : AppCompatActivity() {
                 recyclerView.isVisible = false
                 tracks.clear()
                 updateButton.isVisible = false
-                placeholderImage.setImageResource(R.drawable.not_found)
-                placeholderText.text = getString(R.string.not_found)
+                historyLayout.visibility = View.GONE
+                clearSearchButton.visibility = View.GONE
             }
 
             is UiState.Error -> {
@@ -196,10 +248,18 @@ class SearchActivity : AppCompatActivity() {
                 trackAdapter.notifyDataSetChanged()
                 recyclerView.isVisible = false
                 tracks.clear()
-                placeholderImage.setImageResource(R.drawable.net_error)
-                placeholderText.text = getString(R.string.net_error)
-                updateButton.setOnClickListener { search() }
                 updateButton.isVisible = true
+                historyLayout.visibility = View.GONE
+                clearSearchButton.visibility = View.GONE
+            }
+
+            is UiState.HistoryVisible -> {
+                historyLayout.visibility = View.VISIBLE
+                clearSearchButton.visibility = View.VISIBLE
+                recyclerView.isVisible = false
+                placeholderImage.isVisible = false
+                placeholderText.isVisible = false
+                updateButton.isVisible = false
             }
         }
     }

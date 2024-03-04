@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.FrameLayout
+import com.example.playlistmaker.App
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +33,14 @@ class SettingsActivity : AppCompatActivity() {
         val userAgreementButton: FrameLayout = findViewById(R.id.layoutUserAgreement)
         userAgreementButton.setOnClickListener {
             showUserAgreement()
+        }
+        // Переключатель темы
+        val sharedPrefs = getSharedPreferences(App.SETTING_PREFERENCES, MODE_PRIVATE)
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.switchTheme)
+        themeSwitcher.isChecked = sharedPrefs.getBoolean(App.DARK_THEME_KEY, false)
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
+            sharedPrefs.edit().putBoolean(App.DARK_THEME_KEY, checked).apply()
         }
 
     }

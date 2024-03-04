@@ -24,4 +24,5 @@
     <style name="Search_placeholder">
         <item name="android:textColor">@color/black</item>
     </style>
+
 </resources>
