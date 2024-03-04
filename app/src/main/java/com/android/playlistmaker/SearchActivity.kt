@@ -35,6 +35,8 @@ class SearchActivity : AppCompatActivity() {
     private val tracksHistory = ArrayList<Track>()
     private val tracks = ArrayList<Track>()
 
+//извиняюсь, в начале закомитил запушил эту домашку, а потом потом открыл гит и замержил предыдущий пул реквест...
+
     private lateinit var trackAdapterHistory: TrackAdapter
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var placeholderImage: ImageView
