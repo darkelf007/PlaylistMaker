@@ -8,4 +8,6 @@
     <color name="dark_grey">#AEAFB4</color>
     <color name="button_text_color">@color/black</color>
     <color name="button_background_color">@color/white</color>
+    <color name="switch_Knob_color">@color/blue</color>
+    <color name="switch_track_color">#9FBBF3</color>
 </resources>

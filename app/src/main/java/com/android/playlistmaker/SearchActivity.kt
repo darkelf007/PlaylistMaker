@@ -237,6 +237,8 @@ class SearchActivity : AppCompatActivity() {
                 trackAdapter.notifyDataSetChanged()
                 recyclerView.isVisible = false
                 tracks.clear()
+                placeholderImage.setImageResource(R.drawable.not_found)
+                placeholderText.text = getString(R.string.not_found)
                 updateButton.isVisible = false
                 historyLayout.visibility = View.GONE
                 clearSearchButton.visibility = View.GONE
@@ -249,6 +251,9 @@ class SearchActivity : AppCompatActivity() {
                 trackAdapter.notifyDataSetChanged()
                 recyclerView.isVisible = false
                 tracks.clear()
+                placeholderImage.setImageResource(R.drawable.net_error)
+                placeholderText.text = getString(R.string.net_error)
+                updateButton.setOnClickListener { search() }
                 updateButton.isVisible = true
                 historyLayout.visibility = View.GONE
                 clearSearchButton.visibility = View.GONE
