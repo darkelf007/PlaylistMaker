@@ -35,7 +35,6 @@ class SearchActivity : AppCompatActivity() {
     private val tracksHistory = ArrayList<Track>()
     private val tracks = ArrayList<Track>()
 
-//извиняюсь, в начале закомитил запушил эту домашку, а потом потом открыл гит и замержил предыдущий пул реквест...
 
     private lateinit var trackAdapterHistory: TrackAdapter
     private lateinit var trackAdapter: TrackAdapter
@@ -115,8 +114,8 @@ class SearchActivity : AppCompatActivity() {
                 tracksHistory.remove(track)
             }
             tracksHistory.add(0, track)
-            if (tracksHistory.size == 10) {
-                tracksHistory.removeAt(9)
+            if (tracksHistory.size == 11) {
+                tracksHistory.removeAt(10)
             }
             searchHistory.write(tracksHistory)
             trackAdapterHistory.notifyDataSetChanged()
@@ -256,8 +255,9 @@ class SearchActivity : AppCompatActivity() {
             }
 
             is UiState.HistoryVisible -> {
-                historyLayout.visibility = View.VISIBLE
-                clearSearchButton.visibility = View.VISIBLE
+                val historyNotEmpty = tracksHistory.isNotEmpty()
+                historyLayout.visibility = if (historyNotEmpty) View.VISIBLE else View.GONE
+                clearSearchButton.visibility = if (historyNotEmpty) View.VISIBLE else View.GONE
                 recyclerView.isVisible = false
                 placeholderImage.isVisible = false
                 placeholderText.isVisible = false
