@@ -35,6 +35,7 @@ class SearchActivity : AppCompatActivity() {
     private val tracksHistory = ArrayList<Track>()
     private val tracks = ArrayList<Track>()
 
+
     private lateinit var trackAdapterHistory: TrackAdapter
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var placeholderImage: ImageView
@@ -113,8 +114,8 @@ class SearchActivity : AppCompatActivity() {
                 tracksHistory.remove(track)
             }
             tracksHistory.add(0, track)
-            if (tracksHistory.size == 10) {
-                tracksHistory.removeAt(9)
+            if (tracksHistory.size == 11) {
+                tracksHistory.removeAt(10)
             }
             searchHistory.write(tracksHistory)
             trackAdapterHistory.notifyDataSetChanged()
@@ -236,6 +237,8 @@ class SearchActivity : AppCompatActivity() {
                 trackAdapter.notifyDataSetChanged()
                 recyclerView.isVisible = false
                 tracks.clear()
+                placeholderImage.setImageResource(R.drawable.not_found)
+                placeholderText.text = getString(R.string.not_found)
                 updateButton.isVisible = false
                 historyLayout.visibility = View.GONE
                 clearSearchButton.visibility = View.GONE
@@ -248,14 +251,18 @@ class SearchActivity : AppCompatActivity() {
                 trackAdapter.notifyDataSetChanged()
                 recyclerView.isVisible = false
                 tracks.clear()
+                placeholderImage.setImageResource(R.drawable.net_error)
+                placeholderText.text = getString(R.string.net_error)
+                updateButton.setOnClickListener { search() }
                 updateButton.isVisible = true
                 historyLayout.visibility = View.GONE
                 clearSearchButton.visibility = View.GONE
             }
 
             is UiState.HistoryVisible -> {
-                historyLayout.visibility = View.VISIBLE
-                clearSearchButton.visibility = View.VISIBLE
+                val historyNotEmpty = tracksHistory.isNotEmpty()
+                historyLayout.visibility = if (historyNotEmpty) View.VISIBLE else View.GONE
+                clearSearchButton.visibility = if (historyNotEmpty) View.VISIBLE else View.GONE
                 recyclerView.isVisible = false
                 placeholderImage.isVisible = false
                 placeholderText.isVisible = false

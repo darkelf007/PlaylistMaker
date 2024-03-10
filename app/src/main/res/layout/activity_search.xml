@@ -51,6 +51,7 @@
             android:background="@drawable/search_view_background"
             android:drawableStart="@drawable/search_grey"
             android:drawablePadding="8dp"
+            android:fontFamily="@font/yandexsanstextmedium"
             android:hint="@string/search"
             android:imeOptions="actionDone"
             android:inputType="text"
@@ -58,7 +59,8 @@
             android:paddingStart="@dimen/dp_10"
             android:singleLine="true"
             android:textColor="@color/black"
-            android:textColorHint="@color/dark_grey" />
+            android:textColorHint="@color/dark_grey"
+            android:textSize="@dimen/text_size_16" />
 
         <ImageView
             android:id="@+id/clearIcon"
