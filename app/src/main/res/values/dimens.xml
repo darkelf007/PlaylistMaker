@@ -6,6 +6,7 @@
     <dimen name="text_size_11">11sp</dimen>
     <dimen name="text_size_19">19sp</dimen>
     <dimen name="text_size_14">14sp</dimen>
+    <dimen name="text_size_13">13sp</dimen>
     <!-- margin_value -->
     <dimen name="dp_16">16dp</dimen>
     <dimen name="dp_14">14dp</dimen>
@@ -14,6 +15,7 @@
     <dimen name="dp_0">0dp</dimen>
     <dimen name="dp_4">4dp</dimen>
     <dimen name="dp_52">52dp</dimen>
+    <dimen name="dp_26">26dp</dimen>
     <dimen name="dp_46">46dp</dimen>
     <dimen name="dp_56">56dp</dimen>
     <dimen name="dp_36">36dp</dimen>

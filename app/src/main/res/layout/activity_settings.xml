@@ -24,7 +24,7 @@
             app:icon="@drawable/arrow"
             app:iconGravity="end"
             app:iconPadding="@dimen/dp_52"
-            app:iconSize="@dimen/dp_24" />
+            app:iconSize="@dimen/dp_16" />
 
         <TextView
             android:id="@+id/textSettings"
