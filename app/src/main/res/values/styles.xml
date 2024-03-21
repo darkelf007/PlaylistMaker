@@ -27,13 +27,13 @@
 
     <style name="player_text_style">
         <item name="android:textColor">@color/dark_grey</item>
-        <item name="android:textFontWeight">500</item>
+        <item name="android:textFontWeight">400</item>
         <item name="android:textSize">@dimen/text_size_13</item>
     </style>
 
     <style name="track_info_style">
         <item name="android:textColor">@color/black_white</item>
-        <item name="android:textFontWeight">500</item>
+        <item name="android:textFontWeight">400</item>
         <item name="android:textSize">@dimen/text_size_13</item>
     </style>
 

@@ -2,6 +2,8 @@ package com.android.playlistmaker
 
 import com.google.gson.annotations.SerializedName
 
+const val COVER_ARTWORK = "512x512bb.jpg"
+
 data class Track(
     val trackName: String, // Название композиции
     val artistName: String, // Имя исполнителя
@@ -13,4 +15,4 @@ data class Track(
     val primaryGenreName: String,
     val country: String,
     val previewUrl: String
-){fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")}
+){fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', COVER_ARTWORK)}
