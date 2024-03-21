@@ -2,6 +2,7 @@ package com.android.playlistmaker
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
@@ -17,6 +18,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,7 +36,6 @@ class SearchActivity : AppCompatActivity() {
 
     private val tracksHistory = ArrayList<Track>()
     private val tracks = ArrayList<Track>()
-
 
     private lateinit var trackAdapterHistory: TrackAdapter
     private lateinit var trackAdapter: TrackAdapter
@@ -107,6 +108,7 @@ class SearchActivity : AppCompatActivity() {
         trackAdapterHistory.notifyDataSetChanged()
 
         trackAdapterHistory.itemClickListener = { track ->
+            intentCreation(track)
         }
 
         trackAdapter.itemClickListener = { track ->
@@ -119,7 +121,7 @@ class SearchActivity : AppCompatActivity() {
             }
             searchHistory.write(tracksHistory)
             trackAdapterHistory.notifyDataSetChanged()
-
+            intentCreation(track)
         }
 
         clearSearchButton.setOnClickListener {
@@ -130,6 +132,15 @@ class SearchActivity : AppCompatActivity() {
         }
 
     }
+
+
+    private fun intentCreation(track: Track) {
+            val playerIntent = Intent(this, PlayerActivity::class.java)
+            playerIntent.putExtra(TRACK, Gson().toJson(track))
+            startActivity(playerIntent)
+
+    }
+
 
     private fun search() {
         if (inputEditText.text.isNotEmpty()) {
