@@ -17,8 +17,6 @@ import java.util.Locale
 class PlayerActivity : AppCompatActivity() {
 
     private lateinit var playButton: ImageButton
-//    private lateinit var addToPlaylistButton: ImageButton
-//    private lateinit var likeButton: ImageButton
     private lateinit var backButton: Button
     private lateinit var trackImage: ImageView
     private lateinit var trackName: TextView
@@ -49,8 +47,6 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun initialization() {
         playButton = findViewById(R.id.player_play_track)
-//        likeButton = findViewById(R.id.player_like_track)
-//        addToPlaylistButton = findViewById(R.id.add_to_playlist_button)
         backButton = findViewById(R.id.back_botton)
         trackImage = findViewById(R.id.track_album_placeholder)
         trackName = findViewById(R.id.player_track_name)
