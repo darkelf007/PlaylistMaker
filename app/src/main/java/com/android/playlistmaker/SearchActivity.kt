@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -53,6 +55,12 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyLayout: View
     private lateinit var clearSearchButton: Button
 
+    private var isClickAllowed = true
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    private val searchRunnable = Runnable { search() }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -94,6 +102,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.isVisible = clearButtonVisibility(s)
                 setUiState(UiState.HistoryVisible)
+                searchDebounce()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -135,10 +144,11 @@ class SearchActivity : AppCompatActivity() {
 
 
     private fun intentCreation(track: Track) {
+        if (clickDebounce()) {
             val playerIntent = Intent(this, PlayerActivity::class.java)
             playerIntent.putExtra(TRACK, Gson().toJson(track))
             startActivity(playerIntent)
-
+        }
     }
 
 
@@ -217,9 +227,25 @@ class SearchActivity : AppCompatActivity() {
         return !s.isNullOrEmpty()
     }
 
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
     private companion object {
         const val SEARCH_ITEM = "SEARCH_ITEM"
         const val HISTORY_PREFERENCES = "HISTORY_PREFERENCES"
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
     sealed class UiState {

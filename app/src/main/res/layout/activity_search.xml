@@ -82,7 +82,7 @@
             android:layout_width="@dimen/dp_44"
             android:layout_height="@dimen/dp_44"
             android:layout_gravity="center"
-            android:indeterminateTint="@color/dark_grey"
+            android:indeterminateTint="@color/blue"
 
             />
     </FrameLayout>

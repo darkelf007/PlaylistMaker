@@ -1,6 +1,9 @@
 package com.android.playlistmaker
 
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -33,6 +36,18 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var countryGroup: Group
     private lateinit var secsOfListening: TextView
     private lateinit var track: Track
+    private var mediaPlayer = MediaPlayer()
+    private var playerState = STATE_DEFAULT
+    private lateinit var handler: Handler
+
+    private val run = object : Runnable {
+        override fun run() {
+            if (playerState == STATE_PLAYING) secsOfListening.text = SimpleDateFormat(
+                "mm:ss", Locale.getDefault()
+            ).format(mediaPlayer.currentPosition)
+            handler.postDelayed(this, DELAY)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,8 +56,24 @@ class PlayerActivity : AppCompatActivity() {
 
         val json = intent.getStringExtra("TRACK")
         track = Gson().fromJson(json, Track::class.java)
-
+        handler = Handler(Looper.getMainLooper())
+        preparePlayer()
         updateUIWithTrack(track)
+
+        playButton.setOnClickListener {
+            playbackControl()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        pausePlayer()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.release()
+
     }
 
     private fun initialization() {
@@ -87,6 +118,56 @@ class PlayerActivity : AppCompatActivity() {
         )
         handleUiState(if (track.primaryGenreName.isNotEmpty()) UiState.GenreAvailable(track.primaryGenreName) else UiState.GenreUnavailable)
         handleUiState(if (track.country.isNotEmpty()) UiState.CountryAvailable(track.country) else UiState.CountryUnavailable)
+    }
+
+    private fun preparePlayer() {
+        mediaPlayer.setDataSource(track.previewUrl)
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener {
+            playButton.isEnabled = true
+            playerState = STATE_PREPARED
+        }
+        mediaPlayer.setOnCompletionListener {
+            handler.removeCallbacks(run)
+            playButton.setImageResource(R.drawable.play_button)
+            secsOfListening.text = DEFAULT_MM_SS
+            playerState = STATE_PREPARED
+        }
+    }
+
+    private fun startPlayer() {
+        mediaPlayer.start()
+        playButton.setImageResource(R.drawable.pause_button)
+        playerState = STATE_PLAYING
+        handler.post(run)
+    }
+
+    private fun pausePlayer() {
+        mediaPlayer.pause()
+        playButton.setImageResource(R.drawable.play_button)
+        playerState = STATE_PAUSED
+        handler.removeCallbacks(run)
+    }
+
+    private fun playbackControl() {
+        when (playerState) {
+            STATE_PLAYING -> {
+                pausePlayer()
+            }
+
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+            }
+        }
+    }
+
+    companion object {
+        private const val DEFAULT_MM_SS = "00:00"
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val DELAY = 300L
     }
 
     private fun handleUiState(state: UiState) {
