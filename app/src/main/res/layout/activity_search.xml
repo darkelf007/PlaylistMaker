@@ -15,7 +15,7 @@
 
         <Button
             android:id="@+id/button_backToMain"
-            style="@style/ButtonSettingsStyle"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="@dimen/dp_44"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_12"
@@ -24,7 +24,7 @@
             app:icon="@drawable/arrow"
             app:iconGravity="end"
             app:iconPadding="@dimen/dp_52"
-            app:iconSize="@dimen/dp_24" />
+            app:iconSize="@dimen/dp_16" />
 
         <TextView
             android:id="@+id/textSettings"
@@ -172,12 +172,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
-            android:backgroundTint="@color/button_background_color"
+            android:backgroundTint="@color/white_black"
             android:fontFamily="@font/yandexsanstextmedium"
             android:gravity="center"
             android:text="@string/clear_history"
             android:textAllCaps="false"
-            android:textColor="@color/button_text_color"
+            android:textColor="@color/black_white"
             android:textFontWeight="500"
             android:textSize="@dimen/text_size_14"
             android:visibility="gone"
