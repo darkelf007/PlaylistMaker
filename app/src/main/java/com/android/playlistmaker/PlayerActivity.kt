@@ -40,12 +40,12 @@ class PlayerActivity : AppCompatActivity() {
     private var playerState = STATE_DEFAULT
     private lateinit var handler: Handler
 
-    private val run = object : Runnable {
+
+    private val timerRunnable = object : Runnable {
         override fun run() {
-            if (playerState == STATE_PLAYING) secsOfListening.text = SimpleDateFormat(
-                "mm:ss", Locale.getDefault()
-            ).format(mediaPlayer.currentPosition)
-            handler.postDelayed(this, DELAY)
+            if (playerState == STATE_PLAYING) secsOfListening.text =
+                DateTimeUtil.formatTime(mediaPlayer.currentPosition)
+            handler.postDelayed(this, DELAY_MILLIS)
         }
     }
 
@@ -54,7 +54,7 @@ class PlayerActivity : AppCompatActivity() {
         setContentView(R.layout.activity_player)
         initialization()
 
-        val json = intent.getStringExtra("TRACK")
+        val json = intent.getStringExtra(TRACK)
         track = Gson().fromJson(json, Track::class.java)
         handler = Handler(Looper.getMainLooper())
         preparePlayer()
@@ -67,6 +67,7 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        handler.removeCallbacks(timerRunnable)
         pausePlayer()
     }
 
@@ -128,7 +129,7 @@ class PlayerActivity : AppCompatActivity() {
             playerState = STATE_PREPARED
         }
         mediaPlayer.setOnCompletionListener {
-            handler.removeCallbacks(run)
+            handler.removeCallbacks(timerRunnable)
             playButton.setImageResource(R.drawable.play_button)
             secsOfListening.text = DEFAULT_MM_SS
             playerState = STATE_PREPARED
@@ -139,14 +140,14 @@ class PlayerActivity : AppCompatActivity() {
         mediaPlayer.start()
         playButton.setImageResource(R.drawable.pause_button)
         playerState = STATE_PLAYING
-        handler.post(run)
+        handler.post(timerRunnable)
     }
 
     private fun pausePlayer() {
         mediaPlayer.pause()
         playButton.setImageResource(R.drawable.play_button)
         playerState = STATE_PAUSED
-        handler.removeCallbacks(run)
+        handler.removeCallbacks(timerRunnable)
     }
 
     private fun playbackControl() {
@@ -162,18 +163,19 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     companion object {
+        private const val TRACK = "TRACK"
         private const val DEFAULT_MM_SS = "00:00"
         private const val STATE_DEFAULT = 0
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
-        private const val DELAY = 300L
+        private const val DELAY_MILLIS = 300L
     }
 
     private fun handleUiState(state: UiState) {
         when (state) {
-            is UiState.TrackTimeAvailable -> trackLength.text =
-                SimpleDateFormat("mm:ss", Locale.getDefault()).format(state.time)
+            is UiState.TrackTimeAvailable ->
+                trackLength.text = DateTimeUtil.formatTime(state.time)
 
             is UiState.TrackTimeUnavailable -> trackLengthGroup.visibility = View.GONE
             is UiState.CollectionNameAvailable -> albumName.text = state.name
@@ -200,5 +202,12 @@ class PlayerActivity : AppCompatActivity() {
         data class CountryAvailable(val country: String) : UiState()
         object CountryUnavailable : UiState()
         object BackButtonClicked : UiState()
+    }
+}
+
+object DateTimeUtil {
+    fun formatTime(timeInMillis: Int): String {
+        val simpleDateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
+        return simpleDateFormat.format(timeInMillis)
     }
 }

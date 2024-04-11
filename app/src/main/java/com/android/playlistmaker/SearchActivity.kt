@@ -231,21 +231,21 @@ class SearchActivity : AppCompatActivity() {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY_MILLIS)
         }
         return current
     }
 
     private fun searchDebounce() {
         handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY_MILLIS)
     }
 
     private companion object {
         const val SEARCH_ITEM = "SEARCH_ITEM"
         const val HISTORY_PREFERENCES = "HISTORY_PREFERENCES"
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L
+        private const val SEARCH_DEBOUNCE_DELAY_MILLIS = 2000L
     }
 
     sealed class UiState {
