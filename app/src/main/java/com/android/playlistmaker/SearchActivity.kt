@@ -121,15 +121,20 @@ class SearchActivity : AppCompatActivity() {
         }
 
         trackAdapter.itemClickListener = { track ->
-            if (tracksHistory.contains(track)) {
-                tracksHistory.remove(track)
+            val existingIndex = tracksHistory.indexOfFirst { it.trackId == track.trackId }
+            if (existingIndex != -1) {
+                tracksHistory.removeAt(existingIndex)
             }
+
             tracksHistory.add(0, track)
-            if (tracksHistory.size == 11) {
+
+            if (tracksHistory.size > 10) {
                 tracksHistory.removeAt(10)
             }
+
             searchHistory.write(tracksHistory)
             trackAdapterHistory.notifyDataSetChanged()
+
             intentCreation(track)
         }
 
