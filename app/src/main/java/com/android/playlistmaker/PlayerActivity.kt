@@ -131,7 +131,7 @@ class PlayerActivity : AppCompatActivity() {
         mediaPlayer.setOnCompletionListener {
             handler.removeCallbacks(timerRunnable)
             playButton.setImageResource(R.drawable.play_button)
-            secsOfListening.text = DEFAULT_MM_SS
+            secsOfListening.text = getString(R.string.lenght_null)
             playerState = STATE_PREPARED
         }
     }
@@ -164,7 +164,6 @@ class PlayerActivity : AppCompatActivity() {
 
     companion object {
         private const val TRACK = "TRACK"
-        private const val DEFAULT_MM_SS = "00:00"
         private const val STATE_DEFAULT = 0
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2

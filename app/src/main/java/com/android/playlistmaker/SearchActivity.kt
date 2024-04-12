@@ -194,6 +194,11 @@ class SearchActivity : AppCompatActivity() {
         searchText = savedInstanceState.getString(SEARCH_ITEM, "SEARCH_ITEM")
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
+    }
+
     private fun initializingTheView() {
         historyLayout = findViewById(R.id.search_history)
         sharedPrefsHistory = getSharedPreferences(HISTORY_PREFERENCES, MODE_PRIVATE)
