@@ -117,6 +117,15 @@ class SearchActivity : AppCompatActivity() {
         trackAdapterHistory.notifyDataSetChanged()
 
         trackAdapterHistory.itemClickListener = { track ->
+            val existingIndex = tracksHistory.indexOfFirst { it.trackId == track.trackId }
+            if (existingIndex != -1) {
+                tracksHistory.removeAt(existingIndex)
+                tracksHistory.add(0, track)
+            }
+
+            searchHistory.write(tracksHistory)
+            trackAdapterHistory.notifyDataSetChanged()
+
             intentCreation(track)
         }
 
