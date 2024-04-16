@@ -124,6 +124,8 @@
         android:layout_marginTop="@dimen/dp_24"
         android:fontFamily="@font/yandexsanstextmedium"
         android:letterSpacing="0"
+        android:textColor="@color/white_black"
+        android:backgroundTint="@color/black_white"
         android:text="@string/update"
         android:textAllCaps="false"
         android:textFontWeight="500"
