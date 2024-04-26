@@ -15,4 +15,7 @@ data class Track(
     val primaryGenreName: String,
     val country: String,
     val previewUrl: String
-){fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', COVER_ARTWORK)}
+
+) {
+    fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', COVER_ARTWORK)
+}

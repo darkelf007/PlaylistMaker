@@ -1,6 +1,9 @@
 package com.android.playlistmaker
 
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -33,16 +36,45 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var countryGroup: Group
     private lateinit var secsOfListening: TextView
     private lateinit var track: Track
+    private var mediaPlayer = MediaPlayer()
+    private var playerState = STATE_DEFAULT
+    private lateinit var handler: Handler
+
+
+    private val timerRunnable = object : Runnable {
+        override fun run() {
+            if (playerState == STATE_PLAYING) secsOfListening.text =
+                DateTimeUtil.formatTime(mediaPlayer.currentPosition)
+            handler.postDelayed(this, DELAY_MILLIS)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
         initialization()
 
-        val json = intent.getStringExtra("TRACK")
+        val json = intent.getStringExtra(TRACK)
         track = Gson().fromJson(json, Track::class.java)
-
+        handler = Handler(Looper.getMainLooper())
+        preparePlayer()
         updateUIWithTrack(track)
+
+        playButton.setOnClickListener {
+            playbackControl()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacks(timerRunnable)
+        pausePlayer()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.release()
+
     }
 
     private fun initialization() {
@@ -89,10 +121,60 @@ class PlayerActivity : AppCompatActivity() {
         handleUiState(if (track.country.isNotEmpty()) UiState.CountryAvailable(track.country) else UiState.CountryUnavailable)
     }
 
+    private fun preparePlayer() {
+        mediaPlayer.setDataSource(track.previewUrl)
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener {
+            playButton.isEnabled = true
+            playerState = STATE_PREPARED
+        }
+        mediaPlayer.setOnCompletionListener {
+            handler.removeCallbacks(timerRunnable)
+            playButton.setImageResource(R.drawable.play_button)
+            secsOfListening.text = getString(R.string.lenght_null)
+            playerState = STATE_PREPARED
+        }
+    }
+
+    private fun startPlayer() {
+        mediaPlayer.start()
+        playButton.setImageResource(R.drawable.pause_button)
+        playerState = STATE_PLAYING
+        handler.post(timerRunnable)
+    }
+
+    private fun pausePlayer() {
+        mediaPlayer.pause()
+        playButton.setImageResource(R.drawable.play_button)
+        playerState = STATE_PAUSED
+        handler.removeCallbacks(timerRunnable)
+    }
+
+    private fun playbackControl() {
+        when (playerState) {
+            STATE_PLAYING -> {
+                pausePlayer()
+            }
+
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+            }
+        }
+    }
+
+    companion object {
+        private const val TRACK = "TRACK"
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val DELAY_MILLIS = 300L
+    }
+
     private fun handleUiState(state: UiState) {
         when (state) {
-            is UiState.TrackTimeAvailable -> trackLength.text =
-                SimpleDateFormat("mm:ss", Locale.getDefault()).format(state.time)
+            is UiState.TrackTimeAvailable ->
+                trackLength.text = DateTimeUtil.formatTime(state.time)
 
             is UiState.TrackTimeUnavailable -> trackLengthGroup.visibility = View.GONE
             is UiState.CollectionNameAvailable -> albumName.text = state.name
@@ -119,5 +201,12 @@ class PlayerActivity : AppCompatActivity() {
         data class CountryAvailable(val country: String) : UiState()
         object CountryUnavailable : UiState()
         object BackButtonClicked : UiState()
+    }
+}
+
+object DateTimeUtil {
+    fun formatTime(timeInMillis: Int): String {
+        val simpleDateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
+        return simpleDateFormat.format(timeInMillis)
     }
 }

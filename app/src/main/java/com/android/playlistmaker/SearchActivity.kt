@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -53,6 +55,12 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyLayout: View
     private lateinit var clearSearchButton: Button
 
+    private var isClickAllowed = true
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    private val searchRunnable = Runnable { search() }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -94,6 +102,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.isVisible = clearButtonVisibility(s)
                 setUiState(UiState.HistoryVisible)
+                searchDebounce()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -108,19 +117,33 @@ class SearchActivity : AppCompatActivity() {
         trackAdapterHistory.notifyDataSetChanged()
 
         trackAdapterHistory.itemClickListener = { track ->
+            val existingIndex = tracksHistory.indexOfFirst { it.trackId == track.trackId }
+            if (existingIndex != -1) {
+                tracksHistory.removeAt(existingIndex)
+                tracksHistory.add(0, track)
+            }
+
+            searchHistory.write(tracksHistory)
+            trackAdapterHistory.notifyDataSetChanged()
+
             intentCreation(track)
         }
 
         trackAdapter.itemClickListener = { track ->
-            if (tracksHistory.contains(track)) {
-                tracksHistory.remove(track)
+            val existingIndex = tracksHistory.indexOfFirst { it.trackId == track.trackId }
+            if (existingIndex != -1) {
+                tracksHistory.removeAt(existingIndex)
             }
+
             tracksHistory.add(0, track)
-            if (tracksHistory.size == 11) {
+
+            if (tracksHistory.size > 10) {
                 tracksHistory.removeAt(10)
             }
+
             searchHistory.write(tracksHistory)
             trackAdapterHistory.notifyDataSetChanged()
+
             intentCreation(track)
         }
 
@@ -135,10 +158,11 @@ class SearchActivity : AppCompatActivity() {
 
 
     private fun intentCreation(track: Track) {
+        if (clickDebounce()) {
             val playerIntent = Intent(this, PlayerActivity::class.java)
             playerIntent.putExtra(TRACK, Gson().toJson(track))
             startActivity(playerIntent)
-
+        }
     }
 
 
@@ -184,6 +208,11 @@ class SearchActivity : AppCompatActivity() {
         searchText = savedInstanceState.getString(SEARCH_ITEM, "SEARCH_ITEM")
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
+    }
+
     private fun initializingTheView() {
         historyLayout = findViewById(R.id.search_history)
         sharedPrefsHistory = getSharedPreferences(HISTORY_PREFERENCES, MODE_PRIVATE)
@@ -217,9 +246,25 @@ class SearchActivity : AppCompatActivity() {
         return !s.isNullOrEmpty()
     }
 
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY_MILLIS)
+        }
+        return current
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY_MILLIS)
+    }
+
     private companion object {
         const val SEARCH_ITEM = "SEARCH_ITEM"
         const val HISTORY_PREFERENCES = "HISTORY_PREFERENCES"
+        private const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L
+        private const val SEARCH_DEBOUNCE_DELAY_MILLIS = 2000L
     }
 
     sealed class UiState {

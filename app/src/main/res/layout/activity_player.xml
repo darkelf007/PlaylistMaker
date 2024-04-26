@@ -13,9 +13,9 @@
 
         <Button
             android:id="@+id/back_botton"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="@dimen/dp_56"
             android:layout_height="@dimen/dp_56"
-            style="@style/Widget.AppCompat.Button.Borderless"
             android:paddingStart="@dimen/dp_20"
             app:icon="@drawable/arrow"
             app:iconTint="@color/black_white"
@@ -103,10 +103,10 @@
 
         <ImageButton
             android:id="@+id/add_to_playlist_button"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="@dimen/dp_51"
             android:layout_height="@dimen/dp_51"
             android:layout_marginTop="@dimen/dp_54"
-            style="@style/Widget.AppCompat.Button.Borderless"
             android:src="@drawable/add_button"
             app:layout_constraintEnd_toStartOf="@id/player_play_track"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
@@ -115,9 +115,9 @@
 
         <ImageButton
             android:id="@+id/player_play_track"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="@dimen/dp_84"
             android:layout_height="@dimen/dp_84"
-            style="@style/Widget.AppCompat.Button.Borderless"
             android:src="@drawable/play_button"
             app:layout_constraintBottom_toBottomOf="@id/add_to_playlist_button"
             app:layout_constraintEnd_toStartOf="@id/player_like_track"
@@ -127,9 +127,9 @@
 
         <ImageButton
             android:id="@+id/player_like_track"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="@dimen/dp_51"
             android:layout_height="@dimen/dp_51"
-            style="@style/Widget.AppCompat.Button.Borderless"
             android:src="@drawable/like_button"
             app:layout_constraintBottom_toBottomOf="@id/add_to_playlist_button"
             app:layout_constraintEnd_toEndOf="@id/right_info_guideline"
