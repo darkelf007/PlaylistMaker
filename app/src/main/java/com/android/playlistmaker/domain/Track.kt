@@ -1,4 +1,4 @@
-package com.android.playlistmaker
+package com.android.playlistmaker.domain
 
 import com.google.gson.annotations.SerializedName
 

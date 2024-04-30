@@ -1,4 +1,4 @@
-package com.android.playlistmaker
+package com.android.playlistmaker.presentation
 
 import android.app.Activity
 import android.content.Context
@@ -20,6 +20,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.android.playlistmaker.R
+import com.android.playlistmaker.domain.Track
+import com.android.playlistmaker.data.TrackResponse
+import com.android.playlistmaker.data.SearchHistory
+import com.android.playlistmaker.data.TRACK
+import com.android.playlistmaker.data.iTunesAPI
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback

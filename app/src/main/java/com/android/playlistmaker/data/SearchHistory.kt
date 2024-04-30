@@ -1,7 +1,8 @@
-package com.android.playlistmaker
+package com.android.playlistmaker.data
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.android.playlistmaker.domain.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

@@ -1,4 +1,4 @@
-package com.android.playlistmaker
+package com.android.playlistmaker.presentation
 
 import android.content.Intent
 import android.net.Uri
@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.FrameLayout
+import com.android.playlistmaker.R
 import com.example.playlistmaker.App
 import com.google.android.material.switchmaterial.SwitchMaterial
 

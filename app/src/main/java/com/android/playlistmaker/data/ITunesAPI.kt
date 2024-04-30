@@ -1,4 +1,4 @@
-package com.android.playlistmaker
+package com.android.playlistmaker.data
 
 import retrofit2.Call
 import retrofit2.http.GET
