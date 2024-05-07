@@ -1,4 +1,4 @@
-package com.android.playlistmaker.presentation
+package com.android.playlistmaker.ui
 
 import android.content.res.Resources
 import android.view.LayoutInflater
