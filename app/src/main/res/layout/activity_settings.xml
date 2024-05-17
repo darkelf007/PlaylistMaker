@@ -22,6 +22,7 @@
             android:contentDescription="@string/button_back"
             android:outlineProvider="none"
             app:icon="@drawable/arrow"
+            android:background="@color/transparent"
             app:iconGravity="end"
             app:iconPadding="@dimen/dp_52"
             app:iconSize="@dimen/dp_16" />
