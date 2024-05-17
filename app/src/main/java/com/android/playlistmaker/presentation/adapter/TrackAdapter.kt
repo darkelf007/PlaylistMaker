@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.android.playlistmaker.R
-import com.android.playlistmaker.domain.Track
+import com.android.playlistmaker.domain.model.Track
 import com.android.playlistmaker.presentation.viewholder.TrackViewHolder
 
 

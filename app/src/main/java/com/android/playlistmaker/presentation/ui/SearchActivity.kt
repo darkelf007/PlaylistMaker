@@ -21,10 +21,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.android.playlistmaker.R
-import com.android.playlistmaker.domain.Track
+import com.android.playlistmaker.domain.model.Track
 import com.android.playlistmaker.data.model.TrackResponse
-import com.android.playlistmaker.data.repository.SearchHistory
-import com.android.playlistmaker.data.repository.TRACK
+import com.android.playlistmaker.data.repository.SearchHistoryRepositoryImpl
 import com.android.playlistmaker.data.api.iTunesAPI
 import com.android.playlistmaker.presentation.adapter.TrackAdapter
 import com.google.gson.Gson
@@ -56,7 +55,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var downloadIcon: ViewGroup
     private lateinit var clearButton: ImageView
     private lateinit var backButton: Button
-    private lateinit var searchHistory: SearchHistory
+    private lateinit var searchHistory: SearchHistoryRepositoryImpl
     private lateinit var sharedPrefsHistory: SharedPreferences
     private lateinit var recyclerViewHistory: RecyclerView
     private lateinit var historyLayout: View
@@ -167,10 +166,11 @@ class SearchActivity : AppCompatActivity() {
     private fun intentCreation(track: Track) {
         if (clickDebounce()) {
             val playerIntent = Intent(this, PlayerActivity::class.java)
-            playerIntent.putExtra(TRACK, Gson().toJson(track))
+            playerIntent.putExtra(SearchHistoryRepositoryImpl.TRACK, Gson().toJson(track))
             startActivity(playerIntent)
         }
     }
+
 
 
     private fun search() {
@@ -223,7 +223,7 @@ class SearchActivity : AppCompatActivity() {
     private fun initializingTheView() {
         historyLayout = findViewById(R.id.search_history)
         sharedPrefsHistory = getSharedPreferences(HISTORY_PREFERENCES, MODE_PRIVATE)
-        searchHistory = SearchHistory(sharedPrefsHistory)
+        searchHistory = SearchHistoryRepositoryImpl(sharedPrefsHistory)
         recyclerViewHistory = findViewById(R.id.search_history_recycler_view)
         clearSearchButton = findViewById(R.id.clear_search_history)
         trackAdapter = TrackAdapter(tracks, resources)
