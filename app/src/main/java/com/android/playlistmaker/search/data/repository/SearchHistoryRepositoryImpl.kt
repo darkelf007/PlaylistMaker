@@ -1,4 +1,4 @@
-package com.android.playlistmaker.data.repository
+package com.android.playlistmaker.search.data.repository
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
