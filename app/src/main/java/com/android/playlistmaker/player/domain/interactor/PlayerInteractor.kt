@@ -1,11 +1,10 @@
 package com.android.playlistmaker.player.domain.interactor
 
 import com.android.playlistmaker.player.data.MediaPlayerWrapper
-import com.android.playlistmaker.player.domain.model.Track
 
 class PlayerInteractor(val mediaPlayerWrapper: MediaPlayerWrapper) {
-    fun prepare(track: Track, onPrepared: () -> Unit) {
-        mediaPlayerWrapper.setDataSource(track.previewUrl)
+    fun prepare(url: String, onPrepared: () -> Unit) {
+        mediaPlayerWrapper.setDataSource(url)
         mediaPlayerWrapper.prepareAsync(onPrepared)
     }
 
