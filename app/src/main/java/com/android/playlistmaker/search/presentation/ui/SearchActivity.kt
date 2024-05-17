@@ -26,7 +26,7 @@ import com.android.playlistmaker.search.data.model.TrackResponse
 import com.android.playlistmaker.search.data.repository.SearchHistoryRepositoryImpl
 import com.android.playlistmaker.search.data.api.iTunesAPI
 import com.android.playlistmaker.player.presentation.ui.PlayerActivity
-import com.android.playlistmaker.search.presentation.ui.adapter.TrackAdapter
+import com.android.playlistmaker.search.presentation.adapter.TrackAdapter
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback

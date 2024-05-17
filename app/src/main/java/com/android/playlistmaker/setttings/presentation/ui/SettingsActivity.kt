@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.FrameLayout
 import com.android.playlistmaker.R
-import com.example.playlistmaker.App
+import com.android.playlistmaker.domain.app.App
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {

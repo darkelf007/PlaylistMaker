@@ -1,4 +1,4 @@
-package com.android.playlistmaker.search.presentation.ui.viewholder
+package com.android.playlistmaker.search.presentation.viewholder
 
 import android.content.res.Resources
 import android.icu.text.SimpleDateFormat
