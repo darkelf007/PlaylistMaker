@@ -1,4 +1,4 @@
-package com.android.playlistmaker.ui
+package com.android.playlistmaker.presentation.ui
 
 import android.media.MediaPlayer
 import android.os.Bundle

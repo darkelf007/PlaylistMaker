@@ -1,4 +1,4 @@
-package com.android.playlistmaker.ui
+package com.android.playlistmaker.presentation.adapter
 
 import android.content.res.Resources
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.android.playlistmaker.R
 import com.android.playlistmaker.domain.Track
+import com.android.playlistmaker.presentation.viewholder.TrackViewHolder
 
 
 class TrackAdapter(private val tracks: List<Track>, private val resources: Resources) :

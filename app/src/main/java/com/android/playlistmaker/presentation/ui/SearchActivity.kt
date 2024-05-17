@@ -1,4 +1,4 @@
-package com.android.playlistmaker.ui
+package com.android.playlistmaker.presentation.ui
 
 import android.app.Activity
 import android.content.Context
@@ -22,10 +22,11 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.android.playlistmaker.R
 import com.android.playlistmaker.domain.Track
-import com.android.playlistmaker.data.TrackResponse
-import com.android.playlistmaker.data.SearchHistory
-import com.android.playlistmaker.data.TRACK
-import com.android.playlistmaker.data.iTunesAPI
+import com.android.playlistmaker.data.model.TrackResponse
+import com.android.playlistmaker.data.repository.SearchHistory
+import com.android.playlistmaker.data.repository.TRACK
+import com.android.playlistmaker.data.api.iTunesAPI
+import com.android.playlistmaker.presentation.adapter.TrackAdapter
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback

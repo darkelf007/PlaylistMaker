@@ -1,4 +1,4 @@
-package com.android.playlistmaker.ui
+package com.android.playlistmaker.presentation.viewholder
 
 import android.content.res.Resources
 import android.icu.text.SimpleDateFormat
