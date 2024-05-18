@@ -3,7 +3,7 @@ package com.android.playlistmaker.search.data.repository
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.android.playlistmaker.domain.model.Track
-import com.android.playlistmaker.domain.repository.SearchHistoryRepository
+import com.android.playlistmaker.search.domain.repository.SearchHistoryRepository
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

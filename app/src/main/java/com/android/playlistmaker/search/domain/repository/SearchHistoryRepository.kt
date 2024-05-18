@@ -1,4 +1,4 @@
-package com.android.playlistmaker.domain.repository
+package com.android.playlistmaker.search.domain.repository
 
 import com.android.playlistmaker.domain.model.Track
 
