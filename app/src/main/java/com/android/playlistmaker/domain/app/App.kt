@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.android.playlistmaker.domain.app
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate

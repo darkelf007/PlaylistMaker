@@ -1,6 +1,6 @@
-package com.android.playlistmaker
+package com.android.playlistmaker.player.presentation.ui
 
-import android.media.MediaPlayer
+
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,6 +11,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
+import com.android.playlistmaker.R
+import com.android.playlistmaker.domain.model.Track
+import com.android.playlistmaker.player.data.MediaPlayerWrapper
+import com.android.playlistmaker.player.domain.interactor.PlayerInteractor
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
@@ -36,7 +40,7 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var countryGroup: Group
     private lateinit var secsOfListening: TextView
     private lateinit var track: Track
-    private var mediaPlayer = MediaPlayer()
+    private lateinit var playerInteractor: PlayerInteractor
     private var playerState = STATE_DEFAULT
     private lateinit var handler: Handler
 
@@ -44,7 +48,7 @@ class PlayerActivity : AppCompatActivity() {
     private val timerRunnable = object : Runnable {
         override fun run() {
             if (playerState == STATE_PLAYING) secsOfListening.text =
-                DateTimeUtil.formatTime(mediaPlayer.currentPosition)
+                DateTimeUtil.formatTime(playerInteractor.currentPosition())
             handler.postDelayed(this, DELAY_MILLIS)
         }
     }
@@ -57,6 +61,8 @@ class PlayerActivity : AppCompatActivity() {
         val json = intent.getStringExtra(TRACK)
         track = Gson().fromJson(json, Track::class.java)
         handler = Handler(Looper.getMainLooper())
+
+        playerInteractor = PlayerInteractor(MediaPlayerWrapper())
         preparePlayer()
         updateUIWithTrack(track)
 
@@ -73,7 +79,7 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release()
+        playerInteractor.release()
 
     }
 
@@ -122,13 +128,12 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun preparePlayer() {
-        mediaPlayer.setDataSource(track.previewUrl)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
+        playerInteractor.prepare (track.previewUrl)
+        {
             playButton.isEnabled = true
             playerState = STATE_PREPARED
         }
-        mediaPlayer.setOnCompletionListener {
+        playerInteractor.setOnCompletionListener {
             handler.removeCallbacks(timerRunnable)
             playButton.setImageResource(R.drawable.play_button)
             secsOfListening.text = getString(R.string.lenght_null)
@@ -137,14 +142,14 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun startPlayer() {
-        mediaPlayer.start()
+        playerInteractor.start()
         playButton.setImageResource(R.drawable.pause_button)
         playerState = STATE_PLAYING
         handler.post(timerRunnable)
     }
 
     private fun pausePlayer() {
-        mediaPlayer.pause()
+        playerInteractor.pause()
         playButton.setImageResource(R.drawable.play_button)
         playerState = STATE_PAUSED
         handler.removeCallbacks(timerRunnable)

@@ -1,4 +1,4 @@
-package com.android.playlistmaker
+package com.android.playlistmaker.main.presentation.ui
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import com.android.playlistmaker.R
+import com.android.playlistmaker.search.presentation.ui.SearchActivity
+import com.android.playlistmaker.setttings.presentation.ui.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
 

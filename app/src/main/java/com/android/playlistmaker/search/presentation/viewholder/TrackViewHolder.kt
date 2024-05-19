@@ -1,4 +1,4 @@
-package com.android.playlistmaker
+package com.android.playlistmaker.search.presentation.viewholder
 
 import android.content.res.Resources
 import android.icu.text.SimpleDateFormat
@@ -7,6 +7,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.android.playlistmaker.R
+import com.android.playlistmaker.domain.model.Track
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import java.util.Locale

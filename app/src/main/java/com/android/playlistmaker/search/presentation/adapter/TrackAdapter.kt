@@ -1,9 +1,12 @@
-package com.android.playlistmaker
+package com.android.playlistmaker.search.presentation.adapter
 
 import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.android.playlistmaker.R
+import com.android.playlistmaker.domain.model.Track
+import com.android.playlistmaker.search.presentation.viewholder.TrackViewHolder
 
 
 class TrackAdapter(private val tracks: List<Track>, private val resources: Resources) :
