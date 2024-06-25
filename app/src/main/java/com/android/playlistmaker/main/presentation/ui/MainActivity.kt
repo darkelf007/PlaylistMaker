@@ -8,7 +8,7 @@ import android.widget.Button
 import android.widget.Toast
 import com.android.playlistmaker.R
 import com.android.playlistmaker.search.presentation.ui.SearchActivity
-import com.android.playlistmaker.settings.presentation.ui.SettingsActivity
+import com.android.playlistmaker.settings.ui.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
 
