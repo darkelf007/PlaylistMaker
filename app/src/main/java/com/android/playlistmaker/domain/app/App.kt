@@ -2,7 +2,7 @@ package com.android.playlistmaker.domain.app
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.android.playlistmaker.settings.domain.model.SettingsRepository
+import com.android.playlistmaker.settings.data.SettingsRepository
 
 class App : Application() {
 
@@ -17,6 +17,15 @@ class App : Application() {
         super.onCreate()
         val sharedPrefs = getSharedPreferences(SETTING_PREFERENCES, MODE_PRIVATE)
         settingsRepository = SettingsRepository(sharedPrefs)
+        switchTheme(settingsRepository.getDarkThemeEnabled())
+
+
+    }
+
+    fun switchTheme(darkThemeEnabled: Boolean) {
+        AppCompatDelegate.setDefaultNightMode(
+            if (darkThemeEnabled) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+        )
     }
 
 }

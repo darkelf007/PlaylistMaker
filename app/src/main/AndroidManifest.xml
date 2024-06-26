@@ -30,7 +30,7 @@
             android:name=".media.presentation.ui.MediaActivity"
             android:exported="false" />
         <activity
-            android:name=".main.presentation.ui.MainActivity"
+            android:name=".main.ui.MainActivity"
             android:exported="true"
             android:theme="@style/Main.Activity.Theme">
             <intent-filter>

@@ -2,14 +2,15 @@ package com.android.playlistmaker.settings.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.android.playlistmaker.settings.domain.model.SettingsRepository
+import com.android.playlistmaker.creator.Creator
+import com.android.playlistmaker.settings.data.SettingsRepository
 
-class SettingsViewModelFactory(private val repository: SettingsRepository) : ViewModelProvider.Factory {
+@Suppress("UNCHECKED_CAST")
+class SettingsViewModelFactory(private val repository: SettingsRepository) :
+    ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return SettingsViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
+            val getThemeUseCase = Creator.createGetThemeUseCase(repository)
+            val toggleThemeUseCase = Creator.createToggleThemeUseCase(repository)
+            return SettingsViewModel(getThemeUseCase, toggleThemeUseCase) as T
     }
 }
