@@ -35,6 +35,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
+    private lateinit var searchViewModel: SearchViewModel
 
     private val ITunesApiBaseUrl = "https://itunes.apple.com"
     private val retrofit = Retrofit.Builder().baseUrl(ITunesApiBaseUrl)
