@@ -1,6 +1,7 @@
 package com.android.playlistmaker.settings.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
@@ -23,6 +24,8 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Log.e("AAA", "Activity created")
 
         val factory = SettingsViewModelFactory((application as App).settingsRepository)
         viewModel = ViewModelProvider(this, factory).get(SettingsViewModel::class.java)

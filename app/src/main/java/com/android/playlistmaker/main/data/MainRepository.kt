@@ -1,4 +1,9 @@
 package com.android.playlistmaker.main.data
 
-class MainRepository {
+import android.content.Context
+
+interface MainRepository {
+    fun onSearchClick(context: Context)
+    fun onMediaClick(context: Context)
+    fun onSettingsClick(context: Context)
 }

@@ -1,5 +1,6 @@
 package com.android.playlistmaker.settings.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,7 +15,9 @@ class SettingsViewModel(
     private val _darkThemeEnabled = MutableLiveData<Boolean>()
     val darkThemeEnabled: LiveData<Boolean> get() = _darkThemeEnabled
 
+
     init {
+        Log.e("AAA", "VM created")
         _darkThemeEnabled.value = isDarkThemeEnabled()
     }
 
@@ -26,5 +29,10 @@ class SettingsViewModel(
 
     private fun isDarkThemeEnabled(): Boolean {
         return getThemeUseCase.execute()
+    }
+
+    override fun onCleared() {
+        Log.e("AAA", "VM cleared")
+        super.onCleared()
     }
 }

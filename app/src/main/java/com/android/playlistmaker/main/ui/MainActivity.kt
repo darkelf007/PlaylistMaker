@@ -1,46 +1,40 @@
+// In MainActivity.kt
 package com.android.playlistmaker.main.ui
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import android.widget.Toast
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.android.playlistmaker.R
 import com.android.playlistmaker.databinding.ActivityMainBinding
-import com.android.playlistmaker.databinding.ActivitySettingsBinding
-import com.android.playlistmaker.search.presentation.ui.SearchActivity
-import com.android.playlistmaker.settings.ui.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var viewModel: MainViewModel
     private lateinit var binding: ActivityMainBinding
+    private lateinit var viewModel: MainViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        viewModel = MainViewModel(this)
+        Log.e("AAA", "Activity created")
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel = MainViewModel(this)
-
+        viewModel = ViewModelProvider(this, MainViewModelFactory()).get(MainViewModel::class.java)
         setupListeners()
-
-
     }
+
     private fun setupListeners() {
         binding.buttonSearch.setOnClickListener {
-            val intent = Intent(this, SearchActivity::class.java)
-            startActivity(intent)
+            viewModel.onSearchClick(this)
         }
 
         binding.buttonMedia.setOnClickListener {
-            Toast.makeText(this, "Media!", Toast.LENGTH_SHORT).show()
+            viewModel.onMediaClick(this)
         }
 
         binding.buttonSettings.setOnClickListener {
-            val intent = Intent(this, SettingsActivity::class.java)
-            startActivity(intent)
+            viewModel.onSettingsClick(this)
         }
     }
 }
