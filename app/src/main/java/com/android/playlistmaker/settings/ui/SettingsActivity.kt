@@ -7,10 +7,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import com.android.playlistmaker.databinding.ActivitySettingsBinding
 import com.android.playlistmaker.domain.app.App
-import com.android.playlistmaker.settings.data.CommunicationRepository
-import com.android.playlistmaker.settings.domain.SendSupportEmailUseCase
-import com.android.playlistmaker.settings.domain.ShowShareDialogUseCase
-import com.android.playlistmaker.settings.domain.ShowUserAgreementUseCase
+
 import com.android.playlistmaker.settings.util.IntentUtils
 
 class SettingsActivity : AppCompatActivity() {
@@ -27,7 +24,12 @@ class SettingsActivity : AppCompatActivity() {
 
         Log.e("AAA", "Activity created")
 
-        val factory = SettingsViewModelFactory((application as App).settingsRepository)
+        val app = application as App
+        val factory = SettingsViewModelFactory(
+            app.settingsRepository,
+            CommunicationRepository(this),
+            IntentUtils
+        )
         viewModel = ViewModelProvider(this, factory).get(SettingsViewModel::class.java)
 
         viewModel.darkThemeEnabled.observe(this) { enabled ->
@@ -65,13 +67,13 @@ class SettingsActivity : AppCompatActivity() {
             viewModel.switchTheme(isChecked)
         }
         binding.layoutUserAgreement.setOnClickListener {
-            startActivity(showUserAgreementUseCase.execute())
+            startActivity(viewModel.executeShowUserAgreement())
         }
         binding.layoutTextWriteToSupport.setOnClickListener {
-            startActivity(sendSupportEmailUseCase.execute())
+            startActivity(viewModel.executeSendSupportEmail())
         }
         binding.layoutToShare.setOnClickListener {
-            startActivity(showShareDialogUseCase.execute())
+            startActivity(viewModel.executeShowShareDialog())
         }
     }
 
