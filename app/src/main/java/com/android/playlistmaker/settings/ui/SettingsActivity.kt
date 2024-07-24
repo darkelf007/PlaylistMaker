@@ -13,11 +13,7 @@ import com.android.playlistmaker.settings.util.IntentUtils
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
     private lateinit var viewModel: SettingsViewModel
-    private lateinit var showUserAgreementUseCase: ShowUserAgreementUseCase
-    private lateinit var sendSupportEmailUseCase: SendSupportEmailUseCase
-    private lateinit var showShareDialogUseCase: ShowShareDialogUseCase
-    private lateinit var repository: CommunicationRepository
-    private lateinit var intentUtils: IntentUtils
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +23,7 @@ class SettingsActivity : AppCompatActivity() {
         val app = application as App
         val factory = SettingsViewModelFactory(
             app.settingsRepository,
-            CommunicationRepository(this),
+            this,
             IntentUtils
         )
         viewModel = ViewModelProvider(this, factory).get(SettingsViewModel::class.java)
@@ -38,11 +34,7 @@ class SettingsActivity : AppCompatActivity() {
             )
         }
 
-        repository = CommunicationRepository(this)
-        intentUtils = IntentUtils
-        showUserAgreementUseCase = ShowUserAgreementUseCase(repository, intentUtils)
-        sendSupportEmailUseCase = SendSupportEmailUseCase(repository, intentUtils)
-        showShareDialogUseCase = ShowShareDialogUseCase(repository, intentUtils)
+
 
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -51,6 +43,7 @@ class SettingsActivity : AppCompatActivity() {
         setupListeners()
         binding.switchTheme.isChecked = viewModel.darkThemeEnabled.value ?: false
     }
+
     private fun setupObservers() {
         viewModel.darkThemeEnabled.observe(this) { enabled ->
             if (binding.switchTheme.isChecked != enabled) {
@@ -66,14 +59,17 @@ class SettingsActivity : AppCompatActivity() {
         binding.switchTheme.setOnCheckedChangeListener { _, isChecked ->
             viewModel.switchTheme(isChecked)
         }
-        binding.layoutUserAgreement.setOnClickListener {
-            startActivity(viewModel.executeShowUserAgreement())
+        binding.layoutTextWriteToSupport.setOnClickListener {
+            val supportEmailIntent = viewModel.getSupportEmailIntent()
+            startActivity(supportEmailIntent)
         }
         binding.layoutTextWriteToSupport.setOnClickListener {
-            startActivity(viewModel.executeSendSupportEmail())
+            val supportEmailIntent = viewModel.getSupportEmailIntent()
+            startActivity(supportEmailIntent)
         }
         binding.layoutToShare.setOnClickListener {
-            startActivity(viewModel.executeShowShareDialog())
+            val shareIntent = viewModel.getShareIntent()
+            startActivity(shareIntent)
         }
     }
 
