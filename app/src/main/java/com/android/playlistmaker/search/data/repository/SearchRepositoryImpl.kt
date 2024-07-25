@@ -1,28 +1,41 @@
 package com.android.playlistmaker.search.data.repository
 
+import android.util.Log
 import com.android.playlistmaker.search.data.api.iTunesAPI
 import com.android.playlistmaker.search.data.model.TrackResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.android.playlistmaker.search.domain.repository.SearchRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
-class SearchRepositoryImpl(private val iTunesService: iTunesAPI) {
+class SearchRepositoryImpl: SearchRepository {
+    private val ITunesApiBaseUrl = "https://itunes.apple.com"
+    private val retrofit: Retrofit = Retrofit.Builder()
+        .baseUrl(ITunesApiBaseUrl)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    private val iTunesService: iTunesAPI = retrofit.create(iTunesAPI::class.java)
 
-    fun search(query: String, callback: (Result<TrackResponse>) -> Unit) {
-        iTunesService.search(query).enqueue(object : Callback<TrackResponse> {
-            override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
+    private val TAG = "SearchRepositoryImpl"
+
+    override suspend fun search(query: String): TrackResponse {
+        return withContext(Dispatchers.IO) {
+            try {
+                Log.d(TAG, "Starting search for query: $query")
+                val response = iTunesService.search(query).execute()
                 if (response.isSuccessful) {
-                    response.body()?.let {
-                        callback(Result.success(it))
-                    } ?: callback(Result.failure(Exception("No results found")))
+                    Log.d(TAG, "Search successful: ${response.body()?.results?.size ?: 0} results found")
+                    response.body() ?: throw Exception("Empty response body")
                 } else {
-                    callback(Result.failure(Exception("Failed to fetch results")))
+                    val errorMessage = "Search failed with error: ${response.code()} - ${response.message()}"
+                    Log.e(TAG, errorMessage)
+                    throw Exception(errorMessage)
                 }
+            } catch (e: Exception) {
+                Log.e(TAG, "Search error: ${e.message}", e)
+                throw e
             }
-
-            override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                callback(Result.failure(t))
-            }
-        })
+        }
     }
 }

@@ -9,12 +9,13 @@ import com.android.playlistmaker.domain.model.Track
 import com.android.playlistmaker.search.presentation.viewholder.TrackViewHolder
 
 
-class TrackAdapter(private val tracks: List<Track>, private val resources: Resources) :
+class TrackAdapter(private var tracks: List<Track>, private val resources: Resources) :
     RecyclerView.Adapter<TrackViewHolder>() {
+
     var itemClickListener: ((Track) -> Unit)? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.layout_track_card, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_track_card, parent, false)
         return TrackViewHolder(view, resources)
     }
 
@@ -24,4 +25,11 @@ class TrackAdapter(private val tracks: List<Track>, private val resources: Resou
     }
 
     override fun getItemCount() = tracks.size
+
+    fun updateTracks(newTracks: List<Track>) {
+        tracks = newTracks
+        notifyDataSetChanged()
+    }
+
+
 }
