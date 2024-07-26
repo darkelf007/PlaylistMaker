@@ -29,7 +29,8 @@ class SearchActivity : AppCompatActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private val searchRunnable = Runnable { searchViewModel.search(binding.inputEditText.text.toString()) }
+    private val searchRunnable =
+        Runnable { searchViewModel.search(binding.inputEditText.text.toString()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +48,13 @@ class SearchActivity : AppCompatActivity() {
         if (savedInstanceState != null) {
             val searchText = savedInstanceState.getString(SEARCH_ITEM, "")
             binding.inputEditText.setText(searchText)
+            if (!searchText.isNullOrEmpty()) {
+                searchViewModel.search(searchText)
+
+            }
+
         }
+
     }
 
     private fun setupObservers() {
@@ -76,6 +83,7 @@ class SearchActivity : AppCompatActivity() {
             binding.inputEditText.setText("")
             searchViewModel.hideKeyboard(currentFocus ?: View(this))
             searchViewModel.clearTracks()
+            searchViewModel.showHistory()
         }
 
         binding.buttonBackToMain.setOnClickListener {
@@ -102,7 +110,7 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearIcon.isVisible = clearButtonVisibility(s)
-                searchViewModel.showHistory()
+
                 searchDebounce()
             }
 
@@ -181,8 +189,10 @@ class SearchActivity : AppCompatActivity() {
 
                 is SearchViewModel.UiState.HistoryVisible -> {
                     Log.d(TAG, "handleUiState: HistoryVisible")
-                    binding.searchHistory.isVisible = searchViewModel.trackAdapterHistory.itemCount > 0
-                    binding.clearSearchHistory.isVisible = searchViewModel.trackAdapterHistory.itemCount > 0
+                    binding.searchHistory.isVisible =
+                        searchViewModel.trackAdapterHistory.itemCount > 0
+                    binding.clearSearchHistory.isVisible =
+                        searchViewModel.trackAdapterHistory.itemCount > 0
                     binding.trackList.isVisible = false
                     binding.placeholderImage.isVisible = false
                     binding.placeholderText.isVisible = false
@@ -228,6 +238,9 @@ class SearchActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         val searchText = savedInstanceState.getString(SEARCH_ITEM, "")
         binding.inputEditText.setText(searchText)
+        if (searchText.isNullOrEmpty()) {
+            searchViewModel.showHistory()
+        }
     }
 
     private companion object {

@@ -34,8 +34,6 @@ class SettingsActivity : AppCompatActivity() {
             )
         }
 
-
-
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -63,15 +61,13 @@ class SettingsActivity : AppCompatActivity() {
             val supportEmailIntent = viewModel.getSupportEmailIntent()
             startActivity(supportEmailIntent)
         }
-        binding.layoutTextWriteToSupport.setOnClickListener {
-            val supportEmailIntent = viewModel.getSupportEmailIntent()
-            startActivity(supportEmailIntent)
+        binding.layoutUserAgreement.setOnClickListener {
+            val userLicenceAgreement = viewModel.getUserAgreementIntent()
+            startActivity(userLicenceAgreement)
         }
         binding.layoutToShare.setOnClickListener {
             val shareIntent = viewModel.getShareIntent()
             startActivity(shareIntent)
         }
     }
-
-
 }

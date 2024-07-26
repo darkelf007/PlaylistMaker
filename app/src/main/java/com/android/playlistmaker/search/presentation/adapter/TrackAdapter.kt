@@ -30,6 +30,4 @@ class TrackAdapter(private var tracks: List<Track>, private val resources: Resou
         tracks = newTracks
         notifyDataSetChanged()
     }
-
-
 }

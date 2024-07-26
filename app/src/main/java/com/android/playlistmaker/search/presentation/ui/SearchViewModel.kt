@@ -1,6 +1,5 @@
 package com.android.playlistmaker.search.presentation.ui
 
-import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.Intent
@@ -10,10 +9,8 @@ import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.recyclerview.widget.RecyclerView
 import com.android.playlistmaker.domain.model.Track
 import com.android.playlistmaker.player.presentation.ui.PlayerActivity
-import com.android.playlistmaker.search.data.model.TrackResponse
 import com.android.playlistmaker.search.data.repository.SearchHistoryRepositoryImpl
 import com.android.playlistmaker.search.data.repository.SearchRepositoryImpl
 import com.android.playlistmaker.search.presentation.adapter.TrackAdapter
@@ -43,26 +40,31 @@ class SearchViewModel(
         loadSearchHistory()
     }
 
-
-
     fun search(query: String) {
-        Log.d(TAG, "search called with query: $query")
-        uiState.value = UiState.Loading
+        if (query.isBlank()) {
+            updateUiState(UiState.HistoryVisible)
+            return
+        }
+
+        updateUiState(UiState.Loading)
         viewModelScope.launch {
             try {
                 val response = searchRepository.search(query)
                 if (response.results.isNotEmpty()) {
-                    Log.d(TAG, "Search successful: ${response.results.size} results")
                     tracks.value = response.results
-                    uiState.value = UiState.Success
+                    updateUiState(UiState.Success)
                 } else {
-                    Log.d(TAG, "Search empty")
-                    uiState.value = UiState.Empty
+                    updateUiState(UiState.Empty)
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Search error: ${e.message}")
-                uiState.value = UiState.Error(e.message ?: "Unknown Error")
+                updateUiState(UiState.Error(e.message ?: "Unknown Error"))
             }
+        }
+    }
+
+    fun updateUiState(state: UiState) {
+        if (uiState.value != state) {
+            uiState.value = state
         }
     }
 
@@ -91,7 +93,7 @@ class SearchViewModel(
     }
 
     fun showHistory() {
-        uiState.value = UiState.HistoryVisible
+        updateUiState(UiState.HistoryVisible)
     }
 
     fun createIntentForTrack(track: Track): Intent {

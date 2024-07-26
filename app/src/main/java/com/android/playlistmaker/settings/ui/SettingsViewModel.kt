@@ -18,8 +18,7 @@ class SettingsViewModel(
     private val toggleThemeUseCase: ToggleThemeUseCase,
     private val showUserAgreementUseCase: ShowUserAgreementUseCase,
     private val sendSupportEmailUseCase: SendSupportEmailUseCase,
-    private val showShareDialogUseCase: ShowShareDialogUseCase,
-    private val communicationRepository: CommunicationRepository
+    private val showShareDialogUseCase: ShowShareDialogUseCase
 ) : ViewModel() {
 
     private val _darkThemeEnabled = MutableLiveData<Boolean>()
@@ -36,24 +35,20 @@ class SettingsViewModel(
         _darkThemeEnabled.value = isDark
     }
 
-
     private fun isDarkThemeEnabled(): Boolean {
         return getThemeUseCase.execute()
     }
 
     fun getUserAgreementIntent(): Intent {
-        val url = communicationRepository.getUserAgreementUrl()
-        return IntentUtils.createWebIntent(url)
+        return showUserAgreementUseCase.execute()
     }
 
     fun getSupportEmailIntent(): Intent {
-        val emailDetails = communicationRepository.getSupportEmailDetails()
-        return IntentUtils.createEmailIntent(emailDetails.email, emailDetails.subject, emailDetails.message)
+        return sendSupportEmailUseCase.execute()
     }
 
     fun getShareIntent(): Intent {
-        val message = communicationRepository.getShareMessage()
-        return IntentUtils.createShareIntent(message)
+        return showShareDialogUseCase.execute()
     }
 
     override fun onCleared() {

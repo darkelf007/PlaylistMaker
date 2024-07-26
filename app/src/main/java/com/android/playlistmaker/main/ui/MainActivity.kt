@@ -1,4 +1,3 @@
-// In MainActivity.kt
 package com.android.playlistmaker.main.ui
 
 import android.os.Bundle

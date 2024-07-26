@@ -28,7 +28,7 @@ class SettingsViewModelFactory(
         return SettingsViewModel(
             getThemeUseCase, toggleThemeUseCase, showUserAgreementUseCase,
             sendSupportEmailUseCase,
-            showShareDialogUseCase,communicationRepository
+            showShareDialogUseCase
         ) as T
     }
 }
