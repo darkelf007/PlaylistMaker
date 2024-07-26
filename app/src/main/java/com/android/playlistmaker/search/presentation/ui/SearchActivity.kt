@@ -35,17 +35,14 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        Log.e("AAA", "Activity created")
         Log.d(TAG, "onCreate called")
-
 
         binding.trackList.adapter = searchViewModel.trackAdapter
         binding.searchHistoryRecyclerView.adapter = searchViewModel.trackAdapterHistory
 
         setupObservers()
         setupListeners()
-
-
-
 
         if (savedInstanceState != null) {
             val searchText = savedInstanceState.getString(SEARCH_ITEM, "")
@@ -203,7 +200,6 @@ class SearchActivity : AppCompatActivity() {
             startActivity(playerIntent)
         }
     }
-
 
     private fun clearButtonVisibility(s: CharSequence?): Boolean {
         return !s.isNullOrEmpty()

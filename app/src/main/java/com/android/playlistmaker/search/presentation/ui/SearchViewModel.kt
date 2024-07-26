@@ -39,13 +39,11 @@ class SearchViewModel(
     private val searchRepository: SearchRepositoryImpl = SearchRepositoryImpl()
 
     init {
+        Log.e("AAA", "VM created")
         loadSearchHistory()
     }
 
-    fun bindViews(recyclerView: RecyclerView, recyclerViewHistory: RecyclerView) {
-        recyclerView.adapter = trackAdapter
-        recyclerViewHistory.adapter = trackAdapterHistory
-    }
+
 
     fun search(query: String) {
         Log.d(TAG, "search called with query: $query")
@@ -113,5 +111,10 @@ class SearchViewModel(
         object Empty : UiState()
         data class Error(val message: String) : UiState()
         object HistoryVisible : UiState()
+    }
+
+    override fun onCleared() {
+        Log.e("AAA", "VM cleared")
+        super.onCleared()
     }
 }
