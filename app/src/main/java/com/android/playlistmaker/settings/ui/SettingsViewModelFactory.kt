@@ -8,13 +8,14 @@ import com.android.playlistmaker.settings.data.CommunicationRepository
 import com.android.playlistmaker.settings.data.SettingsRepository
 import com.android.playlistmaker.settings.util.IntentUtils
 
-@Suppress("UNCHECKED_CAST")
+
 class SettingsViewModelFactory(
     private val repository: SettingsRepository,
     private val context: Context,
     private val intentUtils: IntentUtils
 ) :
     ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val communicationRepository = CommunicationRepository(context)
         val getThemeUseCase = Creator.createGetThemeUseCase(repository)

@@ -50,11 +50,8 @@ class SearchActivity : AppCompatActivity() {
             binding.inputEditText.setText(searchText)
             if (!searchText.isNullOrEmpty()) {
                 searchViewModel.search(searchText)
-
             }
-
         }
-
     }
 
     private fun setupObservers() {

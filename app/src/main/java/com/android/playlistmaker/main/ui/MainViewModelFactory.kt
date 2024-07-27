@@ -14,7 +14,7 @@ class MainViewModelFactory : ViewModelProvider.Factory {
     private val useCase by lazy(LazyThreadSafetyMode.NONE) {
         MainUseCase(repository)
     }
-
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return MainViewModel(useCase) as T
     }

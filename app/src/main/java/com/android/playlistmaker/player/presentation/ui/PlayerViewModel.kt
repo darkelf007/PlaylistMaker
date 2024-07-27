@@ -77,6 +77,7 @@ class PlayerViewModel(
         const val STATE_PAUSED = 3
         private const val DELAY_MILLIS = 300L
     }
+
     override fun onCleared() {
         Log.e("AAA", "VM cleared")
         super.onCleared()

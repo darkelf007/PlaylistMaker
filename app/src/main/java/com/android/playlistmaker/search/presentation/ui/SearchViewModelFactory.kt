@@ -14,7 +14,7 @@ class SearchViewModelFactory(
     private val application: Application,
     private val context: Context
 ) : ViewModelProvider.Factory {
-
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return modelClass.getConstructor(
             Application::class.java,

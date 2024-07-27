@@ -3,7 +3,6 @@ package com.android.playlistmaker.player.presentation.ui
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -27,7 +26,8 @@ class PlayerActivity : AppCompatActivity() {
     private val timerRunnable = object : Runnable {
         override fun run() {
             if (playerViewModel.playerState.value == PlayerViewModel.STATE_PLAYING) {
-                binding.previewTrackLength.text = DateTimeUtil.formatTime(playerViewModel.currentPosition.value ?: 0)
+                binding.previewTrackLength.text =
+                    DateTimeUtil.formatTime(playerViewModel.currentPosition.value ?: 0)
                 handler.postDelayed(this, DELAY_MILLIS)
             }
         }
@@ -41,7 +41,8 @@ class PlayerActivity : AppCompatActivity() {
 
         handler = Handler(Looper.getMainLooper())
 
-        playerViewModel = ViewModelProvider(this, PlayerViewModelFactory()).get(PlayerViewModel::class.java)
+        playerViewModel =
+            ViewModelProvider(this, PlayerViewModelFactory()).get(PlayerViewModel::class.java)
 
         val json = intent.getStringExtra(TRACK)
         playerViewModel.setTrackFromJson(json ?: "")
@@ -64,6 +65,7 @@ class PlayerActivity : AppCompatActivity() {
                     binding.playerPlayTrack.setImageResource(R.drawable.pause_button)
                     handler.post(timerRunnable)
                 }
+
                 PlayerViewModel.STATE_PAUSED, PlayerViewModel.STATE_DEFAULT -> {
                     binding.playerPlayTrack.setImageResource(R.drawable.play_button)
                     handler.removeCallbacks(timerRunnable)
@@ -98,13 +100,21 @@ class PlayerActivity : AppCompatActivity() {
             .into(binding.trackAlbumPlaceholder)
 
         handleUiState(if (trackViewData.trackTime != 0) UiState.TrackTimeAvailable(trackViewData.trackTime) else UiState.TrackTimeUnavailable)
-        handleUiState(if (trackViewData.collectionName.isNotEmpty()) UiState.CollectionNameAvailable(trackViewData.collectionName) else UiState.CollectionNameUnavailable)
+        handleUiState(
+            if (trackViewData.collectionName.isNotEmpty()) UiState.CollectionNameAvailable(
+                trackViewData.collectionName
+            ) else UiState.CollectionNameUnavailable
+        )
         handleUiState(
             if (trackViewData.releaseDate.isNotEmpty()) UiState.ReleaseYearAvailable(
                 trackViewData.releaseDate.split("-")[0]
             ) else UiState.ReleaseYearUnavailable
         )
-        handleUiState(if (trackViewData.primaryGenreName.isNotEmpty()) UiState.GenreAvailable(trackViewData.primaryGenreName) else UiState.GenreUnavailable)
+        handleUiState(
+            if (trackViewData.primaryGenreName.isNotEmpty()) UiState.GenreAvailable(
+                trackViewData.primaryGenreName
+            ) else UiState.GenreUnavailable
+        )
         handleUiState(if (trackViewData.country.isNotEmpty()) UiState.CountryAvailable(trackViewData.country) else UiState.CountryUnavailable)
     }
 
@@ -122,7 +132,9 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun handleUiState(state: UiState) {
         when (state) {
-            is UiState.TrackTimeAvailable -> binding.trackLengthValue.text = DateTimeUtil.formatTime(state.time)
+            is UiState.TrackTimeAvailable -> binding.trackLengthValue.text =
+                DateTimeUtil.formatTime(state.time)
+
             is UiState.TrackTimeUnavailable -> binding.trackLengthGroup.visibility = View.GONE
             is UiState.CollectionNameAvailable -> binding.albumName.text = state.name
             is UiState.CollectionNameUnavailable -> binding.albumGroup.visibility = View.GONE
