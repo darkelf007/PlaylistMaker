@@ -12,7 +12,7 @@
         tools:context=".player.presentation.ui.PlayerActivity">
 
         <Button
-            android:id="@+id/back_botton"
+            android:id="@+id/back_button"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="@dimen/dp_56"
             android:layout_height="@dimen/dp_56"
@@ -61,7 +61,7 @@
             app:layout_constraintDimensionRatio="h,1:1"
             app:layout_constraintEnd_toEndOf="@id/right_info_guideline"
             app:layout_constraintStart_toStartOf="@id/left_info_guideline"
-            app:layout_constraintTop_toBottomOf="@id/back_botton" />
+            app:layout_constraintTop_toBottomOf="@id/back_button" />
 
         <TextView
             android:id="@+id/player_track_name"
@@ -168,7 +168,7 @@
             app:layout_constraintTop_toBottomOf="@id/preview_track_length" />
 
         <TextView
-            android:id="@+id/track_lenght_value"
+            android:id="@+id/track_length_value"
             style="@style/track_info_style"
             android:layout_width="@dimen/dp_0"
             android:layout_height="wrap_content"
@@ -186,7 +186,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="visible"
-            app:constraint_referenced_ids="track_length,track_lenght_value" />
+            app:constraint_referenced_ids="track_length,track_length_value" />
 
         <TextView
             android:id="@+id/album"

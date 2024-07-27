@@ -16,15 +16,22 @@ class SearchViewModelFactory(
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
-            val gson = Gson()
-            val sharedPrefs = application.getSharedPreferences("HISTORY_PREFERENCES", Context.MODE_PRIVATE)
-            val searchHistoryRepository = SearchHistoryRepositoryImpl(sharedPrefs)
-            val trackAdapter = TrackAdapter(mutableListOf(), context.resources)
-            val trackAdapterHistory = TrackAdapter(mutableListOf(), context.resources)
-            val playerActivity = PlayerActivity::class.java
-            return SearchViewModel(application, context, gson, searchHistoryRepository, trackAdapter, trackAdapterHistory, playerActivity) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
+        return modelClass.getConstructor(
+            Application::class.java,
+            Context::class.java,
+            Gson::class.java,
+            SearchHistoryRepositoryImpl::class.java,
+            TrackAdapter::class.java,
+            TrackAdapter::class.java,
+            Class::class.java
+        ).newInstance(
+            application,
+            context,
+            Gson(),
+            SearchHistoryRepositoryImpl(application.getSharedPreferences("HISTORY_PREFERENCES", Context.MODE_PRIVATE)),
+            TrackAdapter(mutableListOf(), context.resources),
+            TrackAdapter(mutableListOf(), context.resources),
+            PlayerActivity::class.java
+        )
     }
 }

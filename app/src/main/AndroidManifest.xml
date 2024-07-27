@@ -17,6 +17,7 @@
         <activity
             android:name=".player.presentation.ui.PlayerActivity"
             android:exported="false"
+            android:configChanges="orientation|screenSize"
             android:theme="@style/Theme.PlaylistMaker"/>
         <activity
             android:name=".search.presentation.ui.SearchActivity"

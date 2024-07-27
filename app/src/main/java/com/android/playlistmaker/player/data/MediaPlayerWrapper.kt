@@ -3,7 +3,7 @@ package com.android.playlistmaker.player.data
 import android.media.MediaPlayer
 
 class MediaPlayerWrapper {
-    val mediaPlayer = MediaPlayer()
+   private val mediaPlayer = MediaPlayer()
 
     fun setDataSource(url: String) {
         mediaPlayer.setDataSource(url)

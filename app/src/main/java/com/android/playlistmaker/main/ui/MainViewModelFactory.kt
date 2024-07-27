@@ -16,9 +16,6 @@ class MainViewModelFactory : ViewModelProvider.Factory {
     }
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            return MainViewModel(useCase) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
+        return MainViewModel(useCase) as T
     }
 }

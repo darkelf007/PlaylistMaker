@@ -27,8 +27,6 @@ class SearchViewModel(
     private val playerActivity: Class<PlayerActivity>
 ) : AndroidViewModel(application) {
 
-    private val TAG = "SearchViewModel"
-
     val tracks = MutableLiveData<List<Track>>()
     val searchHistory = MutableLiveData<List<Track>>()
     val uiState = MutableLiveData<UiState>()

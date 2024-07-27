@@ -16,10 +16,10 @@ object Creator {
         return ToggleThemeUseCaseImpl(repository)
     }
 
-
     fun createGetThemeUseCase(repository: SettingsRepository): GetThemeUseCase {
         return GetThemeUseCaseImpl(repository)
     }
+
     fun createShowUserAgreementUseCase(
         communicationRepository: CommunicationRepository,
         intentUtils: IntentUtils
