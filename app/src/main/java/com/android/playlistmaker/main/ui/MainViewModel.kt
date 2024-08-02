@@ -1,20 +1,19 @@
 package com.android.playlistmaker.main.ui
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
-import com.android.playlistmaker.main.domain.MainUseCase
+import com.android.playlistmaker.main.domain.MainInteractor
 
-class MainViewModel(private val useCase: MainUseCase) : ViewModel() {
+class MainViewModel(private val interactor: MainInteractor) : ViewModel() {
 
-    fun onSearchClick(context: Context) {
-        useCase.onSearchClick(context)
+    fun onSearchClick() {
+        interactor.onSearchClick()
     }
 
-    fun onMediaClick(context: Context) {
-        useCase.onMediaClick(context)
+    fun onMediaClick() {
+        interactor.onMediaClick()
     }
 
-    fun onSettingsClick(context: Context) {
-        useCase.onSettingsClick(context)
+    fun onSettingsClick() {
+        interactor.onSettingsClick()
     }
 }

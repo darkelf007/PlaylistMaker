@@ -2,36 +2,25 @@ package com.android.playlistmaker.search.presentation.ui
 
 import android.app.Application
 import android.content.Context
-import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.android.playlistmaker.domain.model.Track
-import com.android.playlistmaker.player.presentation.ui.PlayerActivity
-import com.android.playlistmaker.search.data.repository.SearchHistoryRepositoryImpl
-import com.android.playlistmaker.search.data.repository.SearchRepositoryImpl
-import com.android.playlistmaker.search.presentation.adapter.TrackAdapter
+import com.android.playlistmaker.search.domain.SearchInteractor
+import com.android.playlistmaker.search.domain.SearchTrack
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
     application: Application,
-    private val context: Context,
-    private val gson: Gson,
-    private val searchHistoryRepository: SearchHistoryRepositoryImpl,
-    val trackAdapter: TrackAdapter,
-    val trackAdapterHistory: TrackAdapter,
-    private val playerActivity: Class<PlayerActivity>
+    private val searchInteractor: SearchInteractor
 ) : AndroidViewModel(application) {
 
-    val tracks = MutableLiveData<List<Track>>()
-    val searchHistory = MutableLiveData<List<Track>>()
+    val tracks = MutableLiveData<List<SearchTrack>>()
+    val searchHistory = MutableLiveData<List<SearchTrack>>()
     val uiState = MutableLiveData<UiState>()
-
-    private val searchRepository: SearchRepositoryImpl = SearchRepositoryImpl()
 
     init {
         Log.e("AAA", "VM created")
@@ -47,9 +36,9 @@ class SearchViewModel(
         updateUiState(UiState.Loading)
         viewModelScope.launch {
             try {
-                val response = searchRepository.search(query)
-                if (response.results.isNotEmpty()) {
-                    tracks.value = response.results
+                val response = searchInteractor.search(query)
+                if (response.isNotEmpty()) {
+                    tracks.value = response
                     updateUiState(UiState.Success)
                 } else {
                     updateUiState(UiState.Empty)
@@ -60,29 +49,29 @@ class SearchViewModel(
         }
     }
 
-    fun updateUiState(state: UiState) {
+    private fun updateUiState(state: UiState) {
         if (uiState.value != state) {
             uiState.value = state
         }
     }
 
     private fun loadSearchHistory() {
-        searchHistory.value = searchHistoryRepository.read() ?: emptyList()
+        searchHistory.value = searchInteractor.getSearchHistory() ?: emptyList()
     }
 
-    fun addTrackToHistory(track: Track) {
+    fun addTrackToHistory(searchTrack: SearchTrack) {
         val history = searchHistory.value?.toMutableList() ?: mutableListOf()
-        history.removeAll { it.trackId == track.trackId }
-        history.add(0, track)
+        history.removeAll { it.trackId == searchTrack.trackId }
+        history.add(0, searchTrack)
         if (history.size > 10) {
             history.removeAt(10)
         }
-        searchHistoryRepository.write(ArrayList(history))
+        searchInteractor.saveSearchHistory(history)
         searchHistory.value = history
     }
 
     fun clearSearchHistory() {
-        searchHistoryRepository.clearHistory()
+        searchInteractor.clearSearchHistory()
         searchHistory.value = emptyList()
     }
 
@@ -94,23 +83,22 @@ class SearchViewModel(
         updateUiState(UiState.HistoryVisible)
     }
 
-    fun createIntentForTrack(track: Track): Intent {
-        val playerIntent = Intent(context, playerActivity)
-        playerIntent.putExtra(SearchHistoryRepositoryImpl.TRACK, gson.toJson(track))
-        return playerIntent
+    fun createTrackJson(searchTrack: SearchTrack): String {
+        return Gson().toJson(searchTrack)
     }
 
     fun hideKeyboard(view: View) {
-        val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager =
+            getApplication<Application>().applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     sealed class UiState {
-        object Loading : UiState()
-        object Success : UiState()
-        object Empty : UiState()
+        data object Loading : UiState()
+        data object Success : UiState()
+        data object Empty : UiState()
         data class Error(val message: String) : UiState()
-        object HistoryVisible : UiState()
+        data object HistoryVisible : UiState()
     }
 
     override fun onCleared() {

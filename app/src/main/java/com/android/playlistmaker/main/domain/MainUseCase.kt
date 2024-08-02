@@ -1,18 +1,15 @@
 package com.android.playlistmaker.main.domain
 
-import android.content.Context
-import com.android.playlistmaker.main.data.MainRepository
-
-class MainUseCase(private val repository: MainRepository) {
-    fun onSearchClick(context: Context) {
-        repository.onSearchClick(context)
+class MainUseCase(private val repository: MainRepository): MainInteractor {
+    override fun onSearchClick() {
+        repository.onSearchClick()
     }
 
-    fun onMediaClick(context: Context) {
-        repository.onMediaClick(context)
+    override fun onMediaClick() {
+        repository.onMediaClick()
     }
 
-    fun onSettingsClick(context: Context) {
-        repository.onSettingsClick(context)
+    override fun onSettingsClick() {
+        repository.onSettingsClick()
     }
 }

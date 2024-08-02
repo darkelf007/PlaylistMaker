@@ -1,43 +1,32 @@
 package com.android.playlistmaker.creator
 
-import com.android.playlistmaker.settings.data.CommunicationRepository
-import com.android.playlistmaker.settings.data.SettingsRepository
-import com.android.playlistmaker.settings.domain.GetThemeUseCase
-import com.android.playlistmaker.settings.domain.GetThemeUseCaseImpl
+import android.content.Context
+import android.media.MediaPlayer
+import com.android.playlistmaker.player.presentation.PlayerViewModelFactory
+import com.android.playlistmaker.settings.data.CommunicationRepositoryImpl
 import com.android.playlistmaker.settings.domain.SendSupportEmailUseCase
 import com.android.playlistmaker.settings.domain.ShowShareDialogUseCase
 import com.android.playlistmaker.settings.domain.ShowUserAgreementUseCase
-import com.android.playlistmaker.settings.domain.ToggleThemeUseCase
-import com.android.playlistmaker.settings.domain.ToggleThemeUseCaseImpl
-import com.android.playlistmaker.settings.util.IntentUtils
 
 object Creator {
-    fun createToggleThemeUseCase(repository: SettingsRepository): ToggleThemeUseCase {
-        return ToggleThemeUseCaseImpl(repository)
+
+    fun createShowUserAgreementUseCase(context: Context): ShowUserAgreementUseCase {
+        val repository = CommunicationRepositoryImpl(context)
+        return ShowUserAgreementUseCase(repository)
     }
 
-    fun createGetThemeUseCase(repository: SettingsRepository): GetThemeUseCase {
-        return GetThemeUseCaseImpl(repository)
+    fun createSendSupportEmailUseCase(context: Context): SendSupportEmailUseCase {
+        val repository = CommunicationRepositoryImpl(context)
+        return SendSupportEmailUseCase(repository)
     }
 
-    fun createShowUserAgreementUseCase(
-        communicationRepository: CommunicationRepository,
-        intentUtils: IntentUtils
-    ): ShowUserAgreementUseCase {
-        return ShowUserAgreementUseCase(communicationRepository, intentUtils)
+    fun createShowShareDialogUseCase(context: Context): ShowShareDialogUseCase {
+        val repository = CommunicationRepositoryImpl(context)
+        return ShowShareDialogUseCase(repository)
     }
 
-    fun createSendSupportEmailUseCase(
-        communicationRepository: CommunicationRepository,
-        intentUtils: IntentUtils
-    ): SendSupportEmailUseCase {
-        return SendSupportEmailUseCase(communicationRepository, intentUtils)
-    }
-
-    fun createShowShareDialogUseCase(
-        communicationRepository: CommunicationRepository,
-        intentUtils: IntentUtils
-    ): ShowShareDialogUseCase {
-        return ShowShareDialogUseCase(communicationRepository, intentUtils)
+    fun createPlayerViewModelFactory(): PlayerViewModelFactory {
+        val mediaPlayer = MediaPlayer()
+        return PlayerViewModelFactory(mediaPlayer)
     }
 }

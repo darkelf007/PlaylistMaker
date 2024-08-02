@@ -19,21 +19,21 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel = ViewModelProvider(this, MainViewModelFactory()).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(this, MainViewModelFactory(this)).get(MainViewModel::class.java)
         setupListeners()
     }
 
     private fun setupListeners() {
         binding.buttonSearch.setOnClickListener {
-            viewModel.onSearchClick(this)
+            viewModel.onSearchClick()
         }
 
         binding.buttonMedia.setOnClickListener {
-            viewModel.onMediaClick(this)
+            viewModel.onMediaClick()
         }
 
         binding.buttonSettings.setOnClickListener {
-            viewModel.onSettingsClick(this)
+            viewModel.onSettingsClick()
         }
     }
 }

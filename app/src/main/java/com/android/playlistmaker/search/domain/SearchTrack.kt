@@ -1,10 +1,8 @@
-package com.android.playlistmaker.domain.model
+package com.android.playlistmaker.search.domain
 
 import com.google.gson.annotations.SerializedName
 
-const val COVER_ARTWORK = "512x512bb.jpg"
-
-data class Track(
+data class SearchTrack(
     val trackName: String, // Название композиции
     val artistName: String, // Имя исполнителя
     @SerializedName("trackTimeMillis") val trackTime: Int, // Продолжительность трека
@@ -16,6 +14,4 @@ data class Track(
     val country: String,
     val previewUrl: String
 
-) {
-    fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', COVER_ARTWORK)
-}
+)

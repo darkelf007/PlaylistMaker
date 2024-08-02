@@ -1,41 +1,29 @@
 package com.android.playlistmaker.search.data.repository
 
-import android.util.Log
-import com.android.playlistmaker.search.data.api.iTunesAPI
-import com.android.playlistmaker.search.data.model.TrackResponse
-import com.android.playlistmaker.search.domain.repository.SearchRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.android.playlistmaker.search.data.model.TrackDataModel
+import com.android.playlistmaker.search.data.model.TrackResponseData
+import com.android.playlistmaker.search.domain.SearchRepository
+import com.android.playlistmaker.search.domain.SearchTrack
 
-class SearchRepositoryImpl: SearchRepository {
-    private val ITunesApiBaseUrl = "https://itunes.apple.com"
-    private val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl(ITunesApiBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val iTunesService: iTunesAPI = retrofit.create(iTunesAPI::class.java)
+class SearchRepositoryImpl(private val dataSource: SearchDataSource) : SearchRepository {
 
-    private val TAG = "SearchRepositoryImpl"
+    override suspend fun search(query: String): List<SearchTrack> {
+        val trackResponse: TrackResponseData = dataSource.search(query)
+        return trackResponse.results.map { it.toDomain() }
+    }
 
-    override suspend fun search(query: String): TrackResponse {
-        return withContext(Dispatchers.IO) {
-            try {
-                Log.d(TAG, "Starting search for query: $query")
-                val response = iTunesService.search(query).execute()
-                if (response.isSuccessful) {
-                    Log.d(TAG, "Search successful: ${response.body()?.results?.size ?: 0} results found")
-                    response.body() ?: throw Exception("Empty response body")
-                } else {
-                    val errorMessage = "Search failed with error: ${response.code()} - ${response.message()}"
-                    Log.e(TAG, errorMessage)
-                    throw Exception(errorMessage)
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Search error: ${e.message}", e)
-                throw e
-            }
-        }
+    private fun TrackDataModel.toDomain(): SearchTrack {
+        return SearchTrack(
+            trackName = this.trackName,
+            artistName = this.artistName,
+            trackTime = this.trackTime,
+            artworkUrl100 = this.artworkUrl100,
+            trackId = this.trackId,
+            collectionName = this.collectionName,
+            releaseDate = this.releaseDate,
+            primaryGenreName = this.primaryGenreName,
+            country = this.country,
+            previewUrl = this.previewUrl
+        )
     }
 }

@@ -1,5 +1,6 @@
 package com.android.playlistmaker.search.presentation.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -14,33 +15,39 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.android.playlistmaker.R
 import com.android.playlistmaker.databinding.ActivitySearchBinding
-import com.android.playlistmaker.domain.model.Track
+import com.android.playlistmaker.player.presentation.PlayerActivity
+import com.android.playlistmaker.search.domain.SearchTrack
+import com.android.playlistmaker.search.presentation.adapter.TrackAdapter
 
 class SearchActivity : AppCompatActivity() {
 
     private val TAG = "SearchActivity"
     private val searchViewModel: SearchViewModel by viewModels {
-        SearchViewModelFactory(application, this)
+        SearchViewModelFactory(application)
     }
 
     private lateinit var binding: ActivitySearchBinding
+    private lateinit var trackAdapter: TrackAdapter
+    private lateinit var trackAdapterHistory: TrackAdapter
 
     private var isClickAllowed = true
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private val searchRunnable =
-        Runnable { searchViewModel.search(binding.inputEditText.text.toString()) }
+    private val searchRunnable = Runnable { searchViewModel.search(binding.inputEditText.text.toString()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        Log.e("AAA", "Activity created")
+        Log.e(TAG, "Activity created")
         Log.d(TAG, "onCreate called")
 
-        binding.trackList.adapter = searchViewModel.trackAdapter
-        binding.searchHistoryRecyclerView.adapter = searchViewModel.trackAdapterHistory
+        trackAdapter = TrackAdapter(mutableListOf(), resources)
+        trackAdapterHistory = TrackAdapter(mutableListOf(), resources)
+
+        binding.trackList.adapter = trackAdapter
+        binding.searchHistoryRecyclerView.adapter = trackAdapterHistory
 
         setupObservers()
         setupListeners()
@@ -58,12 +65,12 @@ class SearchActivity : AppCompatActivity() {
         Log.d(TAG, "setupObservers called")
         searchViewModel.tracks.observe(this, Observer { tracks ->
             Log.d(TAG, "Tracks updated: ${tracks.size} items")
-            searchViewModel.trackAdapter.updateTracks(tracks)
+            trackAdapter.updateTracks(tracks)
         })
 
         searchViewModel.searchHistory.observe(this, Observer { tracksHistory ->
             Log.d(TAG, "Search history updated: ${tracksHistory.size} items")
-            searchViewModel.trackAdapterHistory.updateTracks(tracksHistory)
+            trackAdapterHistory.updateTracks(tracksHistory)
         })
 
         searchViewModel.uiState.observe(this, Observer { state ->
@@ -121,12 +128,12 @@ class SearchActivity : AppCompatActivity() {
             searchViewModel.clearSearchHistory()
         }
 
-        searchViewModel.trackAdapterHistory.itemClickListener = { track ->
+        trackAdapterHistory.itemClickListener = { track ->
             searchViewModel.addTrackToHistory(track)
             intentCreation(track)
         }
 
-        searchViewModel.trackAdapter.itemClickListener = { track ->
+        trackAdapter.itemClickListener = { track ->
             searchViewModel.addTrackToHistory(track)
             intentCreation(track)
         }
@@ -177,7 +184,7 @@ class SearchActivity : AppCompatActivity() {
                     binding.placeholderImage.isVisible = true
                     binding.placeholderText.isVisible = true
                     binding.placeholderImage.setImageResource(R.drawable.net_error)
-                    binding.placeholderText.text = state.message
+                    binding.placeholderText.text = getString(R.string.net_error)
                     binding.buttonUpdate.isVisible = true
                     binding.buttonUpdate.setOnClickListener { searchViewModel.search(binding.inputEditText.text.toString()) }
                     binding.searchHistory.isVisible = false
@@ -187,9 +194,9 @@ class SearchActivity : AppCompatActivity() {
                 is SearchViewModel.UiState.HistoryVisible -> {
                     Log.d(TAG, "handleUiState: HistoryVisible")
                     binding.searchHistory.isVisible =
-                        searchViewModel.trackAdapterHistory.itemCount > 0
+                        trackAdapterHistory.itemCount > 0
                     binding.clearSearchHistory.isVisible =
-                        searchViewModel.trackAdapterHistory.itemCount > 0
+                        trackAdapterHistory.itemCount > 0
                     binding.trackList.isVisible = false
                     binding.placeholderImage.isVisible = false
                     binding.placeholderText.isVisible = false
@@ -201,9 +208,11 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun intentCreation(track: Track) {
+    private fun intentCreation(searchTrack: SearchTrack) {
         if (clickDebounce()) {
-            val playerIntent = searchViewModel.createIntentForTrack(track)
+            val playerIntent = Intent(this, PlayerActivity::class.java).apply {
+                putExtra("TRACK", searchViewModel.createTrackJson(searchTrack))
+            }
             startActivity(playerIntent)
         }
     }

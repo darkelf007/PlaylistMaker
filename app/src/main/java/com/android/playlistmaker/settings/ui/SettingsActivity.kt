@@ -5,9 +5,9 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
+import com.android.playlistmaker.App
+import com.android.playlistmaker.creator.Creator
 import com.android.playlistmaker.databinding.ActivitySettingsBinding
-import com.android.playlistmaker.domain.app.App
-
 import com.android.playlistmaker.settings.util.IntentUtils
 
 class SettingsActivity : AppCompatActivity() {
@@ -23,8 +23,9 @@ class SettingsActivity : AppCompatActivity() {
         val app = application as App
         val factory = SettingsViewModelFactory(
             app.settingsRepository,
-            this,
-            IntentUtils
+            Creator.createSendSupportEmailUseCase(this),
+            Creator.createShowUserAgreementUseCase(this),
+            Creator.createShowShareDialogUseCase(this)
         )
         viewModel = ViewModelProvider(this, factory).get(SettingsViewModel::class.java)
 
@@ -48,6 +49,28 @@ class SettingsActivity : AppCompatActivity() {
                 binding.switchTheme.isChecked = enabled
             }
         }
+        viewModel.supportEmailTrigger.observe(this) { details ->
+            if (details != null) {
+                val intent = IntentUtils.createEmailIntent(
+                    details.email,
+                    details.subject,
+                    details.message
+                )
+                startActivity(intent)
+            }
+        }
+        viewModel.userAgreementTrigger.observe(this) { url ->
+            if (url != null) {
+                val intent = IntentUtils.createWebIntent(url)
+                startActivity(intent)
+            }
+        }
+        viewModel.shareTrigger.observe(this) { message ->
+            if (message != null) {
+                val intent = IntentUtils.createShareIntent(message)
+                startActivity(intent)
+            }
+        }
     }
 
     private fun setupListeners() {
@@ -58,16 +81,14 @@ class SettingsActivity : AppCompatActivity() {
             viewModel.switchTheme(isChecked)
         }
         binding.layoutTextWriteToSupport.setOnClickListener {
-            val supportEmailIntent = viewModel.getSupportEmailIntent()
-            startActivity(supportEmailIntent)
+            viewModel.triggerSupportEmail()
         }
         binding.layoutUserAgreement.setOnClickListener {
-            val userLicenceAgreement = viewModel.getUserAgreementIntent()
-            startActivity(userLicenceAgreement)
+            viewModel.triggerUserAgreement()
         }
         binding.layoutToShare.setOnClickListener {
-            val shareIntent = viewModel.getShareIntent()
-            startActivity(shareIntent)
+            viewModel.triggerShare()
         }
+
     }
 }

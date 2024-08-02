@@ -3,20 +3,21 @@ package com.android.playlistmaker.main.data
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import com.android.playlistmaker.main.domain.MainRepository
 import com.android.playlistmaker.search.presentation.ui.SearchActivity
 import com.android.playlistmaker.settings.ui.SettingsActivity
 
-class MainRepositoryImpl : MainRepository {
-    override fun onSearchClick(context: Context) {
+class MainRepositoryImpl(private val context: Context) : MainRepository {
+    override fun onSearchClick() {
         val intent = Intent(context, SearchActivity::class.java)
         context.startActivity(intent)
     }
 
-    override fun onMediaClick(context: Context) {
+    override fun onMediaClick() {
         Toast.makeText(context, "Media!", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onSettingsClick(context: Context) {
+    override fun onSettingsClick() {
         val intent = Intent(context, SettingsActivity::class.java)
         context.startActivity(intent)
     }

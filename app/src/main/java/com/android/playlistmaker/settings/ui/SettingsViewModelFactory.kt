@@ -1,33 +1,29 @@
 package com.android.playlistmaker.settings.ui
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.android.playlistmaker.creator.Creator
-import com.android.playlistmaker.settings.data.CommunicationRepository
 import com.android.playlistmaker.settings.data.SettingsRepository
-import com.android.playlistmaker.settings.util.IntentUtils
+import com.android.playlistmaker.settings.domain.GetThemeUseCaseImpl
+import com.android.playlistmaker.settings.domain.SendSupportEmailUseCase
+import com.android.playlistmaker.settings.domain.ShowShareDialogUseCase
+import com.android.playlistmaker.settings.domain.ShowUserAgreementUseCase
+import com.android.playlistmaker.settings.domain.ToggleThemeUseCaseImpl
 
 
 class SettingsViewModelFactory(
-    private val repository: SettingsRepository,
-    private val context: Context,
-    private val intentUtils: IntentUtils
-) :
-    ViewModelProvider.Factory {
+    private val settingsRepository: SettingsRepository,
+    private val sendSupportEmailUseCase: SendSupportEmailUseCase,
+    private val showUserAgreementUseCase: ShowUserAgreementUseCase,
+    private val showShareDialogUseCase: ShowShareDialogUseCase
+) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val communicationRepository = CommunicationRepository(context)
-        val getThemeUseCase = Creator.createGetThemeUseCase(repository)
-        val toggleThemeUseCase = Creator.createToggleThemeUseCase(repository)
-        val showUserAgreementUseCase =
-            Creator.createShowUserAgreementUseCase(communicationRepository, intentUtils)
-        val sendSupportEmailUseCase =
-            Creator.createSendSupportEmailUseCase(communicationRepository, intentUtils)
-        val showShareDialogUseCase =
-            Creator.createShowShareDialogUseCase(communicationRepository, intentUtils)
+        val getThemeUseCase = GetThemeUseCaseImpl(settingsRepository)
+        val toggleThemeUseCase = ToggleThemeUseCaseImpl(settingsRepository)
         return SettingsViewModel(
-            getThemeUseCase, toggleThemeUseCase, showUserAgreementUseCase,
+            getThemeUseCase,
+            toggleThemeUseCase,
+            showUserAgreementUseCase,
             sendSupportEmailUseCase,
             showShareDialogUseCase
         ) as T

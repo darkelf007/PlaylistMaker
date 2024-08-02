@@ -1,36 +1,36 @@
 package com.android.playlistmaker.player.data
 
 import android.media.MediaPlayer
+import com.android.playlistmaker.player.domain.AudioRepository
 
-class MediaPlayerWrapper {
-   private val mediaPlayer = MediaPlayer()
+class AudioPlayerImpl(private val mediaPlayer: MediaPlayer) : AudioRepository {
 
-    fun setDataSource(url: String) {
+    override fun setDataSource(url: String) {
         mediaPlayer.setDataSource(url)
     }
 
-    fun prepareAsync(onPrepared: () -> Unit) {
+    override fun prepareAsync(onPrepared: () -> Unit) {
         mediaPlayer.setOnPreparedListener { onPrepared() }
         mediaPlayer.prepareAsync()
     }
 
-    fun start() {
+    override fun start() {
         mediaPlayer.start()
     }
 
-    fun pause() {
+    override fun pause() {
         mediaPlayer.pause()
     }
 
-    fun release() {
+    override fun release() {
         mediaPlayer.release()
     }
 
-    fun setOnCompletionListener(onComplete: () -> Unit) {
+    override fun setOnCompletionListener(onComplete: () -> Unit) {
         mediaPlayer.setOnCompletionListener { onComplete() }
     }
 
-    fun getCurrentPosition(): Int {
+    override fun getCurrentPosition(): Int {
         return mediaPlayer.currentPosition
     }
 }

@@ -60,8 +60,11 @@
             android:paddingStart="@dimen/dp_10"
             android:singleLine="true"
             android:textColor="@color/black"
+            android:textCursorDrawable="@drawable/custom_cursor"
             android:textColorHint="@color/dark_grey"
+
             android:textSize="@dimen/text_size_16" />
+
 
         <ImageView
             android:id="@+id/clearIcon"
@@ -92,10 +95,10 @@
         android:id="@+id/track_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingHorizontal="@dimen/dp_16"
         android:paddingVertical="@dimen/dp_8"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/layout_track_card" />
+
 
     <ImageView
         android:id="@+id/placeholderImage"
