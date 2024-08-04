@@ -40,8 +40,7 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        Log.e(TAG, "Activity created")
-        Log.d(TAG, "onCreate called")
+        Log.d(TAG, "Activity created")
 
         trackAdapter = TrackAdapter(mutableListOf(), resources)
         trackAdapterHistory = TrackAdapter(mutableListOf(), resources)

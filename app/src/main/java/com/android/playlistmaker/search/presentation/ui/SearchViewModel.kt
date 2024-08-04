@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.android.playlistmaker.search.domain.SearchInteractor
@@ -18,12 +19,17 @@ class SearchViewModel(
     private val searchInteractor: SearchInteractor
 ) : AndroidViewModel(application) {
 
-    val tracks = MutableLiveData<List<SearchTrack>>()
-    val searchHistory = MutableLiveData<List<SearchTrack>>()
-    val uiState = MutableLiveData<UiState>()
+    private val _tracks = MutableLiveData<List<SearchTrack>>()
+    val tracks: LiveData<List<SearchTrack>> get() = _tracks
+
+    private val _searchHistory = MutableLiveData<List<SearchTrack>>()
+    val searchHistory: LiveData<List<SearchTrack>> get() = _searchHistory
+
+    private val _uiState = MutableLiveData<UiState>()
+    val uiState: LiveData<UiState> get() = _uiState
 
     init {
-        Log.e("AAA", "VM created")
+        Log.d("SearchViewModel", "VM created")
         loadSearchHistory()
     }
 
@@ -38,7 +44,7 @@ class SearchViewModel(
             try {
                 val response = searchInteractor.search(query)
                 if (response.isNotEmpty()) {
-                    tracks.value = response
+                    _tracks.value = response
                     updateUiState(UiState.Success)
                 } else {
                     updateUiState(UiState.Empty)
@@ -50,33 +56,33 @@ class SearchViewModel(
     }
 
     private fun updateUiState(state: UiState) {
-        if (uiState.value != state) {
-            uiState.value = state
+        if (_uiState.value != state) {
+            _uiState.value = state
         }
     }
 
     private fun loadSearchHistory() {
-        searchHistory.value = searchInteractor.getSearchHistory() ?: emptyList()
+        _searchHistory.value = searchInteractor.getSearchHistory() ?: emptyList()
     }
 
     fun addTrackToHistory(searchTrack: SearchTrack) {
-        val history = searchHistory.value?.toMutableList() ?: mutableListOf()
+        val history = _searchHistory.value?.toMutableList() ?: mutableListOf()
         history.removeAll { it.trackId == searchTrack.trackId }
         history.add(0, searchTrack)
         if (history.size > 10) {
             history.removeAt(10)
         }
         searchInteractor.saveSearchHistory(history)
-        searchHistory.value = history
+        _searchHistory.value = history
     }
 
     fun clearSearchHistory() {
         searchInteractor.clearSearchHistory()
-        searchHistory.value = emptyList()
+        _searchHistory.value = emptyList()
     }
 
     fun clearTracks() {
-        tracks.value = emptyList()
+        _tracks.value = emptyList()
     }
 
     fun showHistory() {
@@ -94,15 +100,15 @@ class SearchViewModel(
     }
 
     sealed class UiState {
-        data object Loading : UiState()
-        data object Success : UiState()
-        data object Empty : UiState()
+        object Loading : UiState()
+        object Success : UiState()
+        object Empty : UiState()
         data class Error(val message: String) : UiState()
-        data object HistoryVisible : UiState()
+        object HistoryVisible : UiState()
     }
 
     override fun onCleared() {
-        Log.e("AAA", "VM cleared")
+        Log.d("SearchViewModel", "VM cleared")
         super.onCleared()
     }
 }
