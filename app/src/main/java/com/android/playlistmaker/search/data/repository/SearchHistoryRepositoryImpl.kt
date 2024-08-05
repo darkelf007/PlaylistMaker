@@ -1,30 +1,10 @@
 package com.android.playlistmaker.search.data.repository
 
-import android.content.SharedPreferences
-import androidx.core.content.edit
-import com.android.playlistmaker.domain.model.Track
-import com.android.playlistmaker.search.domain.repository.SearchHistoryRepository
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.android.playlistmaker.search.domain.SearchTrack
+import com.android.playlistmaker.search.domain.SearchHistoryRepository
 
-
-class SearchHistoryRepositoryImpl (private val sharedPrefs: SharedPreferences) :
-    SearchHistoryRepository {
-    companion object {
-        const val TRACK = "TRACK"
-    }
-    override fun clearHistory() {
-        sharedPrefs.edit { remove(TRACK) }
-    }
-
-    override fun read(): ArrayList<Track>? {
-        val json = sharedPrefs.getString(TRACK, null)
-        val changeType = object : TypeToken<ArrayList<Track>>() {}.type
-        return Gson().fromJson(json, changeType)
-    }
-
-    override fun write(tracks: ArrayList<Track>) {
-        val json = Gson().toJson(tracks)
-        sharedPrefs.edit { putString(TRACK, json) }
-    }
+class SearchHistoryRepositoryImpl(private val dataSource: SearchHistoryDataSource) : SearchHistoryRepository {
+    override fun clearHistory() = dataSource.clearHistory()
+    override fun read(): List<SearchTrack>? = dataSource.read()
+    override fun write(searchTracks: List<SearchTrack>) = dataSource.write(searchTracks)
 }
