@@ -9,7 +9,6 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
@@ -18,13 +17,13 @@ import com.android.playlistmaker.databinding.ActivitySearchBinding
 import com.android.playlistmaker.player.presentation.PlayerActivity
 import com.android.playlistmaker.search.domain.SearchTrack
 import com.android.playlistmaker.search.presentation.adapter.TrackAdapter
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class SearchActivity : AppCompatActivity() {
 
     private val TAG = "SearchActivity"
-    private val searchViewModel: SearchViewModel by viewModels {
-        SearchViewModelFactory(application)
-    }
+    private val searchViewModel: SearchViewModel by viewModel { parametersOf(application) }
 
     private lateinit var binding: ActivitySearchBinding
     private lateinit var trackAdapter: TrackAdapter

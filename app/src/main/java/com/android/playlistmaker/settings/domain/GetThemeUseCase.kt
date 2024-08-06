@@ -1,5 +1,7 @@
 package com.android.playlistmaker.settings.domain
 
-interface GetThemeUseCase {
-    fun execute(): Boolean
+class GetThemeUseCase(private val settingsRepository: SettingsRepository) : GetThemeUseCaseInterface {
+    override fun execute(): Boolean {
+        return settingsRepository.getDarkThemeEnabled()
+    }
 }

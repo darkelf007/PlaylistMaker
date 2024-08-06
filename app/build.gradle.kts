@@ -37,10 +37,14 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    buildToolsVersion = "34.0.0"
 
 }
 
 dependencies {
+    implementation("io.insert-koin:koin-android:3.5.6")
+    implementation("io.insert-koin:koin-core:3.5.6")
+
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.activity:activity-ktx:1.9.1")
