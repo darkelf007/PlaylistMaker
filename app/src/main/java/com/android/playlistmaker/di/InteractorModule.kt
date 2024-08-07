@@ -13,7 +13,7 @@ import org.koin.dsl.module
 val interactorModule = module {
 
     single<MainInteractor> { MainUseCase(get()) }
-    single { SearchInteractor(get(), get()) }
+    single<SearchInteractor> { SearchInteractor(get(), get()) }
     single<ToggleThemeUseCaseInterface> { ToggleThemeUseCase(get()) }
     single<GetThemeUseCaseInterface> { GetThemeUseCase(get()) }
 

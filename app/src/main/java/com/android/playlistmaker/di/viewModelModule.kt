@@ -13,7 +13,7 @@ import org.koin.dsl.module
 val viewModelModule = module {
     viewModel { MainViewModel(get()) }
     viewModel { PlayerViewModel(get(), SavedStateHandle()) }
-    viewModel { (application: Application) -> SearchViewModel(application, get()) }
+    viewModel { (application: Application) -> SearchViewModel(application, get(), get()) }
     viewModel {
         SettingsViewModel(
             getThemeUseCase = get(),

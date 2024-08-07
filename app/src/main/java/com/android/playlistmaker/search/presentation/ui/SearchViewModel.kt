@@ -16,7 +16,8 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel(
     application: Application,
-    private val searchInteractor: SearchInteractor
+    private val searchInteractor: SearchInteractor,
+    private val gson: Gson
 ) : AndroidViewModel(application) {
 
     private val _tracks = MutableLiveData<List<SearchTrack>>()
@@ -90,7 +91,7 @@ class SearchViewModel(
     }
 
     fun createTrackJson(searchTrack: SearchTrack): String {
-        return Gson().toJson(searchTrack)
+        return gson.toJson(searchTrack)
     }
 
     fun hideKeyboard(view: View) {
