@@ -9,7 +9,9 @@ import com.android.playlistmaker.settings.ui.SettingsActivity
 
 class MainRepositoryImpl(private val context: Context) : MainRepository {
     override fun onSearchClick() {
-        val intent = Intent(context, SearchActivity::class.java)
+        val intent = Intent(context, SearchActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
         context.startActivity(intent)
     }
 
@@ -18,7 +20,9 @@ class MainRepositoryImpl(private val context: Context) : MainRepository {
     }
 
     override fun onSettingsClick() {
-        val intent = Intent(context, SettingsActivity::class.java)
+        val intent = Intent(context, SettingsActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
         context.startActivity(intent)
     }
 }

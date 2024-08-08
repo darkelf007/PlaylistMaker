@@ -6,15 +6,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.android.playlistmaker.settings.domain.EmailDetails
-import com.android.playlistmaker.settings.domain.GetThemeUseCase
+import com.android.playlistmaker.settings.domain.GetThemeUseCaseInterface
 import com.android.playlistmaker.settings.domain.SendSupportEmailUseCase
 import com.android.playlistmaker.settings.domain.ShowShareDialogUseCase
 import com.android.playlistmaker.settings.domain.ShowUserAgreementUseCase
-import com.android.playlistmaker.settings.domain.ToggleThemeUseCase
+import com.android.playlistmaker.settings.domain.ToggleThemeUseCaseInterface
 
 class SettingsViewModel(
-    private val getThemeUseCase: GetThemeUseCase,
-    private val toggleThemeUseCase: ToggleThemeUseCase,
+    private val getThemeUseCase: GetThemeUseCaseInterface,
+    private val toggleThemeUseCase: ToggleThemeUseCaseInterface,
     private val showUserAgreementUseCase: ShowUserAgreementUseCase,
     private val sendSupportEmailUseCase: SendSupportEmailUseCase,
     private val showShareDialogUseCase: ShowShareDialogUseCase
@@ -33,33 +33,50 @@ class SettingsViewModel(
     val shareTrigger: LiveData<String?> get() = _shareTrigger
 
     init {
-        Log.e("AAA", "VM created")
+        Log.e("SettingsViewModel", "VM created")
         _darkThemeEnabled.value = isDarkThemeEnabled()
     }
 
     fun switchTheme(isDark: Boolean) {
+        Log.d("SettingsViewModel", "Switch theme to: $isDark")
         toggleThemeUseCase.execute(isDark)
         _darkThemeEnabled.value = isDark
     }
 
     private fun isDarkThemeEnabled(): Boolean {
+        Log.d("SettingsViewModel", "Checking if dark theme is enabled")
         return getThemeUseCase.execute()
     }
 
     fun triggerSupportEmail() {
+        Log.d("SettingsViewModel", "Trigger support email")
         _supportEmailTrigger.value = sendSupportEmailUseCase.execute()
     }
 
     fun triggerUserAgreement() {
+        Log.d("SettingsViewModel", "Trigger user agreement")
         _userAgreementTrigger.value = showUserAgreementUseCase.execute()
     }
 
     fun triggerShare() {
+        Log.d("SettingsViewModel", "Trigger share")
         _shareTrigger.value = showShareDialogUseCase.execute()
     }
 
+    fun clearUserAgreementTrigger() {
+        _userAgreementTrigger.value = null
+    }
+
+    fun clearSupportEmailTrigger() {
+        _supportEmailTrigger.value = null
+    }
+
+    fun clearShareTrigger() {
+        _shareTrigger.value = null
+    }
+
     override fun onCleared() {
-        Log.e("AAA", "VM cleared")
+        Log.e("SettingsViewModel", "VM cleared")
         super.onCleared()
     }
 }

@@ -1,6 +1,8 @@
 package com.android.playlistmaker.settings.domain
 
-interface ToggleThemeUseCase {
-    fun execute(isDarkModeEnabled: Boolean)
-}
 
+class ToggleThemeUseCase(private val settingsRepository: SettingsRepository) : ToggleThemeUseCaseInterface {
+    override fun execute(isDarkModeEnabled: Boolean) {
+        settingsRepository.setDarkThemeEnabled(isDarkModeEnabled)
+    }
+}

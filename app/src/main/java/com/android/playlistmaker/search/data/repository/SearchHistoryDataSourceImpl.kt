@@ -6,7 +6,10 @@ import com.android.playlistmaker.search.domain.SearchTrack
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class SearchHistoryDataSourceImpl(private val sharedPrefs: SharedPreferences) : SearchHistoryDataSource {
+class SearchHistoryDataSourceImpl(
+    private val sharedPrefs: SharedPreferences,
+    private val gson: Gson
+) : SearchHistoryDataSource {
     companion object {
         const val TRACK = "TRACK"
     }
@@ -18,11 +21,11 @@ class SearchHistoryDataSourceImpl(private val sharedPrefs: SharedPreferences) : 
     override fun read(): List<SearchTrack>? {
         val json = sharedPrefs.getString(TRACK, null)
         val changeType = object : TypeToken<List<SearchTrack>>() {}.type
-        return Gson().fromJson(json, changeType)
+        return gson.fromJson(json, changeType)
     }
 
     override fun write(searchTracks: List<SearchTrack>) {
-        val json = Gson().toJson(searchTracks)
+        val json = gson.toJson(searchTracks)
         sharedPrefs.edit { putString(TRACK, json) }
     }
 }

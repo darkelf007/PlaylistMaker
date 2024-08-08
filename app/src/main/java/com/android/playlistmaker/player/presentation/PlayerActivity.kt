@@ -8,11 +8,11 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.android.playlistmaker.R
-import com.android.playlistmaker.creator.Creator
 import com.android.playlistmaker.databinding.ActivityPlayerBinding
 import com.android.playlistmaker.player.domain.Track
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -22,7 +22,7 @@ class PlayerActivity : AppCompatActivity() {
 
     private lateinit var handler: Handler
 
-    private lateinit var playerViewModel: PlayerViewModel
+    private val playerViewModel: PlayerViewModel by viewModel()
 
     private val timerRunnable = object : Runnable {
         override fun run() {
@@ -42,9 +42,6 @@ class PlayerActivity : AppCompatActivity() {
         initialization()
 
         handler = Handler(Looper.getMainLooper())
-
-        val factory = Creator.createPlayerViewModelFactory()
-        playerViewModel = ViewModelProvider(this, factory)[PlayerViewModel::class.java]
 
         val json = intent.getStringExtra(TRACK)
         Log.d("PlayerActivity", "Received JSON: $json")
