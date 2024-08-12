@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.button.MaterialButton
+
+        android:id="@+id/new_playlist"
+        style="@style/new_playlist_button"
+        android:text="@string/new_playlist" />
+
+    <ImageView
+        android:layout_width="@dimen/dp_120"
+        android:layout_height="@dimen/dp_120"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/dp_104"
+        android:src="@drawable/not_found" />
+
+    <TextView
+        android:text="@string/you_havent_created_any_playlists"
+        style="@style/no_playlist" />
+
+</FrameLayout>

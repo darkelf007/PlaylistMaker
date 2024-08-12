@@ -147,7 +147,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_28"
             android:gravity="center_horizontal"
-            android:text="@string/lenght_null"
+            android:text="@string/length_null"
             android:textColor="@color/black_white"
             android:textFontWeight="500"
             android:textSize="@dimen/text_size_14"
