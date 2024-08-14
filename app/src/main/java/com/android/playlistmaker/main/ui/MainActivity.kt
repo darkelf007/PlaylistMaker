@@ -3,7 +3,6 @@ package com.android.playlistmaker.main.ui
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.android.playlistmaker.R
 import com.android.playlistmaker.databinding.ActivityMainBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel

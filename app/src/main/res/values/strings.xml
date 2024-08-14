@@ -14,7 +14,7 @@
     <string name="support_message">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="support_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="user_agreement_url">https://yandex.ru/legal/practicum_offer/</string>
-    <string name="share_Dialog">Привет, посетите нашу страничку: https://practicum.yandex.ru/android-developer/</string>
+    <string name="share_dialog">Привет, посетите нашу страничку: https://practicum.yandex.ru/android-developer/</string>
 
     <!-- SearchActivity -->
     <string name="not_found">Ничего не нашлось</string>
@@ -24,7 +24,7 @@
     <string name="you_were_searched">Вы искали</string>
 
     <!-- PlayerActivity -->
-    <string name="lenght_null" translatable="false">00:00</string>
+    <string name="length_null" translatable="false">00:00</string>
     <string name="track_name">Track_name</string>
     <string name="artist_name">Artist_name</string>
     <string name="trackLength">Длительность</string>
@@ -32,5 +32,13 @@
     <string name="releaseYear">Год</string>
     <string name="genre">Жанр</string>
     <string name="country">Страна</string>
+
+    <!-- MediaActivity -->
+    <string name="favorite_tracks">Избранные треки</string>
+    <string name="playlists">Плейлисты</string>
+    <string name="media_library">Медиатека</string>
+    <string name="your_media_library_is_empty">Ваша медиатека пуста</string>
+    <string name="new_playlist">Новый плейлист</string>
+    <string name="you_havent_created_any_playlists">Вы не создали \nни одного плейлиста</string>
 
 </resources>

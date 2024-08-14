@@ -19,6 +19,6 @@ class CommunicationRepositoryImpl(private val context: Context) : CommunicationR
     }
 
     override fun getShareMessage(): String {
-        return context.getString(R.string.share_Dialog)
+        return context.getString(R.string.share_dialog)
     }
 }
