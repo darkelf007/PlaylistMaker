@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".settings.ui.SettingsActivity">
+    tools:context=".settings.ui.SettingsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,24 +13,12 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/button_backToMain"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="@dimen/dp_44"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dp_12"
-            android:contentDescription="@string/button_back"
-            android:outlineProvider="none"
-            app:icon="@drawable/arrow"
-            android:background="@color/transparent"
-            app:iconGravity="end"
-            app:iconPadding="@dimen/dp_52"
-            app:iconSize="@dimen/dp_16" />
 
         <TextView
             android:id="@+id/textSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_12"
             android:text="@string/settings"
             android:textSize="@dimen/text_size_22" />
 

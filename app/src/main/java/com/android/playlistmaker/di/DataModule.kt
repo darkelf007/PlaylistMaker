@@ -2,8 +2,6 @@ package com.android.playlistmaker.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.android.playlistmaker.main.data.MainRepositoryImpl
-import com.android.playlistmaker.main.domain.MainRepository
 import com.android.playlistmaker.search.data.api.iTunesAPI
 import com.android.playlistmaker.search.data.repository.SearchDataSource
 import com.android.playlistmaker.search.data.repository.SearchDataSourceImpl
@@ -45,7 +43,6 @@ val dataModule = module {
     single<SearchHistoryRepository> { SearchHistoryRepositoryImpl(get()) }
     single<CommunicationRepositoryInterface> { CommunicationRepositoryImpl(androidContext()) }
     single<SettingsRepository> { SettingsRepositoryImpl(get()) }
-    single<MainRepository> { MainRepositoryImpl(androidContext()) }
     single<Gson> { Gson() }
 }
 

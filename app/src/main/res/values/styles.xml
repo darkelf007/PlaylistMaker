@@ -83,5 +83,14 @@
         <item name="android:textSize">@dimen/text_size_19</item>
     </style>
 
+    <!-- NavigationView -->
+    <style name="bottom_navigation" parent="Widget.Design.BottomNavigationView">
+        <item name="itemTextAppearanceActive">@style/navigation_text</item>
+        <item name="itemTextAppearanceInactive">@style/navigation_text</item>
+    </style>
 
+    <style name="navigation_text" parent="bottom_navigation">
+        <item name="fontFamily">@font/yandexsanstextmedium</item>
+        <item name="android:textSize">@dimen/text_size_12</item>
+    </style>
 </resources>

@@ -1,7 +1,11 @@
 package com.android.playlistmaker.player.presentation
 
 import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.android.playlistmaker.player.domain.PlayerUseCase
 import com.android.playlistmaker.player.domain.Track
 import com.google.gson.Gson
@@ -12,6 +16,9 @@ class PlayerViewModel(
     private val playerInteractor: PlayerUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+    init {
+        Log.e("PlayerViewModel", "VM created")
+    }
 
     private val _viewState = MutableLiveData(PlayerViewState())
     val viewState: LiveData<PlayerViewState> get() = _viewState
@@ -48,20 +55,34 @@ class PlayerViewModel(
     }
 
     fun startPlayer() {
-        Log.d("PlayerViewModel", "Starting player")
-        playerInteractor.start()
-        Log.d("PlayerViewModel", "Player started")
-        _viewState.value = _viewState.value?.copy(playerState = STATE_PLAYING)
-        savedStateHandle["playerState"] = STATE_PLAYING
-        updateCurrentPosition()
+        if (_viewState.value?.playerState == STATE_PREPARED || _viewState.value?.playerState == STATE_PAUSED) {
+            Log.d("PlayerViewModel", "Starting player")
+            playerInteractor.start()
+            Log.d("PlayerViewModel", "Player started")
+            _viewState.value = _viewState.value?.copy(playerState = STATE_PLAYING)
+            savedStateHandle["playerState"] = STATE_PLAYING
+            updateCurrentPosition()
+        } else {
+            Log.e(
+                "PlayerViewModel",
+                "Cannot start player, incorrect state: ${_viewState.value?.playerState}"
+            )
+        }
     }
 
     fun pausePlayer() {
-        Log.d("PlayerViewModel", "Pausing player")
-        playerInteractor.pause()
-        Log.d("PlayerViewModel", "Player paused")
-        _viewState.value = _viewState.value?.copy(playerState = STATE_PAUSED)
-        savedStateHandle["playerState"] = STATE_PAUSED
+        if (_viewState.value?.playerState == STATE_PLAYING) {
+            Log.d("PlayerViewModel", "Pausing player")
+            playerInteractor.pause()
+            Log.d("PlayerViewModel", "Player paused")
+            _viewState.value = _viewState.value?.copy(playerState = STATE_PAUSED)
+            savedStateHandle["playerState"] = STATE_PAUSED
+        } else {
+            Log.e(
+                "PlayerViewModel",
+                "Cannot pause player, incorrect state: ${_viewState.value?.playerState}"
+            )
+        }
     }
 
     fun releasePlayer() {
@@ -85,7 +106,6 @@ class PlayerViewModel(
         }
     }
 
-
     companion object {
         const val STATE_DEFAULT = 0
         const val STATE_PREPARED = 1
@@ -99,4 +119,3 @@ class PlayerViewModel(
         super.onCleared()
     }
 }
-

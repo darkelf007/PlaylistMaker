@@ -12,24 +12,12 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/backButton"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="@dimen/dp_44"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dp_12"
-            android:contentDescription="@string/button_back"
-            android:outlineProvider="none"
-            app:icon="@drawable/arrow"
-            android:background="@color/transparent"
-            app:iconGravity="end"
-            app:iconPadding="@dimen/dp_52"
-            app:iconSize="@dimen/dp_16" />
 
         <TextView
             android:id="@+id/textSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_12"
             android:text="@string/media_library"
             android:textSize="@dimen/text_size_22" />
 
@@ -37,16 +25,16 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
-        android:background="@color/transparent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/transparent"
         app:tabIndicatorColor="@color/black_white"
         app:tabTextColor="?attr/colorOnPrimary" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 
 </LinearLayout>
