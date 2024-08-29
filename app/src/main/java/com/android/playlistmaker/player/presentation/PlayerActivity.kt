@@ -6,7 +6,6 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.android.playlistmaker.R
 import com.android.playlistmaker.databinding.ActivityPlayerBinding
 import com.android.playlistmaker.player.domain.Track
@@ -88,11 +87,8 @@ class PlayerActivity : AppCompatActivity() {
             Log.e("PlayerActivity", "Cover artwork URL is null or empty")
         } else {
             Log.d("PlayerActivity", "Loading cover artwork from: $coverUrl")
-            Glide.with(this)
-                .load(coverUrl)
-                .placeholder(R.drawable.placeholder_album_player)
-                .error(R.drawable.placeholder_album_player)
-                .centerCrop()
+            Glide.with(this).load(coverUrl).placeholder(R.drawable.placeholder_album_player)
+                .error(R.drawable.placeholder_album_player).centerCrop()
                 .transform(RoundedCorners(resources.getDimensionPixelSize(R.dimen.dp_8)))
                 .into(binding.trackAlbumPlaceholder)
         }
@@ -102,7 +98,11 @@ class PlayerActivity : AppCompatActivity() {
             if (track.collectionName.isNotEmpty()) UiState.CollectionNameAvailable(track.collectionName) else UiState.CollectionNameUnavailable
         )
         handleUiState(
-            if (track.releaseDate.isNotEmpty()) UiState.ReleaseYearAvailable(track.releaseDate.split("-")[0]) else UiState.ReleaseYearUnavailable
+            if (track.releaseDate.isNotEmpty()) UiState.ReleaseYearAvailable(
+                track.releaseDate.split(
+                    "-"
+                )[0]
+            ) else UiState.ReleaseYearUnavailable
         )
         handleUiState(
             if (track.primaryGenreName.isNotEmpty()) UiState.GenreAvailable(track.primaryGenreName) else UiState.GenreUnavailable
@@ -145,6 +145,7 @@ class PlayerActivity : AppCompatActivity() {
                 playerViewModel.pausePlayer()
                 Log.d("PlayerActivity", "Playback control: PAUSE")
             }
+
             PlayerViewModel.STATE_PREPARED, PlayerViewModel.STATE_PAUSED -> {
                 playerViewModel.startPlayer()
                 Log.d("PlayerActivity", "Playback control: PLAY")

@@ -7,25 +7,25 @@ import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.android.playlistmaker.R
-import com.android.playlistmaker.databinding.ActivitySearchBinding
+import com.android.playlistmaker.databinding.FragmentSearchBinding
 import com.android.playlistmaker.player.presentation.PlayerActivity
 import com.android.playlistmaker.search.domain.SearchTrack
 import com.android.playlistmaker.search.presentation.adapter.TrackAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class SearchActivity : AppCompatActivity() {
-
-    private val TAG = "SearchActivity"
-    private val searchViewModel: SearchViewModel by viewModel { parametersOf(application) }
-
-    private lateinit var binding: ActivitySearchBinding
+class SearchFragment : Fragment() {
+    private lateinit var binding: FragmentSearchBinding
+    private val searchViewModel: SearchViewModel by viewModel { parametersOf(requireActivity().application) }
+    private val TAG = "SearchFragment"
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var trackAdapterHistory: TrackAdapter
 
@@ -35,11 +35,19 @@ class SearchActivity : AppCompatActivity() {
 
     private val searchRunnable = Runnable { searchViewModel.search(binding.inputEditText.text.toString()) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        Log.d(TAG, "Activity created")
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        Log.d("FragmentTransition", "SearchFragment created")
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Log.d("FragmentTransition", "SearchFragment view created")
+        Log.d(TAG, "Fragment created")
 
         trackAdapter = TrackAdapter(mutableListOf(), resources)
         trackAdapterHistory = TrackAdapter(mutableListOf(), resources)
@@ -61,17 +69,17 @@ class SearchActivity : AppCompatActivity() {
 
     private fun setupObservers() {
         Log.d(TAG, "setupObservers called")
-        searchViewModel.tracks.observe(this, Observer { tracks ->
+        searchViewModel.tracks.observe(viewLifecycleOwner, Observer { tracks ->
             Log.d(TAG, "Tracks updated: ${tracks.size} items")
             trackAdapter.updateTracks(tracks)
         })
 
-        searchViewModel.searchHistory.observe(this, Observer { tracksHistory ->
+        searchViewModel.searchHistory.observe(viewLifecycleOwner, Observer { tracksHistory ->
             Log.d(TAG, "Search history updated: ${tracksHistory.size} items")
             trackAdapterHistory.updateTracks(tracksHistory)
         })
 
-        searchViewModel.uiState.observe(this, Observer { state ->
+        searchViewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
             Log.d(TAG, "UI State changed: $state")
             handleUiState(state)
         })
@@ -83,14 +91,12 @@ class SearchActivity : AppCompatActivity() {
             binding.placeholderText.isVisible = false
             binding.buttonUpdate.isVisible = false
             binding.inputEditText.setText("")
-            searchViewModel.hideKeyboard(currentFocus ?: View(this))
+            searchViewModel.hideKeyboard(requireActivity().currentFocus ?: View(requireContext()))
             searchViewModel.clearTracks()
             searchViewModel.showHistory()
         }
 
-        binding.buttonBackToMain.setOnClickListener {
-            finish()
-        }
+
 
         binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) searchViewModel.showHistory()
@@ -106,19 +112,12 @@ class SearchActivity : AppCompatActivity() {
         }
 
         val simpleTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // empty
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearIcon.isVisible = clearButtonVisibility(s)
-
                 searchDebounce()
             }
-
-            override fun afterTextChanged(s: Editable?) {
-                // empty
-            }
+            override fun afterTextChanged(s: Editable?) {}
         }
         binding.inputEditText.addTextChangedListener(simpleTextWatcher)
 
@@ -191,10 +190,8 @@ class SearchActivity : AppCompatActivity() {
 
                 is SearchViewModel.UiState.HistoryVisible -> {
                     Log.d(TAG, "handleUiState: HistoryVisible")
-                    binding.searchHistory.isVisible =
-                        trackAdapterHistory.itemCount > 0
-                    binding.clearSearchHistory.isVisible =
-                        trackAdapterHistory.itemCount > 0
+                    binding.searchHistory.isVisible = trackAdapterHistory.itemCount > 0
+                    binding.clearSearchHistory.isVisible = trackAdapterHistory.itemCount > 0
                     binding.trackList.isVisible = false
                     binding.placeholderImage.isVisible = false
                     binding.placeholderText.isVisible = false
@@ -208,7 +205,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun intentCreation(searchTrack: SearchTrack) {
         if (clickDebounce()) {
-            val playerIntent = Intent(this, PlayerActivity::class.java).apply {
+            val playerIntent = Intent(requireContext(), PlayerActivity::class.java).apply {
                 putExtra("TRACK", searchViewModel.createTrackJson(searchTrack))
             }
             startActivity(playerIntent)
@@ -235,15 +232,24 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(SEARCH_ITEM, binding.inputEditText.text.toString())
+        if (this::binding.isInitialized) {
+            outState.putString(SEARCH_ITEM, binding.inputEditText.text.toString())
+        }
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        val searchText = savedInstanceState.getString(SEARCH_ITEM, "")
-        binding.inputEditText.setText(searchText)
-        if (searchText.isNullOrEmpty()) {
-            searchViewModel.showHistory()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        handler.removeCallbacksAndMessages(null)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        if (savedInstanceState != null && this::binding.isInitialized) {
+            val searchText = savedInstanceState.getString(SEARCH_ITEM, "")
+            binding.inputEditText.setText(searchText)
+            if (searchText.isNullOrEmpty()) {
+                searchViewModel.showHistory()
+            }
         }
     }
 

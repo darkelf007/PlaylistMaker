@@ -3,36 +3,24 @@ package com.android.playlistmaker.main.ui
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.android.playlistmaker.R
 import com.android.playlistmaker.databinding.ActivityMainBinding
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val viewModel: MainViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        Log.e("AAA", "Activity created")
-
+        Log.e("MainActivity", "Activity created")
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupListeners()
-    }
 
-    private fun setupListeners() {
-        binding.buttonSearch.setOnClickListener {
-            viewModel.onSearchClick()
-        }
-
-        binding.buttonMedia.setOnClickListener {
-            viewModel.onMediaClick()
-        }
-
-        binding.buttonSettings.setOnClickListener {
-            viewModel.onSettingsClick()
-        }
+        val navMainFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navMainFragment.navController
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.setupWithNavController(navController)
     }
 }

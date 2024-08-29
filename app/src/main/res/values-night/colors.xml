@@ -7,6 +7,8 @@
     <color name="grey">#E5E7EA</color>
     <color name="dark_grey">#AEAFB4</color>
     <color name="white_black">@color/black</color>
+    <color name="black_blue">@color/blue</color>
+    <color name="white_blue">@color/blue</color>
     <color name="black_white">@color/white</color>
     <color name="switch_Knob_color">@color/blue</color>
     <color name="switch_track_color">#9FBBF3</color>

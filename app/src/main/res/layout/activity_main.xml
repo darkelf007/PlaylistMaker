@@ -1,61 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".main.ui.MainActivity">
+    android:fitsSystemWindows="true"
+    tools:context=".main.ui.MainActivity"
+    android:theme="@style/Theme.PlaylistMaker">
 
-    <FrameLayout
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_56">
+        android:layout_height="match_parent"
+        app:navGraph="@navigation/nav_graph"
+        app:defaultNavHost="true"/>
+    <View
+        android:id="@+id/bottom_nav_separator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E6E8EB"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <TextView
-            android:id="@+id/textPlaylistMaker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dp_12"
-            android:layout_marginTop="@dimen/dp_10"
-            android:text="@string/app_name"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_size_22" />
-    </FrameLayout>
-
-    <Button
-        android:id="@+id/button_search"
-        style="@style/ButtonStyle"
-        android:text="@string/search"
-        app:cornerRadius="@dimen/dp_16"
-        android:layout_marginStart="@dimen/dp_16"
-        android:layout_marginTop="@dimen/dp_16"
-        android:layout_marginEnd="@dimen/dp_16"
-        app:icon="@drawable/search"
-        app:iconGravity="textStart"
-        app:iconTint="@color/dark_blue" />
-
-    <Button
-        android:id="@+id/button_media"
-        style="@style/ButtonStyle"
-        android:text="@string/media"
-        app:cornerRadius="@dimen/dp_16"
-        android:layout_marginStart="@dimen/dp_16"
-        android:layout_marginTop="@dimen/dp_16"
-        android:layout_marginEnd="@dimen/dp_16"
-        app:icon="@drawable/media"
-        app:iconGravity="textStart"
-        app:iconTint="@color/dark_blue" />
-
-    <Button
-        android:id="@+id/button_settings"
-        style="@style/ButtonStyle"
-        android:layout_marginBottom="@dimen/dp_28"
-        android:text="@string/settings"
-        app:cornerRadius="@dimen/dp_16"
-        android:layout_marginStart="@dimen/dp_16"
-        android:layout_marginTop="@dimen/dp_16"
-        android:layout_marginEnd="@dimen/dp_16"
-        app:icon="@drawable/settings"
-        app:iconGravity="textStart"
-        app:iconTint="@color/dark_blue" />
-</LinearLayout>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_56"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@color/white_black"
+        app:menu="@menu/navigation_items"
+        style="@style/bottom_navigation"
+        app:itemIconTint="@color/nav_item_icon_color"
+        app:itemTextColor="@color/nav_item_text_color"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,24 +2,32 @@ package com.android.playlistmaker.settings.ui
 
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
-import com.android.playlistmaker.databinding.ActivitySettingsBinding
+import androidx.fragment.app.Fragment
+import com.android.playlistmaker.databinding.FragmentSettingsBinding
 import com.android.playlistmaker.settings.util.IntentUtils
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SettingsActivity : AppCompatActivity() {
-    private lateinit var binding: ActivitySettingsBinding
+class SettingsFragment : Fragment() {
+
+    private lateinit var binding: FragmentSettingsBinding
     private val settingsViewModel: SettingsViewModel by viewModel()
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        Log.d("FragmentTransition", "SearchFragment created")
+        binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d("SettingsActivity", "Activity created")
-
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Log.d("FragmentTransition", "SearchFragment view created")
         setupObservers()
         setupListeners()
 
@@ -36,8 +44,8 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
-        settingsViewModel.darkThemeEnabled.observe(this) { enabled ->
-            Log.d("SettingsActivity", "Dark theme enabled: $enabled")
+        settingsViewModel.darkThemeEnabled.observe(viewLifecycleOwner) { enabled ->
+            Log.d("SettingsFragment", "Dark theme enabled: $enabled")
             if (binding.switchTheme.isChecked != enabled) {
                 binding.switchTheme.isChecked = enabled
             }
@@ -45,26 +53,26 @@ class SettingsActivity : AppCompatActivity() {
                 if (enabled) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
             )
         }
-        settingsViewModel.supportEmailTrigger.observe(this) { details ->
+        settingsViewModel.supportEmailTrigger.observe(viewLifecycleOwner) { details ->
             details?.let {
-                Log.d("SettingsActivity", "Support email triggered")
+                Log.d("SettingsFragment", "Support email triggered")
                 val intent = IntentUtils.createEmailIntent(it.email, it.subject, it.message)
                 startActivity(intent)
                 settingsViewModel.clearSupportEmailTrigger()
             }
         }
-        settingsViewModel.userAgreementTrigger.observe(this) { url ->
-            Log.d("SettingsActivity", "User agreement trigger observer")
+        settingsViewModel.userAgreementTrigger.observe(viewLifecycleOwner) { url ->
+            Log.d("SettingsFragment", "User agreement trigger observer")
             url?.let {
-                Log.d("SettingsActivity", "User agreement triggered")
+                Log.d("SettingsFragment", "User agreement triggered")
                 val intent = IntentUtils.createWebIntent(it)
                 startActivity(intent)
                 settingsViewModel.clearUserAgreementTrigger()
             }
         }
-        settingsViewModel.shareTrigger.observe(this) { message ->
+        settingsViewModel.shareTrigger.observe(viewLifecycleOwner) { message ->
             message?.let {
-                Log.d("SettingsActivity", "Share triggered")
+                Log.d("SettingsFragment", "Share triggered")
                 val intent = IntentUtils.createShareIntent(it)
                 startActivity(intent)
                 settingsViewModel.clearShareTrigger()
@@ -73,27 +81,23 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        Log.d("SettingsActivity", "Setting up listeners")
-        binding.buttonBackToMain.setOnClickListener {
-            Log.d("SettingsActivity", "Back to main clicked")
-            finish()
-        }
+        Log.d("SettingsFragment", "Setting up listeners")
+
         binding.switchTheme.setOnCheckedChangeListener { _, isChecked ->
-            Log.d("SettingsActivity", "Switch theme clicked: $isChecked")
+            Log.d("SettingsFragment", "Switch theme clicked: $isChecked")
             settingsViewModel.switchTheme(isChecked)
         }
         binding.layoutTextWriteToSupport.setOnClickListener {
-            Log.d("SettingsActivity", "Write to support clicked")
+            Log.d("SettingsFragment", "Write to support clicked")
             settingsViewModel.triggerSupportEmail()
         }
         binding.layoutUserAgreement.setOnClickListener {
-            Log.d("SettingsActivity", "User agreement clicked")
+            Log.d("SettingsFragment", "User agreement clicked")
             settingsViewModel.triggerUserAgreement()
         }
         binding.layoutToShare.setOnClickListener {
-            Log.d("SettingsActivity", "Share clicked")
+            Log.d("SettingsFragment", "Share clicked")
             settingsViewModel.triggerShare()
         }
-
     }
 }
