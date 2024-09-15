@@ -4,12 +4,15 @@ import com.android.playlistmaker.search.data.model.TrackDataModel
 import com.android.playlistmaker.search.data.model.TrackResponseData
 import com.android.playlistmaker.search.domain.SearchRepository
 import com.android.playlistmaker.search.domain.SearchTrack
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class SearchRepositoryImpl(private val dataSource: SearchDataSource) : SearchRepository {
 
-    override suspend fun search(query: String): List<SearchTrack> {
+    override fun search(query: String): Flow<List<SearchTrack>> = flow {
         val trackResponse: TrackResponseData = dataSource.search(query)
-        return trackResponse.results.map { it.toDomain() }
+        val tracks = trackResponse.results.map { it.toDomain() }
+        emit(tracks)
     }
 
     private fun TrackDataModel.toDomain(): SearchTrack {

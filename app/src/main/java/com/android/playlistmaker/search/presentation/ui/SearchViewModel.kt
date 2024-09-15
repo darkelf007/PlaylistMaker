@@ -12,6 +12,9 @@ import androidx.lifecycle.viewModelScope
 import com.android.playlistmaker.search.domain.SearchInteractor
 import com.android.playlistmaker.search.domain.SearchTrack
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
@@ -29,9 +32,32 @@ class SearchViewModel(
     private val _uiState = MutableLiveData<UiState>()
     val uiState: LiveData<UiState> get() = _uiState
 
+    private val queryFlow = MutableStateFlow("")
+
+    private val _navigateToPlayer = MutableLiveData<Event<String>>()
+    val navigateToPlayer: LiveData<Event<String>> get() = _navigateToPlayer
+
+    private var isClickAllowed = true
+
     init {
         Log.d("SearchViewModel", "VM created")
         loadSearchHistory()
+        observeQuery()
+    }
+
+    fun updateQuery(query: String) {
+        queryFlow.value = query
+    }
+
+    private fun observeQuery() {
+        viewModelScope.launch {
+            queryFlow
+                .debounce(SEARCH_DEBOUNCE_DELAY_MILLIS)
+                .distinctUntilChanged()
+                .collect { query ->
+                    search(query)
+                }
+        }
     }
 
     fun search(query: String) {
@@ -42,18 +68,39 @@ class SearchViewModel(
 
         updateUiState(UiState.Loading)
         viewModelScope.launch {
-            try {
-                val response = searchInteractor.search(query)
-                if (response.isNotEmpty()) {
-                    _tracks.value = response
-                    updateUiState(UiState.Success)
-                } else {
-                    updateUiState(UiState.Empty)
+            searchInteractor.search(query)
+                .flowOn(Dispatchers.IO)
+                .catch { e ->
+                    updateUiState(UiState.Error(e.message ?: "Unknown Error"))
                 }
-            } catch (e: Exception) {
-                updateUiState(UiState.Error(e.message ?: "Unknown Error"))
+                .collect { response ->
+                    if (response.isNotEmpty()) {
+                        _tracks.value = response
+                        updateUiState(UiState.Success)
+                    } else {
+                        updateUiState(UiState.Empty)
+                    }
+                }
+        }
+    }
+
+    fun onTrackClick(searchTrack: SearchTrack) {
+        viewModelScope.launch {
+            if (clickDebounce()) {
+                addTrackToHistory(searchTrack)
+                _navigateToPlayer.value = Event(createTrackJson(searchTrack))
             }
         }
+    }
+
+    private suspend fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            delay(CLICK_DEBOUNCE_DELAY_MILLIS)
+            isClickAllowed = true
+        }
+        return current
     }
 
     private fun updateUiState(state: UiState) {
@@ -108,8 +155,25 @@ class SearchViewModel(
         object HistoryVisible : UiState()
     }
 
+    class Event<out T>(private val content: T) {
+        private var hasBeenHandled = false
+        fun getContentIfNotHandled(): T? {
+            return if (hasBeenHandled) {
+                null
+            } else {
+                hasBeenHandled = true
+                content
+            }
+        }
+    }
+
     override fun onCleared() {
         Log.d("SearchViewModel", "VM cleared")
         super.onCleared()
+    }
+
+    private companion object {
+        private const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L
+        private const val SEARCH_DEBOUNCE_DELAY_MILLIS = 2000L
     }
 }

@@ -1,23 +1,10 @@
 package com.android.playlistmaker.search.domain
 
-class SearchInteractor(
-    private val searchRepository: SearchRepository,
-    private val searchHistoryRepository: SearchHistoryRepository
-) {
+import kotlinx.coroutines.flow.Flow
 
-    suspend fun search(query: String): List<SearchTrack> {
-        return searchRepository.search(query)
-    }
-
-    fun getSearchHistory(): List<SearchTrack>? {
-        return searchHistoryRepository.read()
-    }
-
-    fun saveSearchHistory(history: List<SearchTrack>) {
-        searchHistoryRepository.write(history)
-    }
-
-    fun clearSearchHistory() {
-        searchHistoryRepository.clearHistory()
-    }
+interface SearchInteractor {
+    fun search(query: String): Flow<List<SearchTrack>>
+    fun getSearchHistory(): List<SearchTrack>?
+    fun saveSearchHistory(history: List<SearchTrack>)
+    fun clearSearchHistory()
 }
