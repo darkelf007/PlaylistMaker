@@ -1,33 +1,10 @@
 package com.android.playlistmaker.player.domain
 
-
-class PlayerUseCase(
-    private val audioRepository: AudioRepository
-) {
-    fun prepare(url: String, onPrepared: () -> Unit) {
-        audioRepository.setDataSource(url)
-        audioRepository.prepareAsync(onPrepared)
-    }
-
-    fun start() {
-        audioRepository.start()
-    }
-
-    fun pause() {
-        audioRepository.pause()
-    }
-
-    fun release() {
-        audioRepository.release()
-    }
-
-    fun setOnCompletionListener(onComplete: () -> Unit) {
-        audioRepository.setOnCompletionListener(onComplete)
-    }
-
-    fun currentPosition(): Int {
-        return audioRepository.getCurrentPosition()
-    }
-
-
+interface PlayerUseCase {
+    fun prepare(url: String, onPrepared: () -> Unit)
+    fun start()
+    fun pause()
+    fun release()
+    fun setOnCompletionListener(onComplete: () -> Unit)
+    fun currentPosition(): Int
 }

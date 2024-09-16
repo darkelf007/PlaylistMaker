@@ -1,6 +1,7 @@
 package com.android.playlistmaker.di
 
 import com.android.playlistmaker.player.domain.PlayerUseCase
+import com.android.playlistmaker.player.domain.PlayerUseCaseImpl
 import com.android.playlistmaker.settings.domain.GetThemeUseCase
 import com.android.playlistmaker.settings.domain.SendSupportEmailUseCase
 import com.android.playlistmaker.settings.domain.ShowShareDialogUseCase
@@ -10,7 +11,7 @@ import com.google.gson.Gson
 import org.koin.dsl.module
 
 val repositoryModule = module {
-    single<PlayerUseCase> { PlayerUseCase(get()) }
+    single<PlayerUseCase> { PlayerUseCaseImpl(get()) }
     single<GetThemeUseCase> { GetThemeUseCase(get()) }
     single<ToggleThemeUseCase> { ToggleThemeUseCase(get()) }
     single<ShowUserAgreementUseCase> { ShowUserAgreementUseCase(get()) }

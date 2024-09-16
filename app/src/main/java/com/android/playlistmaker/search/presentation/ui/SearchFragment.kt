@@ -28,8 +28,9 @@ class SearchFragment : Fragment() {
 
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         Log.d("FragmentTransition", "SearchFragment created")
         binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
@@ -115,7 +116,6 @@ class SearchFragment : Fragment() {
                 binding.clearIcon.isVisible = clearButtonVisibility(s)
                 searchViewModel.updateQuery(s.toString())
             }
-
             override fun afterTextChanged(s: Editable?) {}
         }
         binding.inputEditText.addTextChangedListener(simpleTextWatcher)
@@ -181,7 +181,7 @@ class SearchFragment : Fragment() {
                     binding.placeholderText.text = getString(R.string.net_error)
                     binding.buttonUpdate.isVisible = true
                     binding.buttonUpdate.setOnClickListener {
-                        searchViewModel.updateQuery(binding.inputEditText.text.toString())
+                        searchViewModel.search(binding.inputEditText.text.toString())
                     }
                     binding.searchHistory.isVisible = false
                     binding.clearSearchHistory.isVisible = false
@@ -201,7 +201,6 @@ class SearchFragment : Fragment() {
             Log.e(TAG, "Error in handleUiState: ${e.message}")
         }
     }
-
 
     private fun clearButtonVisibility(s: CharSequence?): Boolean {
         return !s.isNullOrEmpty()
