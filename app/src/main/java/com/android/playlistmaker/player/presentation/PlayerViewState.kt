@@ -4,6 +4,5 @@ import com.android.playlistmaker.player.domain.Track
 
 data class PlayerViewState(
     val track: Track? = null,
-    val playerState: Int = PlayerViewModel.STATE_DEFAULT,
-    val currentPosition: Int = 0
+    val playerState: Int = PlayerViewModel.STATE_DEFAULT
 )

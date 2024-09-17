@@ -7,6 +7,9 @@ class PlayerUseCaseImpl(
         audioRepository.setDataSource(url)
         audioRepository.prepareAsync(onPrepared)
     }
+    override fun seekTo(position: Int) {
+        audioRepository.seekTo(position)
+    }
 
     override fun start() {
         audioRepository.start()

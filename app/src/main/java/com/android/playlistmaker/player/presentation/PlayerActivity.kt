@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
+    private var previousTrack: Track? = null
 
     private lateinit var binding: ActivityPlayerBinding
 
@@ -41,7 +42,10 @@ class PlayerActivity : AppCompatActivity() {
 
         playerViewModel.viewState.observe(this) { state ->
             Log.d("PlayerActivity", "ViewState observed: $state")
-            state.track?.let { updateUIWithTrack(it) }
+            if (state.track != previousTrack) {
+                state.track?.let { updateUIWithTrack(it) }
+                previousTrack = state.track
+            }
             updatePlaybackState(state)
         }
 
@@ -122,7 +126,7 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         if (state.playerState == PlayerViewModel.STATE_PREPARED || state.playerState == PlayerViewModel.STATE_PLAYING || state.playerState == PlayerViewModel.STATE_PAUSED) {
-            binding.previewTrackLength.text = DateTimeUtil.formatTime(state.currentPosition)
+//            binding.previewTrackLength.text = DateTimeUtil.formatTime(state.currentPosition)
         }
     }
 

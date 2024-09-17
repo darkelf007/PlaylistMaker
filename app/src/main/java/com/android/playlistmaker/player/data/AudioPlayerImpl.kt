@@ -8,6 +8,14 @@ class AudioPlayerImpl : AudioRepository {
 
     private var mediaPlayer: MediaPlayer? = null
 
+    override fun seekTo(position: Int) {
+        try {
+            mediaPlayer?.seekTo(position)
+        } catch (e: IllegalStateException) {
+            Log.e("AudioPlayerImpl", "Failed to seek media player", e)
+        }
+    }
+
     override fun setDataSource(url: String) {
         try {
             if (mediaPlayer == null) {

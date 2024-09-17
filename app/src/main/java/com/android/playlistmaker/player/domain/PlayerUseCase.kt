@@ -7,4 +7,5 @@ interface PlayerUseCase {
     fun release()
     fun setOnCompletionListener(onComplete: () -> Unit)
     fun currentPosition(): Int
+    fun seekTo(position: Int)
 }

@@ -13,6 +13,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
@@ -22,6 +23,7 @@ class PlayerViewModel(
     init {
         Log.e("PlayerViewModel", "VM created")
     }
+
     private val _currentPosition = MutableStateFlow(0)
     val currentPosition: StateFlow<Int> get() = _currentPosition
 
@@ -49,13 +51,14 @@ class PlayerViewModel(
         }
         playerUseCase.setOnCompletionListener {
             Log.d("PlayerViewModel", "Track completed")
+            updateJob?.cancel()
+            playerUseCase.seekTo(0)
+            _currentPosition.value = 0
             _viewState.value = _viewState.value?.copy(
-                playerState = STATE_PREPARED,
-                currentPosition = 0
+                playerState = STATE_PREPARED
             )
             savedStateHandle["playerState"] = STATE_PREPARED
             savedStateHandle["currentPosition"] = 0
-            updateJob?.cancel()
             Log.d("PlayerViewModel", "Track completed and reset")
         }
     }
@@ -81,9 +84,12 @@ class PlayerViewModel(
             Log.d("PlayerViewModel", "Pausing player")
             playerUseCase.pause()
             Log.d("PlayerViewModel", "Player paused")
+            updateJob?.cancel()
+            val position = playerUseCase.currentPosition()
+            _currentPosition.value = position
             _viewState.value = _viewState.value?.copy(playerState = STATE_PAUSED)
             savedStateHandle["playerState"] = STATE_PAUSED
-            updateJob?.cancel()
+            savedStateHandle["currentPosition"] = position
         } else {
             Log.e(
                 "PlayerViewModel",
@@ -107,7 +113,7 @@ class PlayerViewModel(
     private fun updateCurrentPosition() {
         updateJob?.cancel()
         updateJob = viewModelScope.launch {
-            while (_viewState.value?.playerState == STATE_PLAYING) {
+            while (isActive && _viewState.value?.playerState == STATE_PLAYING) {
                 val position = playerUseCase.currentPosition()
                 Log.d("PlayerViewModel", "Current Position: $position")
                 _currentPosition.value = position
