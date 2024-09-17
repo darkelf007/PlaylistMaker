@@ -17,6 +17,8 @@ import com.android.playlistmaker.settings.domain.CommunicationRepositoryInterfac
 import com.android.playlistmaker.settings.domain.SettingsRepository
 import com.google.gson.Gson
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -35,15 +37,14 @@ val dataModule = module {
         androidContext().getSharedPreferences("search_history_prefs", Context.MODE_PRIVATE)
     }
 
-    single<Gson> { Gson() }
+    singleOf(::Gson)
 
-    single<SearchDataSource> { SearchDataSourceImpl(get()) }
-    single<SearchRepository> { SearchRepositoryImpl(get()) }
-    single<SearchHistoryDataSource> { SearchHistoryDataSourceImpl(get(), get()) }
-    single<SearchHistoryRepository> { SearchHistoryRepositoryImpl(get()) }
-    single<CommunicationRepositoryInterface> { CommunicationRepositoryImpl(androidContext()) }
-    single<SettingsRepository> { SettingsRepositoryImpl(get()) }
-    single<Gson> { Gson() }
+    singleOf(::SearchDataSourceImpl) bind SearchDataSource::class
+    singleOf(::SearchRepositoryImpl) bind SearchRepository::class
+    singleOf(::SearchHistoryDataSourceImpl) bind SearchHistoryDataSource::class
+    singleOf(::SearchHistoryRepositoryImpl) bind SearchHistoryRepository::class
+    singleOf(::CommunicationRepositoryImpl) bind CommunicationRepositoryInterface::class
+    singleOf(::SettingsRepositoryImpl) bind SettingsRepository::class
 }
 
 

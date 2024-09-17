@@ -124,10 +124,6 @@ class PlayerActivity : AppCompatActivity() {
                 Log.d("PlayerActivity", "Player state: PAUSED or DEFAULT")
             }
         }
-
-        if (state.playerState == PlayerViewModel.STATE_PREPARED || state.playerState == PlayerViewModel.STATE_PLAYING || state.playerState == PlayerViewModel.STATE_PAUSED) {
-//            binding.previewTrackLength.text = DateTimeUtil.formatTime(state.currentPosition)
-        }
     }
 
     private fun playbackControl() {

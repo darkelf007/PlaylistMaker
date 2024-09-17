@@ -1,4 +1,7 @@
-package com.android.playlistmaker.player.domain
+package com.android.playlistmaker.player.data
+
+import com.android.playlistmaker.player.domain.AudioRepository
+import com.android.playlistmaker.player.domain.PlayerUseCase
 
 class PlayerUseCaseImpl(
     private val audioRepository: AudioRepository
