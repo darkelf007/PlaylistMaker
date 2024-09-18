@@ -7,20 +7,13 @@ import com.android.playlistmaker.player.presentation.PlayerViewModel
 import com.android.playlistmaker.search.presentation.ui.SearchViewModel
 import com.android.playlistmaker.settings.ui.SettingsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 
 val viewModelModule = module {
-    viewModel { MainViewModel(get()) }
+    viewModelOf(::MainViewModel)
     viewModel { PlayerViewModel(get(), SavedStateHandle()) }
     viewModel { (application: Application) -> SearchViewModel(application, get(), get()) }
-    viewModel {
-        SettingsViewModel(
-            getThemeUseCase = get(),
-            toggleThemeUseCase = get(),
-            showUserAgreementUseCase = get(),
-            sendSupportEmailUseCase = get(),
-            showShareDialogUseCase = get()
-        )
-    }
+    viewModelOf(::SettingsViewModel)
 }

@@ -1,7 +1,8 @@
 
 package com.android.playlistmaker.search.domain
 
+import kotlinx.coroutines.flow.Flow
 
 interface SearchRepository {
-    suspend fun search(query: String): List<SearchTrack>
+    fun search(query: String): Flow<List<SearchTrack>>
 }

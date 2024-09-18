@@ -9,16 +9,23 @@ import androidx.lifecycle.viewModelScope
 import com.android.playlistmaker.player.domain.PlayerUseCase
 import com.android.playlistmaker.player.domain.Track
 import com.google.gson.Gson
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
-    private val playerInteractor: PlayerUseCase,
+    private val playerUseCase: PlayerUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     init {
         Log.e("PlayerViewModel", "VM created")
     }
+
+    private val _currentPosition = MutableStateFlow(0)
+    val currentPosition: StateFlow<Int> get() = _currentPosition
 
     private val _viewState = MutableLiveData(PlayerViewState())
     val viewState: LiveData<PlayerViewState> get() = _viewState
@@ -31,22 +38,24 @@ class PlayerViewModel(
             Log.d("PlayerViewModel", "Track parsed successfully: $track")
             _viewState.value = _viewState.value?.copy(track = track)
             Log.d("PlayerViewModel", "Track preview URL: ${track.previewUrl}")
-            preparePlayer(track.previewUrl)
+            track.previewUrl?.let { preparePlayer(it) }
         }
     }
 
     fun preparePlayer(url: String) {
         Log.d("PlayerViewModel", "Preparing player with URL: $url")
-        playerInteractor.prepare(url) {
+        playerUseCase.prepare(url) {
             Log.d("PlayerViewModel", "Player prepared successfully")
             _viewState.value = _viewState.value?.copy(playerState = STATE_PREPARED)
             savedStateHandle["playerState"] = STATE_PREPARED
         }
-        playerInteractor.setOnCompletionListener {
+        playerUseCase.setOnCompletionListener {
             Log.d("PlayerViewModel", "Track completed")
+            updateJob?.cancel()
+            playerUseCase.seekTo(0)
+            _currentPosition.value = 0
             _viewState.value = _viewState.value?.copy(
-                playerState = STATE_PREPARED,
-                currentPosition = 0
+                playerState = STATE_PREPARED
             )
             savedStateHandle["playerState"] = STATE_PREPARED
             savedStateHandle["currentPosition"] = 0
@@ -57,7 +66,7 @@ class PlayerViewModel(
     fun startPlayer() {
         if (_viewState.value?.playerState == STATE_PREPARED || _viewState.value?.playerState == STATE_PAUSED) {
             Log.d("PlayerViewModel", "Starting player")
-            playerInteractor.start()
+            playerUseCase.start()
             Log.d("PlayerViewModel", "Player started")
             _viewState.value = _viewState.value?.copy(playerState = STATE_PLAYING)
             savedStateHandle["playerState"] = STATE_PLAYING
@@ -73,35 +82,42 @@ class PlayerViewModel(
     fun pausePlayer() {
         if (_viewState.value?.playerState == STATE_PLAYING) {
             Log.d("PlayerViewModel", "Pausing player")
-            playerInteractor.pause()
+            playerUseCase.pause()
             Log.d("PlayerViewModel", "Player paused")
+            updateJob?.cancel()
+            val position = playerUseCase.currentPosition()
+            _currentPosition.value = position
             _viewState.value = _viewState.value?.copy(playerState = STATE_PAUSED)
             savedStateHandle["playerState"] = STATE_PAUSED
+            savedStateHandle["currentPosition"] = position
         } else {
             Log.e(
                 "PlayerViewModel",
                 "Cannot pause player, incorrect state: ${_viewState.value?.playerState}"
             )
+            updateJob?.cancel()
         }
     }
 
     fun releasePlayer() {
         Log.d("PlayerViewModel", "Releasing player")
-        playerInteractor.release()
+        playerUseCase.release()
         Log.d("PlayerViewModel", "Player released")
         _viewState.value = _viewState.value?.copy(playerState = STATE_DEFAULT)
         savedStateHandle["playerState"] = STATE_DEFAULT
+        updateJob?.cancel()
     }
 
+    private var updateJob: Job? = null
+
     private fun updateCurrentPosition() {
-        viewModelScope.launch {
-            while (_viewState.value?.playerState == STATE_PLAYING) {
-                val position = playerInteractor.currentPosition()
+        updateJob?.cancel()
+        updateJob = viewModelScope.launch {
+            while (isActive && _viewState.value?.playerState == STATE_PLAYING) {
+                val position = playerUseCase.currentPosition()
                 Log.d("PlayerViewModel", "Current Position: $position")
-                _viewState.value = _viewState.value?.copy(currentPosition = position)
-                savedStateHandle["currentPosition"] = position
+                _currentPosition.value = position
                 delay(DELAY_MILLIS)
-                Log.d("PlayerViewModel", "Current Position: $position")
             }
         }
     }

@@ -2,8 +2,6 @@ package com.android.playlistmaker.search.presentation.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -17,7 +15,6 @@ import androidx.lifecycle.Observer
 import com.android.playlistmaker.R
 import com.android.playlistmaker.databinding.FragmentSearchBinding
 import com.android.playlistmaker.player.presentation.PlayerActivity
-import com.android.playlistmaker.search.domain.SearchTrack
 import com.android.playlistmaker.search.presentation.adapter.TrackAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -29,11 +26,6 @@ class SearchFragment : Fragment() {
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var trackAdapterHistory: TrackAdapter
 
-    private var isClickAllowed = true
-
-    private val handler = Handler(Looper.getMainLooper())
-
-    private val searchRunnable = Runnable { searchViewModel.search(binding.inputEditText.text.toString()) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -83,6 +75,15 @@ class SearchFragment : Fragment() {
             Log.d(TAG, "UI State changed: $state")
             handleUiState(state)
         })
+
+        searchViewModel.navigateToPlayer.observe(viewLifecycleOwner, Observer { event ->
+            event.getContentIfNotHandled()?.let { trackJson ->
+                val playerIntent = Intent(requireContext(), PlayerActivity::class.java).apply {
+                    putExtra("TRACK", trackJson)
+                }
+                startActivity(playerIntent)
+            }
+        })
     }
 
     private fun setupListeners() {
@@ -96,15 +97,13 @@ class SearchFragment : Fragment() {
             searchViewModel.showHistory()
         }
 
-
-
         binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) searchViewModel.showHistory()
         }
 
         binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchViewModel.search(binding.inputEditText.text.toString())
+                searchViewModel.updateQuery(binding.inputEditText.text.toString())
                 true
             } else {
                 false
@@ -115,7 +114,7 @@ class SearchFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearIcon.isVisible = clearButtonVisibility(s)
-                searchDebounce()
+                searchViewModel.updateQuery(s.toString())
             }
             override fun afterTextChanged(s: Editable?) {}
         }
@@ -126,13 +125,11 @@ class SearchFragment : Fragment() {
         }
 
         trackAdapterHistory.itemClickListener = { track ->
-            searchViewModel.addTrackToHistory(track)
-            intentCreation(track)
+            searchViewModel.onTrackClick(track)
         }
 
         trackAdapter.itemClickListener = { track ->
-            searchViewModel.addTrackToHistory(track)
-            intentCreation(track)
+            searchViewModel.onTrackClick(track)
         }
     }
 
@@ -183,7 +180,9 @@ class SearchFragment : Fragment() {
                     binding.placeholderImage.setImageResource(R.drawable.net_error)
                     binding.placeholderText.text = getString(R.string.net_error)
                     binding.buttonUpdate.isVisible = true
-                    binding.buttonUpdate.setOnClickListener { searchViewModel.search(binding.inputEditText.text.toString()) }
+                    binding.buttonUpdate.setOnClickListener {
+                        searchViewModel.search(binding.inputEditText.text.toString())
+                    }
                     binding.searchHistory.isVisible = false
                     binding.clearSearchHistory.isVisible = false
                 }
@@ -203,31 +202,8 @@ class SearchFragment : Fragment() {
         }
     }
 
-    private fun intentCreation(searchTrack: SearchTrack) {
-        if (clickDebounce()) {
-            val playerIntent = Intent(requireContext(), PlayerActivity::class.java).apply {
-                putExtra("TRACK", searchViewModel.createTrackJson(searchTrack))
-            }
-            startActivity(playerIntent)
-        }
-    }
-
     private fun clearButtonVisibility(s: CharSequence?): Boolean {
         return !s.isNullOrEmpty()
-    }
-
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY_MILLIS)
-        }
-        return current
-    }
-
-    private fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY_MILLIS)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -237,25 +213,18 @@ class SearchFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        handler.removeCallbacksAndMessages(null)
-    }
-
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         if (savedInstanceState != null && this::binding.isInitialized) {
             val searchText = savedInstanceState.getString(SEARCH_ITEM, "")
             binding.inputEditText.setText(searchText)
-            if (searchText.isNullOrEmpty()) {
-                searchViewModel.showHistory()
+            if (!searchText.isNullOrEmpty()) {
+                searchViewModel.search(searchText)
             }
         }
     }
 
     private companion object {
         private const val SEARCH_ITEM = "SEARCH_ITEM"
-        private const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L
-        private const val SEARCH_DEBOUNCE_DELAY_MILLIS = 2000L
     }
 }
