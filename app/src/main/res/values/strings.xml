@@ -32,7 +32,7 @@
     <string name="releaseYear">Год</string>
     <string name="genre">Жанр</string>
     <string name="country">Страна</string>
-    <string name="invalid_track_data">invalid_track_data</string>
+    <string name="invalid_track_data">Не удалось загрузить данные трека</string>
 
     <!-- MediaActivity -->
     <string name="favorite_tracks">Избранные треки</string>
