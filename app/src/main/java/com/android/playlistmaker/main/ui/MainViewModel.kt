@@ -21,6 +21,7 @@ class MainViewModel(private val interactor: MainInteractor) : ViewModel() {
     fun onSettingsClick() {
         interactor.onSettingsClick()
     }
+
     override fun onCleared() {
         Log.e("MainViewModel", "VM cleared")
         super.onCleared()

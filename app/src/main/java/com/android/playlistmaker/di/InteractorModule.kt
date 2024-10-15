@@ -3,8 +3,8 @@ package com.android.playlistmaker.di
 
 import com.android.playlistmaker.main.domain.MainInteractor
 import com.android.playlistmaker.main.domain.MainUseCase
+import com.android.playlistmaker.search.data.repository.SearchInteractorImpl
 import com.android.playlistmaker.search.domain.SearchInteractor
-import com.android.playlistmaker.search.domain.SearchInteractorImpl
 import com.android.playlistmaker.settings.domain.GetThemeUseCase
 import com.android.playlistmaker.settings.domain.GetThemeUseCaseInterface
 import com.android.playlistmaker.settings.domain.ToggleThemeUseCase
