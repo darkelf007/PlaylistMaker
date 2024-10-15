@@ -1,24 +1,24 @@
 package com.android.playlistmaker.player.presentation
 
 import android.os.Bundle
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.android.playlistmaker.R
+import com.android.playlistmaker.app.App.Companion.KEY_FOR_PLAYER
 import com.android.playlistmaker.databinding.ActivityPlayerBinding
-import com.android.playlistmaker.player.domain.Track
+import com.android.playlistmaker.player.domain.models.PlayerTrack
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
-    private var previousTrack: Track? = null
+    private var previousTrack: PlayerTrack? = null
 
     private lateinit var binding: ActivityPlayerBinding
 
@@ -35,10 +35,16 @@ class PlayerActivity : AppCompatActivity() {
             }
         }
 
-        val json = intent.getStringExtra(TRACK)
+        val json = intent.getStringExtra(KEY_FOR_PLAYER)
         Log.d("PlayerActivity", "Received JSON: $json")
 
-        playerViewModel.setTrackFromJson(json ?: "")
+        if (json.isNullOrEmpty()) {
+            Log.e("PlayerActivity", getString(R.string.invalid_track_data))
+            finish()
+            return
+        }
+
+        playerViewModel.setTrackFromJson(json)
 
         playerViewModel.viewState.observe(this) { state ->
             Log.d("PlayerActivity", "ViewState observed: $state")
@@ -47,11 +53,15 @@ class PlayerActivity : AppCompatActivity() {
                 previousTrack = state.track
             }
             updatePlaybackState(state)
+            updateFavoriteButton(state.isFavorite)
         }
 
         binding.playerPlayTrack.setOnClickListener {
             Log.d("PlayerActivity", "Play button clicked")
             playbackControl()
+        }
+        binding.playerLikeTrack.setOnClickListener {
+            playerViewModel.toggleFavorite()
         }
     }
 
@@ -75,7 +85,15 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateUIWithTrack(track: Track) {
+    private fun updateFavoriteButton(isFavorite: Boolean) {
+        if (isFavorite) {
+            binding.playerLikeTrack.setImageResource(R.drawable.red_like_button)
+        } else {
+            binding.playerLikeTrack.setImageResource(R.drawable.like_button)
+        }
+    }
+
+    private fun updateUIWithTrack(track: PlayerTrack) {
         binding.playerTrackName.text = track.trackName
         binding.playerArtistName.text = track.artistName
 
@@ -84,13 +102,16 @@ class PlayerActivity : AppCompatActivity() {
             Log.e("PlayerActivity", "Cover artwork URL is null or empty")
         } else {
             Log.d("PlayerActivity", "Loading cover artwork from: $coverUrl")
-            Glide.with(this).load(coverUrl).placeholder(R.drawable.placeholder_album_player)
-                .error(R.drawable.placeholder_album_player).centerCrop()
+            Glide.with(this)
+                .load(coverUrl)
+                .placeholder(R.drawable.placeholder_album_player)
+                .error(R.drawable.placeholder_album_player)
+                .centerCrop()
                 .transform(RoundedCorners(resources.getDimensionPixelSize(R.dimen.dp_8)))
                 .into(binding.trackAlbumPlaceholder)
         }
 
-        handleUiState(if (track.trackTime != 0) UiState.TrackTimeAvailable(track.trackTime) else UiState.TrackTimeUnavailable)
+        handleUiState(if (track.trackTimeMillis != 0) UiState.TrackTimeAvailable(track.trackTimeMillis) else UiState.TrackTimeUnavailable)
         handleUiState(
             if (!track.collectionName.isNullOrEmpty()) UiState.CollectionNameAvailable(track.collectionName) else UiState.CollectionNameUnavailable
         )
@@ -142,9 +163,6 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    companion object {
-        private const val TRACK = "TRACK"
-    }
 
     private fun handleUiState(state: UiState) {
         when (state) {

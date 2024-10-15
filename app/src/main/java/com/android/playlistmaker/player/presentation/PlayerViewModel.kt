@@ -6,8 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.playlistmaker.player.domain.PlayerUseCase
-import com.android.playlistmaker.player.domain.Track
+import com.android.playlistmaker.media.domain.db.FavoriteDatabaseInteractor
+import com.android.playlistmaker.media.domain.models.FavoriteTrack
+import com.android.playlistmaker.player.domain.interfaces.PlayerUseCase
+import com.android.playlistmaker.player.domain.models.PlayerTrack
 import com.google.gson.Gson
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -18,7 +20,9 @@ import kotlinx.coroutines.launch
 
 class PlayerViewModel(
     private val playerUseCase: PlayerUseCase,
-    private val savedStateHandle: SavedStateHandle
+    private val favoriteDatabaseInteractor: FavoriteDatabaseInteractor,
+    private val savedStateHandle: SavedStateHandle,
+    private val gson: Gson
 ) : ViewModel() {
     init {
         Log.e("PlayerViewModel", "VM created")
@@ -30,8 +34,16 @@ class PlayerViewModel(
     private val _viewState = MutableLiveData(PlayerViewState())
     val viewState: LiveData<PlayerViewState> get() = _viewState
 
+    private var updateJob: Job? = null
+
     fun setTrackFromJson(json: String) {
-        val track = Gson().fromJson(json, Track::class.java)
+        val track = try {
+            gson.fromJson(json, PlayerTrack::class.java)
+        } catch (e: Exception) {
+            Log.e("PlayerViewModel", "Failed to parse track from JSON", e)
+            null
+        }
+
         if (track == null) {
             Log.e("PlayerViewModel", "Failed to parse track from JSON")
         } else {
@@ -39,6 +51,53 @@ class PlayerViewModel(
             _viewState.value = _viewState.value?.copy(track = track)
             Log.d("PlayerViewModel", "Track preview URL: ${track.previewUrl}")
             track.previewUrl?.let { preparePlayer(it) }
+            checkIfFavorite(track.trackId)
+        }
+    }
+
+    private fun checkIfFavorite(trackId: Int) {
+        viewModelScope.launch {
+            val isFav = favoriteDatabaseInteractor.isTrackFavorite(trackId)
+            _viewState.value = _viewState.value?.copy(isFavorite = isFav)
+        }
+    }
+
+    fun toggleFavorite() {
+        val track = _viewState.value?.track ?: return
+        viewModelScope.launch {
+            if (_viewState.value?.isFavorite == true) {
+                favoriteDatabaseInteractor.removeFavoriteTrack(
+                    FavoriteTrack(
+                        trackId = track.trackId,
+                        trackName = track.trackName,
+                        artistName = track.artistName,
+                        trackTimeMillis = track.trackTimeMillis,
+                        artworkUrl100 = track.artworkUrl100,
+                        collectionName = track.collectionName,
+                        releaseDate = track.releaseDate,
+                        primaryGenreName = track.primaryGenreName,
+                        country = track.country,
+                        previewUrl = track.previewUrl
+                    )
+                )
+                _viewState.value = _viewState.value?.copy(isFavorite = false)
+            } else {
+                favoriteDatabaseInteractor.addFavoriteTrack(
+                    FavoriteTrack(
+                        trackId = track.trackId,
+                        trackName = track.trackName,
+                        artistName = track.artistName,
+                        trackTimeMillis = track.trackTimeMillis,
+                        artworkUrl100 = track.artworkUrl100,
+                        collectionName = track.collectionName,
+                        releaseDate = track.releaseDate,
+                        primaryGenreName = track.primaryGenreName,
+                        country = track.country,
+                        previewUrl = track.previewUrl
+                    )
+                )
+                _viewState.value = _viewState.value?.copy(isFavorite = true)
+            }
         }
     }
 
@@ -108,7 +167,6 @@ class PlayerViewModel(
         updateJob?.cancel()
     }
 
-    private var updateJob: Job? = null
 
     private fun updateCurrentPosition() {
         updateJob?.cancel()

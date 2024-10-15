@@ -19,7 +19,7 @@ class MediaFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.d("FragmentTransition", "SearchFragment created")
+        Log.d("FragmentTransition", "MediaFragment  created")
 
         binding = FragmentMediaBinding.inflate(inflater, container, false)
         return binding.root
@@ -27,7 +27,7 @@ class MediaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("FragmentTransition", "SearchFragment view created")
+        Log.d("FragmentTransition", "MediaFragment  view created")
         binding.viewPager.adapter = MediaAdapter(childFragmentManager, lifecycle)
 
         tabLayoutMediator =

@@ -12,12 +12,15 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.playlistmaker.R
+import com.android.playlistmaker.app.App
 import com.android.playlistmaker.databinding.FragmentSearchBinding
 import com.android.playlistmaker.player.presentation.PlayerActivity
 import com.android.playlistmaker.search.presentation.adapter.TrackAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+
 
 class SearchFragment : Fragment() {
     private lateinit var binding: FragmentSearchBinding
@@ -45,7 +48,10 @@ class SearchFragment : Fragment() {
         trackAdapterHistory = TrackAdapter(mutableListOf(), resources)
 
         binding.trackList.adapter = trackAdapter
+        binding.trackList.layoutManager = LinearLayoutManager(context)
+
         binding.searchHistoryRecyclerView.adapter = trackAdapterHistory
+        binding.searchHistoryRecyclerView.layoutManager = LinearLayoutManager(context)
 
         setupObservers()
         setupListeners()
@@ -61,6 +67,7 @@ class SearchFragment : Fragment() {
 
     private fun setupObservers() {
         Log.d(TAG, "setupObservers called")
+
         searchViewModel.tracks.observe(viewLifecycleOwner, Observer { tracks ->
             Log.d(TAG, "Tracks updated: ${tracks.size} items")
             trackAdapter.updateTracks(tracks)
@@ -69,6 +76,22 @@ class SearchFragment : Fragment() {
         searchViewModel.searchHistory.observe(viewLifecycleOwner, Observer { tracksHistory ->
             Log.d(TAG, "Search history updated: ${tracksHistory.size} items")
             trackAdapterHistory.updateTracks(tracksHistory)
+            binding.searchHistory.isVisible = tracksHistory.isNotEmpty()
+
+            if (tracksHistory.isNotEmpty()) {
+                binding.trackList.isVisible = false
+                binding.placeholderImage.isVisible = false
+                binding.placeholderText.isVisible = false
+                binding.buttonUpdate.isVisible = false
+
+                binding.searchHistoryRecyclerView.isVisible = true
+                binding.clearSearchHistory.isVisible = true
+            } else {
+                binding.trackList.isVisible = true
+
+                binding.searchHistoryRecyclerView.isVisible = false
+                binding.clearSearchHistory.isVisible = false
+            }
         })
 
         searchViewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
@@ -79,12 +102,13 @@ class SearchFragment : Fragment() {
         searchViewModel.navigateToPlayer.observe(viewLifecycleOwner, Observer { event ->
             event.getContentIfNotHandled()?.let { trackJson ->
                 val playerIntent = Intent(requireContext(), PlayerActivity::class.java).apply {
-                    putExtra("TRACK", trackJson)
+                    putExtra(App.KEY_FOR_PLAYER, trackJson)
                 }
                 startActivity(playerIntent)
             }
         })
     }
+
 
     private fun setupListeners() {
         binding.clearIcon.setOnClickListener {
@@ -116,6 +140,7 @@ class SearchFragment : Fragment() {
                 binding.clearIcon.isVisible = clearButtonVisibility(s)
                 searchViewModel.updateQuery(s.toString())
             }
+
             override fun afterTextChanged(s: Editable?) {}
         }
         binding.inputEditText.addTextChangedListener(simpleTextWatcher)
@@ -187,14 +212,8 @@ class SearchFragment : Fragment() {
                     binding.clearSearchHistory.isVisible = false
                 }
 
-                is SearchViewModel.UiState.HistoryVisible -> {
-                    Log.d(TAG, "handleUiState: HistoryVisible")
-                    binding.searchHistory.isVisible = trackAdapterHistory.itemCount > 0
-                    binding.clearSearchHistory.isVisible = trackAdapterHistory.itemCount > 0
-                    binding.trackList.isVisible = false
-                    binding.placeholderImage.isVisible = false
-                    binding.placeholderText.isVisible = false
-                    binding.buttonUpdate.isVisible = false
+                else -> {
+                    Log.d(TAG, "handleUiState: Unhandled UiState: $state")
                 }
             }
         } catch (e: Exception) {

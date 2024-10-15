@@ -1,4 +1,4 @@
-package com.android.playlistmaker.player.domain
+package com.android.playlistmaker.player.domain.interfaces
 
 interface AudioRepository {
     fun setDataSource(url: String)

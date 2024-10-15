@@ -14,7 +14,12 @@ import com.android.playlistmaker.search.domain.SearchTrack
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
@@ -41,7 +46,6 @@ class SearchViewModel(
 
     init {
         Log.d("SearchViewModel", "VM created")
-        loadSearchHistory()
         observeQuery()
     }
 
@@ -52,6 +56,7 @@ class SearchViewModel(
     private fun observeQuery() {
         viewModelScope.launch {
             queryFlow
+                .drop(1)
                 .debounce(SEARCH_DEBOUNCE_DELAY_MILLIS)
                 .distinctUntilChanged()
                 .collect { query ->
@@ -62,7 +67,7 @@ class SearchViewModel(
 
     fun search(query: String) {
         if (query.isBlank()) {
-            updateUiState(UiState.HistoryVisible)
+            showHistory()
             return
         }
 
@@ -83,6 +88,7 @@ class SearchViewModel(
                 }
         }
     }
+
 
     fun onTrackClick(searchTrack: SearchTrack) {
         viewModelScope.launch {
@@ -109,20 +115,19 @@ class SearchViewModel(
         }
     }
 
-    private fun loadSearchHistory() {
-        _searchHistory.value = searchInteractor.getSearchHistory() ?: emptyList()
-    }
 
-    fun addTrackToHistory(searchTrack: SearchTrack) {
+    private fun addTrackToHistory(searchTrack: SearchTrack) {
         val history = _searchHistory.value?.toMutableList() ?: mutableListOf()
         history.removeAll { it.trackId == searchTrack.trackId }
-        history.add(0, searchTrack)
+        val updatedTrack = searchTrack.copy(insertionTimeStamp = System.currentTimeMillis())
+        history.add(0, updatedTrack)
         if (history.size > 10) {
             history.removeAt(10)
         }
         searchInteractor.saveSearchHistory(history)
         _searchHistory.value = history
     }
+
 
     fun clearSearchHistory() {
         searchInteractor.clearSearchHistory()
@@ -134,10 +139,17 @@ class SearchViewModel(
     }
 
     fun showHistory() {
-        updateUiState(UiState.HistoryVisible)
+        viewModelScope.launch {
+            Log.d("SearchViewModel", "showHistory called")
+            val history = searchInteractor.getSearchHistory() ?: emptyList()
+            Log.d("SearchViewModel", "Loaded history: ${history.size} items")
+            _searchHistory.value = history
+
+        }
     }
 
-    fun createTrackJson(searchTrack: SearchTrack): String {
+
+    private fun createTrackJson(searchTrack: SearchTrack): String {
         return gson.toJson(searchTrack)
     }
 
@@ -152,7 +164,6 @@ class SearchViewModel(
         object Success : UiState()
         object Empty : UiState()
         data class Error(val message: String) : UiState()
-        object HistoryVisible : UiState()
     }
 
     class Event<out T>(private val content: T) {
