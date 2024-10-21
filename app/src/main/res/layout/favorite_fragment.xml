@@ -23,6 +23,7 @@
         <TextView
             style="@style/your_media_library"
             android:text="@string/your_media_library_is_empty"
+            android:fontFamily="@font/yandexsanstextmedium"
             android:layout_marginTop="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

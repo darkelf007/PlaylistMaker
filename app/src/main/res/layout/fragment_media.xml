@@ -17,6 +17,7 @@
             android:id="@+id/textSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/yandexsanstextmedium"
             android:layout_marginStart="@dimen/dp_12"
             android:text="@string/media_library"
             android:textSize="@dimen/text_size_22" />
