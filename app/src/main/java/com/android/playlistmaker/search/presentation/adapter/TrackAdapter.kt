@@ -1,6 +1,7 @@
 package com.android.playlistmaker.search.presentation.adapter
 
 import android.content.res.Resources
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -22,8 +23,13 @@ class TrackAdapter(private var searchTracks: List<SearchTrack>, private val reso
     }
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
-        holder.bind(searchTracks[position])
-        holder.itemView.setOnClickListener { itemClickListener?.invoke(searchTracks[position]) }
+        val track = searchTracks[position]
+        Log.d("TrackAdapter", "Binding track at position $position: ${track.trackName}")
+        holder.bind(track)
+        holder.itemView.setOnClickListener {
+            Log.d("TrackAdapter", "Track clicked: ${track.trackName}")
+            itemClickListener?.invoke(track)
+        }
     }
 
     override fun getItemCount() = searchTracks.size

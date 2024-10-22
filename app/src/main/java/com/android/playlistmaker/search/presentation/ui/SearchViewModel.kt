@@ -92,7 +92,9 @@ class SearchViewModel(
 
     fun onTrackClick(searchTrack: SearchTrack) {
         viewModelScope.launch {
+
             if (clickDebounce()) {
+                Log.d("SearchViewModel", "Clicked track: ${searchTrack.trackName} with ID: ${searchTrack.trackId}")
                 addTrackToHistory(searchTrack)
                 _navigateToPlayer.value = Event(createTrackJson(searchTrack))
             }
@@ -126,6 +128,7 @@ class SearchViewModel(
         }
         searchInteractor.saveSearchHistory(history)
         _searchHistory.value = history
+        Log.d("SearchViewModel", "History updated: $history")
     }
 
 

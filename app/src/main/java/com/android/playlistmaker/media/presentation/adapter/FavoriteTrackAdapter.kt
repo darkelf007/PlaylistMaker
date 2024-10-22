@@ -13,11 +13,11 @@ import com.bumptech.glide.Glide
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class FavoriteTrackAdapter(val clickListener: TrackClickListener) :
+class FavoriteTrackAdapter(private val clickListener: TrackClickListener) :
     RecyclerView.Adapter<FavoriteTrackAdapter.TrackHolder>() {
 
 
-    val tracks = mutableListOf<FavoriteTrack>()
+    private val tracks = mutableListOf<FavoriteTrack>()
 
     fun setTracks(newTracks: List<FavoriteTrack>) {
         Log.d(

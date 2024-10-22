@@ -76,21 +76,23 @@ class SearchFragment : Fragment() {
         searchViewModel.searchHistory.observe(viewLifecycleOwner, Observer { tracksHistory ->
             Log.d(TAG, "Search history updated: ${tracksHistory.size} items")
             trackAdapterHistory.updateTracks(tracksHistory)
-            binding.searchHistory.isVisible = tracksHistory.isNotEmpty()
+            with(binding) {
+                searchHistory.isVisible = tracksHistory.isNotEmpty()
 
-            if (tracksHistory.isNotEmpty()) {
-                binding.trackList.isVisible = false
-                binding.placeholderImage.isVisible = false
-                binding.placeholderText.isVisible = false
-                binding.buttonUpdate.isVisible = false
+                if (tracksHistory.isNotEmpty()) {
+                    trackList.isVisible = false
+                    placeholderImage.isVisible = false
+                    placeholderText.isVisible = false
+                    buttonUpdate.isVisible = false
 
-                binding.searchHistoryRecyclerView.isVisible = true
-                binding.clearSearchHistory.isVisible = true
-            } else {
-                binding.trackList.isVisible = true
+                    searchHistoryRecyclerView.isVisible = true
+                    clearSearchHistory.isVisible = true
+                } else {
+                    trackList.isVisible = true
 
-                binding.searchHistoryRecyclerView.isVisible = false
-                binding.clearSearchHistory.isVisible = false
+                    searchHistoryRecyclerView.isVisible = false
+                    clearSearchHistory.isVisible = false
+                }
             }
         })
 
@@ -101,6 +103,7 @@ class SearchFragment : Fragment() {
 
         searchViewModel.navigateToPlayer.observe(viewLifecycleOwner, Observer { event ->
             event.getContentIfNotHandled()?.let { trackJson ->
+                Log.d(TAG, "Navigating to Player with track JSON: $trackJson")
                 val playerIntent = Intent(requireContext(), PlayerActivity::class.java).apply {
                     putExtra(App.KEY_FOR_PLAYER, trackJson)
                 }

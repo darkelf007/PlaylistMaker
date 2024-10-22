@@ -4,12 +4,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.android.playlistmaker.app.App
 import com.android.playlistmaker.databinding.FavoriteFragmentBinding
 import com.android.playlistmaker.media.domain.models.FavoriteTrack
@@ -23,13 +20,11 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavoriteFragment : Fragment() {
+    private var _binding: FavoriteFragmentBinding? = null
+    private val binding get() = _binding!!
+
     private var adapter: FavoriteTrackAdapter? = null
-
     private var isClickAllowed = true
-
-    private lateinit var emptyLibraryPlaceholder: ConstraintLayout
-    private lateinit var progressBar: ProgressBar
-    private lateinit var libraryRecyclerView: RecyclerView
 
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
@@ -38,14 +33,12 @@ class FavoriteFragment : Fragment() {
 
     private val viewModel: FavoriteFragmentViewModel by viewModel()
 
-    private lateinit var binding: FavoriteFragmentBinding
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FavoriteFragmentBinding.inflate(inflater, container, false)
+        _binding = FavoriteFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -58,19 +51,19 @@ class FavoriteFragment : Fragment() {
             }
         }
 
-        progressBar = binding.progressBar
-        libraryRecyclerView = binding.libraryRecyclerView
-        emptyLibraryPlaceholder = binding.emptyLibraryPlaceholder
-        libraryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        libraryRecyclerView.adapter = adapter
+        binding.libraryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.libraryRecyclerView.adapter = adapter
 
         viewModel.fillData()
 
         viewModel.databaseTracksState.observe(viewLifecycleOwner) { libraryTrackState ->
             render(libraryTrackState)
         }
+    }
 
-        viewModel.fillData()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onResume() {
@@ -92,11 +85,8 @@ class FavoriteFragment : Fragment() {
         return current
     }
 
-
     private fun clickOnItem(libraryTrack: FavoriteTrack) {
-        Log.d("FavoriteFragment", "Clicked track: $libraryTrack")
         val json = Gson().toJson(libraryTrack)
-        Log.d("FavoriteFragment", "Serialized JSON: $json")
         val intent = Intent(requireContext(), PlayerActivity::class.java).apply {
             putExtra(App.KEY_FOR_PLAYER, json)
         }
@@ -122,14 +112,12 @@ class FavoriteFragment : Fragment() {
                 showPlaceHolder(false)
                 showContent(true)
                 adapter?.setTracks(libraryTracksState.libraryTracks)
-
             }
         }
     }
 
-
     private fun showLoader(isVisible: Boolean) {
-        progressBar.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.progressBar.visibility = if (isVisible) View.VISIBLE else View.GONE
         Log.d(
             "FavouritesFragment",
             if (isVisible) "ProgressBar is visible" else "ProgressBar is hidden"
@@ -137,10 +125,10 @@ class FavoriteFragment : Fragment() {
     }
 
     private fun showPlaceHolder(isVisible: Boolean) {
-        emptyLibraryPlaceholder.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.emptyLibraryPlaceholder.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 
     private fun showContent(isVisible: Boolean) {
-        libraryRecyclerView.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.libraryRecyclerView.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 }
