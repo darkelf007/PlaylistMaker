@@ -94,7 +94,10 @@ class SearchViewModel(
         viewModelScope.launch {
 
             if (clickDebounce()) {
-                Log.d("SearchViewModel", "Clicked track: ${searchTrack.trackName} with ID: ${searchTrack.trackId}")
+                Log.d(
+                    "SearchViewModel",
+                    "Clicked track: ${searchTrack.trackName} with ID: ${searchTrack.trackId}"
+                )
                 addTrackToHistory(searchTrack)
                 _navigateToPlayer.value = Event(createTrackJson(searchTrack))
             }

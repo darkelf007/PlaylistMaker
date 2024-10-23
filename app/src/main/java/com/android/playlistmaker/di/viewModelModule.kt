@@ -15,5 +15,5 @@ val viewModelModule = module {
     viewModelOf(::SettingsViewModel)
     viewModel { PlayerViewModel(get(), get(), get(), get()) }
     viewModel { (application: Application) -> SearchViewModel(application, get(), get()) }
-    viewModel { FavoriteFragmentViewModel(get(), get()) }
+    viewModel { FavoriteFragmentViewModel(get()) }
 }

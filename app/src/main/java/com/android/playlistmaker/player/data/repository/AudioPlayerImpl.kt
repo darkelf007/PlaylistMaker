@@ -9,62 +9,34 @@ class AudioPlayerImpl : AudioRepository {
     private var mediaPlayer: MediaPlayer? = null
 
     override fun seekTo(position: Int) {
-        try {
-            mediaPlayer?.seekTo(position)
-        } catch (e: IllegalStateException) {
-            Log.e("AudioPlayerImpl", "Failed to seek media player", e)
-        }
+        mediaPlayer?.seekTo(position)
     }
 
     override fun setDataSource(url: String) {
-        try {
-            if (mediaPlayer == null) {
-                mediaPlayer = MediaPlayer()
-            } else {
-                mediaPlayer?.reset()
-            }
-            mediaPlayer?.setDataSource(url)
-        } catch (e: IllegalStateException) {
-            Log.e("AudioPlayerImpl", "Failed to set data source", e)
-        } catch (e: Exception) {
-            Log.e("AudioPlayerImpl", "Error setting data source", e)
+        if (mediaPlayer == null) {
+            mediaPlayer = MediaPlayer()
+        } else {
+            mediaPlayer?.reset()
         }
+        mediaPlayer?.setDataSource(url)
     }
 
     override fun prepareAsync(onPrepared: () -> Unit) {
         mediaPlayer?.setOnPreparedListener { onPrepared() }
-        try {
-            mediaPlayer?.prepareAsync()
-        } catch (e: IllegalStateException) {
-            Log.e("AudioPlayerImpl", "Failed to prepare asynchronously", e)
-        } catch (e: Exception) {
-            Log.e("AudioPlayerImpl", "Error preparing asynchronously", e)
-        }
+        mediaPlayer?.prepareAsync()
     }
 
     override fun start() {
-        try {
-            mediaPlayer?.start()
-        } catch (e: IllegalStateException) {
-            Log.e("AudioPlayerImpl", "Failed to start media player", e)
-        }
+        mediaPlayer?.start()
     }
 
     override fun pause() {
-        try {
-            mediaPlayer?.pause()
-        } catch (e: IllegalStateException) {
-            Log.e("AudioPlayerImpl", "Failed to pause media player", e)
-        }
+        mediaPlayer?.pause()
     }
 
     override fun release() {
-        try {
-            mediaPlayer?.release()
-            mediaPlayer = null
-        } catch (e: IllegalStateException) {
-            Log.e("AudioPlayerImpl", "Failed to release media player", e)
-        }
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 
     override fun setOnCompletionListener(onComplete: () -> Unit) {
@@ -72,11 +44,6 @@ class AudioPlayerImpl : AudioRepository {
     }
 
     override fun getCurrentPosition(): Int {
-        return try {
-            mediaPlayer?.currentPosition ?: 0
-        } catch (e: IllegalStateException) {
-            Log.e("AudioPlayerImpl", "Failed to get current position", e)
-            0
-        }
+        return mediaPlayer?.currentPosition ?: 0
     }
 }

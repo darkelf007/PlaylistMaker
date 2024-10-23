@@ -33,33 +33,27 @@ class SettingsViewModel(
     val shareTrigger: LiveData<String?> get() = _shareTrigger
 
     init {
-        Log.e("SettingsViewModel", "VM created")
         _darkThemeEnabled.value = isDarkThemeEnabled()
     }
 
     fun switchTheme(isDark: Boolean) {
-        Log.d("SettingsViewModel", "Switch theme to: $isDark")
         toggleThemeUseCase.execute(isDark)
         _darkThemeEnabled.value = isDark
     }
 
     private fun isDarkThemeEnabled(): Boolean {
-        Log.d("SettingsViewModel", "Checking if dark theme is enabled")
         return getThemeUseCase.execute()
     }
 
     fun triggerSupportEmail() {
-        Log.d("SettingsViewModel", "Trigger support email")
         _supportEmailTrigger.value = sendSupportEmailUseCase.execute()
     }
 
     fun triggerUserAgreement() {
-        Log.d("SettingsViewModel", "Trigger user agreement")
         _userAgreementTrigger.value = showUserAgreementUseCase.execute()
     }
 
     fun triggerShare() {
-        Log.d("SettingsViewModel", "Trigger share")
         _shareTrigger.value = showShareDialogUseCase.execute()
     }
 
@@ -76,7 +70,6 @@ class SettingsViewModel(
     }
 
     override fun onCleared() {
-        Log.e("SettingsViewModel", "VM cleared")
         super.onCleared()
     }
 }

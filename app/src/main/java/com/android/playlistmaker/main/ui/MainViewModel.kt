@@ -6,9 +6,6 @@ import com.android.playlistmaker.main.domain.MainInteractor
 
 class MainViewModel(private val interactor: MainInteractor) : ViewModel() {
 
-    init {
-        Log.e("MainViewModel", "VM created")
-    }
 
     fun onSearchClick() {
         interactor.onSearchClick()
@@ -23,7 +20,6 @@ class MainViewModel(private val interactor: MainInteractor) : ViewModel() {
     }
 
     override fun onCleared() {
-        Log.e("MainViewModel", "VM cleared")
         super.onCleared()
     }
 }

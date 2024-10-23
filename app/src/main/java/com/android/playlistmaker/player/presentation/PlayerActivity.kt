@@ -36,10 +36,8 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         val json = intent.getStringExtra(KEY_FOR_PLAYER)
-        Log.d("PlayerActivity", "Received JSON: $json")
 
         if (json.isNullOrEmpty()) {
-            Log.e("PlayerActivity", getString(R.string.invalid_track_data))
             finish()
             return
         }
@@ -47,7 +45,6 @@ class PlayerActivity : AppCompatActivity() {
         playerViewModel.setTrackFromJson(json)
 
         playerViewModel.viewState.observe(this) { state ->
-            Log.d("PlayerActivity", "ViewState observed: $state")
             if (state.track != previousTrack) {
                 state.track?.let { updateUIWithTrack(it) }
                 previousTrack = state.track
@@ -57,7 +54,6 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         binding.playerPlayTrack.setOnClickListener {
-            Log.d("PlayerActivity", "Play button clicked")
             playbackControl()
         }
         binding.playerLikeTrack.setOnClickListener {
@@ -70,13 +66,11 @@ class PlayerActivity : AppCompatActivity() {
         if (playerViewModel.viewState.value?.playerState == PlayerViewModel.STATE_PLAYING) {
             playerViewModel.pausePlayer()
         }
-        Log.d("PlayerActivity", "Activity paused")
     }
 
     override fun onDestroy() {
         super.onDestroy()
         playerViewModel.releasePlayer()
-        Log.d("PlayerActivity", "Activity destroyed")
     }
 
     private fun initialization() {
@@ -99,9 +93,7 @@ class PlayerActivity : AppCompatActivity() {
 
         val coverUrl = track.getCoverArtwork()
         if (coverUrl.isNullOrEmpty()) {
-            Log.e("PlayerActivity", "Cover artwork URL is null or empty")
         } else {
-            Log.d("PlayerActivity", "Loading cover artwork from: $coverUrl")
             Glide.with(this)
                 .load(coverUrl)
                 .placeholder(R.drawable.placeholder_album_player)
@@ -127,38 +119,31 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun updatePlaybackState(state: PlayerViewState) {
-        Log.d("PlayerActivity", "Updating playback state: ${state.playerState}")
         when (state.playerState) {
             PlayerViewModel.STATE_PREPARED -> {
                 binding.playerPlayTrack.isEnabled = true
                 binding.playerPlayTrack.setImageResource(R.drawable.play_button)
-                Log.d("PlayerActivity", "Player state: PREPARED")
             }
 
             PlayerViewModel.STATE_PLAYING -> {
                 binding.playerPlayTrack.setImageResource(R.drawable.pause_button)
-                Log.d("PlayerActivity", "Player state: PLAYING")
             }
 
             PlayerViewModel.STATE_PAUSED, PlayerViewModel.STATE_DEFAULT -> {
                 binding.playerPlayTrack.setImageResource(R.drawable.play_button)
-                Log.d("PlayerActivity", "Player state: PAUSED or DEFAULT")
             }
         }
     }
 
     private fun playbackControl() {
         val state = playerViewModel.viewState.value
-        Log.d("PlayerActivity", "Playback control: current state = ${state?.playerState}")
         when (state?.playerState) {
             PlayerViewModel.STATE_PLAYING -> {
                 playerViewModel.pausePlayer()
-                Log.d("PlayerActivity", "Playback control: PAUSE")
             }
 
             PlayerViewModel.STATE_PREPARED, PlayerViewModel.STATE_PAUSED -> {
                 playerViewModel.startPlayer()
-                Log.d("PlayerActivity", "Playback control: PLAY")
             }
         }
     }

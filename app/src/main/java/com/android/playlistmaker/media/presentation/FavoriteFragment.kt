@@ -118,10 +118,7 @@ class FavoriteFragment : Fragment() {
 
     private fun showLoader(isVisible: Boolean) {
         binding.progressBar.visibility = if (isVisible) View.VISIBLE else View.GONE
-        Log.d(
-            "FavouritesFragment",
-            if (isVisible) "ProgressBar is visible" else "ProgressBar is hidden"
-        )
+
     }
 
     private fun showPlaceHolder(isVisible: Boolean) {

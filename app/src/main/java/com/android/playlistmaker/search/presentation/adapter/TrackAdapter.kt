@@ -24,10 +24,8 @@ class TrackAdapter(private var searchTracks: List<SearchTrack>, private val reso
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         val track = searchTracks[position]
-        Log.d("TrackAdapter", "Binding track at position $position: ${track.trackName}")
         holder.bind(track)
         holder.itemView.setOnClickListener {
-            Log.d("TrackAdapter", "Track clicked: ${track.trackName}")
             itemClickListener?.invoke(track)
         }
     }

@@ -1,6 +1,5 @@
 package com.android.playlistmaker.media.presentation.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -20,10 +19,7 @@ class FavoriteTrackAdapter(private val clickListener: TrackClickListener) :
     private val tracks = mutableListOf<FavoriteTrack>()
 
     fun setTracks(newTracks: List<FavoriteTrack>) {
-        Log.d(
-            "FavoriteTrackAdapter",
-            "Setting new tracks. Old size: ${tracks.size}, New size: ${newTracks.size}"
-        )
+
         val diffCallback = FavoriteTrackDiffCallback(tracks, newTracks)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         tracks.clear()
@@ -64,25 +60,17 @@ class FavoriteTrackAdapter(private val clickListener: TrackClickListener) :
         return TrackHolder(parent)
     }
 
-    override fun onBindViewHolder(holder: TrackHolder, position: Int) {
-        Log.d("FavoriteTrackAdapter", "onBindViewHolder called for position: $position")
+        override fun onBindViewHolder(holder: TrackHolder, position: Int) {
         if (position < tracks.size) {
             val track = tracks[position]
             holder.bind(track)
             holder.itemView.setOnClickListener {
-                Log.d("FavoriteTrackAdapter", "Item clicked at position: $position")
                 clickListener.onTrackClick(track)
             }
-        } else {
-            Log.e(
-                "FavoriteTrackAdapter",
-                "Attempted to bind position $position, but list size is ${tracks.size}"
-            )
         }
     }
 
     override fun getItemCount(): Int {
-        Log.d("FavoriteTrackAdapter", "getItemCount: ${tracks.size}")
         return tracks.size
     }
 

@@ -25,7 +25,6 @@ import org.koin.core.parameter.parametersOf
 class SearchFragment : Fragment() {
     private lateinit var binding: FragmentSearchBinding
     private val searchViewModel: SearchViewModel by viewModel { parametersOf(requireActivity().application) }
-    private val TAG = "SearchFragment"
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var trackAdapterHistory: TrackAdapter
 
@@ -34,15 +33,12 @@ class SearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.d("FragmentTransition", "SearchFragment created")
         binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("FragmentTransition", "SearchFragment view created")
-        Log.d(TAG, "Fragment created")
 
         trackAdapter = TrackAdapter(mutableListOf(), resources)
         trackAdapterHistory = TrackAdapter(mutableListOf(), resources)
@@ -66,15 +62,12 @@ class SearchFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        Log.d(TAG, "setupObservers called")
 
         searchViewModel.tracks.observe(viewLifecycleOwner, Observer { tracks ->
-            Log.d(TAG, "Tracks updated: ${tracks.size} items")
             trackAdapter.updateTracks(tracks)
         })
 
         searchViewModel.searchHistory.observe(viewLifecycleOwner, Observer { tracksHistory ->
-            Log.d(TAG, "Search history updated: ${tracksHistory.size} items")
             trackAdapterHistory.updateTracks(tracksHistory)
             with(binding) {
                 searchHistory.isVisible = tracksHistory.isNotEmpty()
@@ -97,13 +90,11 @@ class SearchFragment : Fragment() {
         })
 
         searchViewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
-            Log.d(TAG, "UI State changed: $state")
             handleUiState(state)
         })
 
         searchViewModel.navigateToPlayer.observe(viewLifecycleOwner, Observer { event ->
             event.getContentIfNotHandled()?.let { trackJson ->
-                Log.d(TAG, "Navigating to Player with track JSON: $trackJson")
                 val playerIntent = Intent(requireContext(), PlayerActivity::class.java).apply {
                     putExtra(App.KEY_FOR_PLAYER, trackJson)
                 }
@@ -162,65 +153,53 @@ class SearchFragment : Fragment() {
     }
 
     private fun handleUiState(state: SearchViewModel.UiState) {
-        try {
-            when (state) {
-                is SearchViewModel.UiState.Loading -> {
-                    Log.d(TAG, "handleUiState: Loading")
-                    binding.downloadIconFrame.isVisible = true
-                    binding.trackList.isVisible = false
-                    binding.placeholderImage.isVisible = false
-                    binding.placeholderText.isVisible = false
-                    binding.buttonUpdate.isVisible = false
-                    binding.searchHistory.isVisible = false
-                    binding.clearSearchHistory.isVisible = false
-                }
-
-                is SearchViewModel.UiState.Success -> {
-                    Log.d(TAG, "handleUiState: Success")
-                    binding.downloadIconFrame.isVisible = false
-                    binding.trackList.isVisible = true
-                    binding.placeholderImage.isVisible = false
-                    binding.placeholderText.isVisible = false
-                    binding.buttonUpdate.isVisible = false
-                    binding.searchHistory.isVisible = false
-                    binding.clearSearchHistory.isVisible = false
-                }
-
-                is SearchViewModel.UiState.Empty -> {
-                    Log.d(TAG, "handleUiState: Empty")
-                    binding.downloadIconFrame.isVisible = false
-                    binding.trackList.isVisible = false
-                    binding.placeholderImage.isVisible = true
-                    binding.placeholderText.isVisible = true
-                    binding.placeholderImage.setImageResource(R.drawable.not_found)
-                    binding.placeholderText.text = getString(R.string.not_found)
-                    binding.buttonUpdate.isVisible = false
-                    binding.searchHistory.isVisible = false
-                    binding.clearSearchHistory.isVisible = false
-                }
-
-                is SearchViewModel.UiState.Error -> {
-                    Log.d(TAG, "handleUiState: Error with message: ${state.message}")
-                    binding.downloadIconFrame.isVisible = false
-                    binding.trackList.isVisible = false
-                    binding.placeholderImage.isVisible = true
-                    binding.placeholderText.isVisible = true
-                    binding.placeholderImage.setImageResource(R.drawable.net_error)
-                    binding.placeholderText.text = getString(R.string.net_error)
-                    binding.buttonUpdate.isVisible = true
-                    binding.buttonUpdate.setOnClickListener {
-                        searchViewModel.search(binding.inputEditText.text.toString())
-                    }
-                    binding.searchHistory.isVisible = false
-                    binding.clearSearchHistory.isVisible = false
-                }
-
-                else -> {
-                    Log.d(TAG, "handleUiState: Unhandled UiState: $state")
-                }
+        when (state) {
+            is SearchViewModel.UiState.Loading -> {
+                binding.downloadIconFrame.isVisible = true
+                binding.trackList.isVisible = false
+                binding.placeholderImage.isVisible = false
+                binding.placeholderText.isVisible = false
+                binding.buttonUpdate.isVisible = false
+                binding.searchHistory.isVisible = false
+                binding.clearSearchHistory.isVisible = false
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error in handleUiState: ${e.message}")
+
+            is SearchViewModel.UiState.Success -> {
+                binding.downloadIconFrame.isVisible = false
+                binding.trackList.isVisible = true
+                binding.placeholderImage.isVisible = false
+                binding.placeholderText.isVisible = false
+                binding.buttonUpdate.isVisible = false
+                binding.searchHistory.isVisible = false
+                binding.clearSearchHistory.isVisible = false
+            }
+
+            is SearchViewModel.UiState.Empty -> {
+                binding.downloadIconFrame.isVisible = false
+                binding.trackList.isVisible = false
+                binding.placeholderImage.isVisible = true
+                binding.placeholderText.isVisible = true
+                binding.placeholderImage.setImageResource(R.drawable.not_found)
+                binding.placeholderText.text = getString(R.string.not_found)
+                binding.buttonUpdate.isVisible = false
+                binding.searchHistory.isVisible = false
+                binding.clearSearchHistory.isVisible = false
+            }
+
+            is SearchViewModel.UiState.Error -> {
+                binding.downloadIconFrame.isVisible = false
+                binding.trackList.isVisible = false
+                binding.placeholderImage.isVisible = true
+                binding.placeholderText.isVisible = true
+                binding.placeholderImage.setImageResource(R.drawable.net_error)
+                binding.placeholderText.text = getString(R.string.net_error)
+                binding.buttonUpdate.isVisible = true
+                binding.buttonUpdate.setOnClickListener {
+                    searchViewModel.search(binding.inputEditText.text.toString())
+                }
+                binding.searchHistory.isVisible = false
+                binding.clearSearchHistory.isVisible = false
+            }
         }
     }
 
