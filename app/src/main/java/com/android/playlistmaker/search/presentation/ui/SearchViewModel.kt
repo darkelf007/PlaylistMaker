@@ -2,7 +2,6 @@ package com.android.playlistmaker.search.presentation.ui
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.AndroidViewModel
@@ -37,6 +36,9 @@ class SearchViewModel(
     private val _uiState = MutableLiveData<UiState>()
     val uiState: LiveData<UiState> get() = _uiState
 
+    private val _currentQuery = MutableLiveData<String>("")
+    val currentQuery: LiveData<String> get() = _currentQuery
+
     private val queryFlow = MutableStateFlow("")
 
     private val _navigateToPlayer = MutableLiveData<Event<String>>()
@@ -45,11 +47,12 @@ class SearchViewModel(
     private var isClickAllowed = true
 
     init {
-        Log.d("SearchViewModel", "VM created")
         observeQuery()
+
     }
 
     fun updateQuery(query: String) {
+        _currentQuery.value = query
         queryFlow.value = query
     }
 
@@ -94,10 +97,7 @@ class SearchViewModel(
         viewModelScope.launch {
 
             if (clickDebounce()) {
-                Log.d(
-                    "SearchViewModel",
-                    "Clicked track: ${searchTrack.trackName} with ID: ${searchTrack.trackId}"
-                )
+
                 addTrackToHistory(searchTrack)
                 _navigateToPlayer.value = Event(createTrackJson(searchTrack))
             }
@@ -131,7 +131,6 @@ class SearchViewModel(
         }
         searchInteractor.saveSearchHistory(history)
         _searchHistory.value = history
-        Log.d("SearchViewModel", "History updated: $history")
     }
 
 
@@ -146,9 +145,7 @@ class SearchViewModel(
 
     fun showHistory() {
         viewModelScope.launch {
-            Log.d("SearchViewModel", "showHistory called")
             val history = searchInteractor.getSearchHistory() ?: emptyList()
-            Log.d("SearchViewModel", "Loaded history: ${history.size} items")
             _searchHistory.value = history
 
         }
@@ -185,7 +182,6 @@ class SearchViewModel(
     }
 
     override fun onCleared() {
-        Log.d("SearchViewModel", "VM cleared")
         super.onCleared()
     }
 

@@ -60,7 +60,7 @@ class FavoriteTrackAdapter(private val clickListener: TrackClickListener) :
         return TrackHolder(parent)
     }
 
-        override fun onBindViewHolder(holder: TrackHolder, position: Int) {
+    override fun onBindViewHolder(holder: TrackHolder, position: Int) {
         if (position < tracks.size) {
             val track = tracks[position]
             holder.bind(track)

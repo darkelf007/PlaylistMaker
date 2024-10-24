@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +22,8 @@ import org.koin.core.parameter.parametersOf
 
 
 class SearchFragment : Fragment() {
+
+
     private lateinit var binding: FragmentSearchBinding
     private val searchViewModel: SearchViewModel by viewModel { parametersOf(requireActivity().application) }
     private lateinit var trackAdapter: TrackAdapter
@@ -52,41 +53,38 @@ class SearchFragment : Fragment() {
         setupObservers()
         setupListeners()
 
-        if (savedInstanceState != null) {
-            val searchText = savedInstanceState.getString(SEARCH_ITEM, "")
-            binding.inputEditText.setText(searchText)
-            if (!searchText.isNullOrEmpty()) {
-                searchViewModel.search(searchText)
-            }
-        }
     }
 
+
     private fun setupObservers() {
+        searchViewModel.currentQuery.observe(viewLifecycleOwner, Observer { query ->
+            if (binding.inputEditText.text.toString() != query) {
+                binding.inputEditText.setText(query)
+                binding.inputEditText.setSelection(query.length)
+            }
+
+            val shouldShowHistory = binding.inputEditText.hasFocus() && query.isEmpty()
+            val isHistoryVisible =
+                shouldShowHistory && searchViewModel.searchHistory.value?.isNotEmpty() == true
+
+            binding.searchHistory.isVisible = isHistoryVisible
+            binding.clearSearchHistory.isVisible = isHistoryVisible
+
+            binding.trackList.isVisible = query.isNotEmpty()
+        })
 
         searchViewModel.tracks.observe(viewLifecycleOwner, Observer { tracks ->
             trackAdapter.updateTracks(tracks)
+            binding.trackList.isVisible = tracks.isNotEmpty()
         })
 
         searchViewModel.searchHistory.observe(viewLifecycleOwner, Observer { tracksHistory ->
             trackAdapterHistory.updateTracks(tracksHistory)
-            with(binding) {
-                searchHistory.isVisible = tracksHistory.isNotEmpty()
-
-                if (tracksHistory.isNotEmpty()) {
-                    trackList.isVisible = false
-                    placeholderImage.isVisible = false
-                    placeholderText.isVisible = false
-                    buttonUpdate.isVisible = false
-
-                    searchHistoryRecyclerView.isVisible = true
-                    clearSearchHistory.isVisible = true
-                } else {
-                    trackList.isVisible = true
-
-                    searchHistoryRecyclerView.isVisible = false
-                    clearSearchHistory.isVisible = false
-                }
-            }
+            val shouldShowHistory =
+                binding.inputEditText.hasFocus() && searchViewModel.currentQuery.value.isNullOrEmpty()
+            val isHistoryVisible = shouldShowHistory && tracksHistory.isNotEmpty()
+            binding.searchHistory.isVisible = isHistoryVisible
+            binding.clearSearchHistory.isVisible = isHistoryVisible
         })
 
         searchViewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
@@ -106,9 +104,6 @@ class SearchFragment : Fragment() {
 
     private fun setupListeners() {
         binding.clearIcon.setOnClickListener {
-            binding.placeholderImage.isVisible = false
-            binding.placeholderText.isVisible = false
-            binding.buttonUpdate.isVisible = false
             binding.inputEditText.setText("")
             searchViewModel.hideKeyboard(requireActivity().currentFocus ?: View(requireContext()))
             searchViewModel.clearTracks()
@@ -116,7 +111,9 @@ class SearchFragment : Fragment() {
         }
 
         binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) searchViewModel.showHistory()
+            if (hasFocus && searchViewModel.currentQuery.value.isNullOrEmpty()) {
+                searchViewModel.showHistory()
+            }
         }
 
         binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
@@ -161,7 +158,6 @@ class SearchFragment : Fragment() {
                 binding.placeholderText.isVisible = false
                 binding.buttonUpdate.isVisible = false
                 binding.searchHistory.isVisible = false
-                binding.clearSearchHistory.isVisible = false
             }
 
             is SearchViewModel.UiState.Success -> {
@@ -171,7 +167,6 @@ class SearchFragment : Fragment() {
                 binding.placeholderText.isVisible = false
                 binding.buttonUpdate.isVisible = false
                 binding.searchHistory.isVisible = false
-                binding.clearSearchHistory.isVisible = false
             }
 
             is SearchViewModel.UiState.Empty -> {
@@ -183,7 +178,6 @@ class SearchFragment : Fragment() {
                 binding.placeholderText.text = getString(R.string.not_found)
                 binding.buttonUpdate.isVisible = false
                 binding.searchHistory.isVisible = false
-                binding.clearSearchHistory.isVisible = false
             }
 
             is SearchViewModel.UiState.Error -> {
@@ -198,7 +192,6 @@ class SearchFragment : Fragment() {
                     searchViewModel.search(binding.inputEditText.text.toString())
                 }
                 binding.searchHistory.isVisible = false
-                binding.clearSearchHistory.isVisible = false
             }
         }
     }
@@ -207,25 +200,5 @@ class SearchFragment : Fragment() {
         return !s.isNullOrEmpty()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        if (this::binding.isInitialized) {
-            outState.putString(SEARCH_ITEM, binding.inputEditText.text.toString())
-        }
-    }
 
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        if (savedInstanceState != null && this::binding.isInitialized) {
-            val searchText = savedInstanceState.getString(SEARCH_ITEM, "")
-            binding.inputEditText.setText(searchText)
-            if (!searchText.isNullOrEmpty()) {
-                searchViewModel.search(searchText)
-            }
-        }
-    }
-
-    private companion object {
-        private const val SEARCH_ITEM = "SEARCH_ITEM"
-    }
 }

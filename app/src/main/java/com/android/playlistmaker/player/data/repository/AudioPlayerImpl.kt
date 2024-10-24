@@ -1,7 +1,6 @@
 package com.android.playlistmaker.player.data.repository
 
 import android.media.MediaPlayer
-import android.util.Log
 import com.android.playlistmaker.player.domain.interfaces.AudioRepository
 
 class AudioPlayerImpl : AudioRepository {
