@@ -18,16 +18,16 @@
             android:src="@drawable/not_found"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             style="@style/your_media_library"
             android:text="@string/your_media_library_is_empty"
-            android:fontFamily="@font/yandexsanstextmedium"
+            android:fontFamily="@font/yandex_sans_text_medium"
             android:layout_marginTop="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_view"/>
+            app:layout_constraintTop_toBottomOf="@+id/image_view" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -37,11 +37,11 @@
         android:layout_height="44dp"
         android:layout_gravity="center"
         android:indeterminateTint="#6200EE"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/library_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </FrameLayout>

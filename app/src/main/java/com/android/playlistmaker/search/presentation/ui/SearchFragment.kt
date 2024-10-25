@@ -1,5 +1,6 @@
 package com.android.playlistmaker.search.presentation.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -18,17 +20,15 @@ import com.android.playlistmaker.databinding.FragmentSearchBinding
 import com.android.playlistmaker.player.presentation.PlayerActivity
 import com.android.playlistmaker.search.presentation.adapter.TrackAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 
 class SearchFragment : Fragment() {
 
 
     private lateinit var binding: FragmentSearchBinding
-    private val searchViewModel: SearchViewModel by viewModel { parametersOf(requireActivity().application) }
+    private val searchViewModel: SearchViewModel by viewModel()
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var trackAdapterHistory: TrackAdapter
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,40 +53,18 @@ class SearchFragment : Fragment() {
         setupObservers()
         setupListeners()
 
-    }
+        searchViewModel.resetUiState()
 
-
-    private fun setupObservers() {
-        searchViewModel.currentQuery.observe(viewLifecycleOwner, Observer { query ->
+        searchViewModel.currentQuery.value?.let { query ->
             if (binding.inputEditText.text.toString() != query) {
                 binding.inputEditText.setText(query)
                 binding.inputEditText.setSelection(query.length)
+                searchViewModel.updateQuery(query)
             }
+        }
+    }
 
-            val shouldShowHistory = binding.inputEditText.hasFocus() && query.isEmpty()
-            val isHistoryVisible =
-                shouldShowHistory && searchViewModel.searchHistory.value?.isNotEmpty() == true
-
-            binding.searchHistory.isVisible = isHistoryVisible
-            binding.clearSearchHistory.isVisible = isHistoryVisible
-
-            binding.trackList.isVisible = query.isNotEmpty()
-        })
-
-        searchViewModel.tracks.observe(viewLifecycleOwner, Observer { tracks ->
-            trackAdapter.updateTracks(tracks)
-            binding.trackList.isVisible = tracks.isNotEmpty()
-        })
-
-        searchViewModel.searchHistory.observe(viewLifecycleOwner, Observer { tracksHistory ->
-            trackAdapterHistory.updateTracks(tracksHistory)
-            val shouldShowHistory =
-                binding.inputEditText.hasFocus() && searchViewModel.currentQuery.value.isNullOrEmpty()
-            val isHistoryVisible = shouldShowHistory && tracksHistory.isNotEmpty()
-            binding.searchHistory.isVisible = isHistoryVisible
-            binding.clearSearchHistory.isVisible = isHistoryVisible
-        })
-
+    private fun setupObservers() {
         searchViewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
             handleUiState(state)
         })
@@ -99,13 +77,20 @@ class SearchFragment : Fragment() {
                 startActivity(playerIntent)
             }
         })
-    }
 
+        searchViewModel.tracks.observe(viewLifecycleOwner, Observer { tracks ->
+            trackAdapter.updateTracks(tracks)
+        })
+
+        searchViewModel.searchHistory.observe(viewLifecycleOwner, Observer { tracksHistory ->
+            trackAdapterHistory.updateTracks(tracksHistory)
+        })
+    }
 
     private fun setupListeners() {
         binding.clearIcon.setOnClickListener {
             binding.inputEditText.setText("")
-            searchViewModel.hideKeyboard(requireActivity().currentFocus ?: View(requireContext()))
+            hideKeyboard()
             searchViewModel.clearTracks()
             searchViewModel.showHistory()
         }
@@ -113,12 +98,18 @@ class SearchFragment : Fragment() {
         binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && searchViewModel.currentQuery.value.isNullOrEmpty()) {
                 searchViewModel.showHistory()
+            } else {
+                if (!hasFocus) {
+                    hideKeyboard()
+                }
             }
         }
 
         binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchViewModel.updateQuery(binding.inputEditText.text.toString())
+                val query = binding.inputEditText.text.toString()
+                searchViewModel.updateQuery(query)
+                hideKeyboard()
                 true
             } else {
                 false
@@ -151,6 +142,15 @@ class SearchFragment : Fragment() {
 
     private fun handleUiState(state: SearchViewModel.UiState) {
         when (state) {
+            is SearchViewModel.UiState.Idle -> {
+                binding.downloadIconFrame.isVisible = false
+                binding.trackList.isVisible = false
+                binding.placeholderImage.isVisible = false
+                binding.placeholderText.isVisible = false
+                binding.buttonUpdate.isVisible = false
+                binding.searchHistory.isVisible = false
+            }
+
             is SearchViewModel.UiState.Loading -> {
                 binding.downloadIconFrame.isVisible = true
                 binding.trackList.isVisible = false
@@ -167,6 +167,16 @@ class SearchFragment : Fragment() {
                 binding.placeholderText.isVisible = false
                 binding.buttonUpdate.isVisible = false
                 binding.searchHistory.isVisible = false
+            }
+
+            is SearchViewModel.UiState.History -> {
+                binding.downloadIconFrame.isVisible = false
+                binding.trackList.isVisible = false
+                binding.placeholderImage.isVisible = false
+                binding.placeholderText.isVisible = false
+                binding.buttonUpdate.isVisible = false
+                binding.searchHistory.isVisible = state.showHistory && searchViewModel.searchHistory.value?.isNotEmpty() == true
+                binding.clearSearchHistory.isVisible = binding.searchHistory.isVisible
             }
 
             is SearchViewModel.UiState.Empty -> {
@@ -200,5 +210,11 @@ class SearchFragment : Fragment() {
         return !s.isNullOrEmpty()
     }
 
-
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val view = requireActivity().currentFocus
+        if (view != null) {
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+    }
 }

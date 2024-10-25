@@ -1,6 +1,5 @@
 package com.android.playlistmaker.di
 
-import android.app.Application
 import com.android.playlistmaker.main.ui.MainViewModel
 import com.android.playlistmaker.media.presentation.FavoriteFragmentViewModel
 import com.android.playlistmaker.player.presentation.PlayerViewModel
@@ -14,6 +13,6 @@ val viewModelModule = module {
     viewModelOf(::MainViewModel)
     viewModelOf(::SettingsViewModel)
     viewModel { PlayerViewModel(get(), get(), get(), get()) }
-    viewModel { (application: Application) -> SearchViewModel(application, get(), get()) }
+    viewModel { SearchViewModel(get(), get(), get()) }
     viewModel { FavoriteFragmentViewModel(get()) }
 }
