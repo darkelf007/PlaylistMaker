@@ -1,9 +1,10 @@
 <resources>
+
     <style name="Base.Theme.PlaylistMaker" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorOnPrimary">@color/black</item>
         <item name="android:textColor">@color/dark_blue</item>
         <item name="android:colorBackground">@color/white</item>
-        <item name="android:fontFamily">@font/yandexsanstextmedium</item>
+        <item name="android:fontFamily">@font/yandex_sans_text_medium</item>
         <item name="android:statusBarColor">@color/white</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowLightStatusBar">true</item>
@@ -13,7 +14,7 @@
         <item name="android:navigationBarColor">@color/blue</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:colorBackground">@color/blue</item>
-        <item name="android:fontFamily">@font/yandexsanstextmedium</item>
+        <item name="android:fontFamily">@font/yandex_sans_text_medium</item>
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />

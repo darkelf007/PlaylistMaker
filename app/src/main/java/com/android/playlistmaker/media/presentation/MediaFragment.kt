@@ -1,7 +1,6 @@
 package com.android.playlistmaker.media.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +18,6 @@ class MediaFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.d("FragmentTransition", "SearchFragment created")
 
         binding = FragmentMediaBinding.inflate(inflater, container, false)
         return binding.root
@@ -27,7 +25,6 @@ class MediaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("FragmentTransition", "SearchFragment view created")
         binding.viewPager.adapter = MediaAdapter(childFragmentManager, lifecycle)
 
         tabLayoutMediator =

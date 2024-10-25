@@ -21,7 +21,6 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        // Кнопка назад
         val backButton = findViewById<Button>(R.id.button_backToMain)
         backButton.setOnClickListener {
             finish()
@@ -38,7 +37,6 @@ class SearchActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                // Обновление видимости кнопки сброса
                 val closeButton = searchView.findViewById<View>(androidx.appcompat.R.id.search_close_btn)
                 closeButton.visibility = if (s.isNotEmpty()) View.VISIBLE else View.GONE
                 currentText = s.toString()
