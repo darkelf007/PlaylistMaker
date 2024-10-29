@@ -49,22 +49,18 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        // Кнопка назад
         val backButton = findViewById<Button>(R.id.button_backToMain)
         backButton.setOnClickListener {
             finish()
         }
-        // Поделиться ссылкой
         val linearLayout: LinearLayout = findViewById(R.id.layoutToShare)
         linearLayout.setOnClickListener {
             showShareDialog()
         }
-        // Написать в поддержку
         val supportButton: LinearLayout = findViewById(R.id.layoutTextWriteToSupport)
         supportButton.setOnClickListener {
             sendSupportEmail()
         }
-        // Пользовательское соглашение
         val userAgreementButton: LinearLayout = findViewById(R.id.layoutUserAgreement)
         userAgreementButton.setOnClickListener {
             showUserAgreement()

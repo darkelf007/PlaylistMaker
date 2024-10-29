@@ -1,7 +1,7 @@
-package com.android.playlistmaker.player.data
+package com.android.playlistmaker.player.data.repository
 
-import com.android.playlistmaker.player.domain.AudioRepository
-import com.android.playlistmaker.player.domain.PlayerUseCase
+import com.android.playlistmaker.player.domain.interfaces.AudioRepository
+import com.android.playlistmaker.player.domain.interfaces.PlayerUseCase
 
 class PlayerUseCaseImpl(
     private val audioRepository: AudioRepository
@@ -10,6 +10,7 @@ class PlayerUseCaseImpl(
         audioRepository.setDataSource(url)
         audioRepository.prepareAsync(onPrepared)
     }
+
     override fun seekTo(position: Int) {
         audioRepository.seekTo(position)
     }

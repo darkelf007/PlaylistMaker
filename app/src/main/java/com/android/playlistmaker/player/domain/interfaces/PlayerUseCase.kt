@@ -1,4 +1,4 @@
-package com.android.playlistmaker.player.domain
+package com.android.playlistmaker.player.domain.interfaces
 
 interface PlayerUseCase {
     fun prepare(url: String, onPrepared: () -> Unit)

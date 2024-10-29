@@ -1,5 +1,9 @@
-package com.android.playlistmaker.search.domain
+package com.android.playlistmaker.search.data.repository
 
+import com.android.playlistmaker.search.domain.SearchHistoryRepository
+import com.android.playlistmaker.search.domain.SearchInteractor
+import com.android.playlistmaker.search.domain.SearchRepository
+import com.android.playlistmaker.search.domain.SearchTrack
 import kotlinx.coroutines.flow.Flow
 
 class SearchInteractorImpl(

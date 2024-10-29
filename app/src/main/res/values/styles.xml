@@ -52,7 +52,7 @@
         <item name="android:textColor">@color/white_black</item>
         <item name="android:textSize">@dimen/text_size_14</item>
         <item name="android:letterSpacing">0</item>
-        <item name="fontFamily">@font/yandexsanstextmedium</item>
+        <item name="fontFamily">@font/yandex_sans_text_medium</item>
         <item name="android:layout_marginTop">@dimen/dp_24</item>
 
     </style>
@@ -60,7 +60,7 @@
     <style name="your_media_library">
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/black_white</item>
-        <item name="android:fontFamily">@font/yandexsanstextmedium</item>
+        <item name="android:fontFamily">@font/yandex_sans_text_medium</item>
         <item name="android:letterSpacing">0</item>
         <item name="android:layout_width">@dimen/dp_312</item>
         <item name="android:layout_height">wrap_content</item>
@@ -75,7 +75,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center_horizontal</item>
         <item name="android:layout_marginTop">240dp</item>
-        <item name="android:fontFamily">@font/yandexsanstextmedium</item>
+        <item name="android:fontFamily">@font/yandex_sans_text_medium</item>
         <item name="android:gravity">center</item>
         <item name="android:letterSpacing">0</item>
         <item name="android:textAllCaps">false</item>
@@ -90,7 +90,7 @@
     </style>
 
     <style name="navigation_text" parent="bottom_navigation">
-        <item name="fontFamily">@font/yandexsanstextmedium</item>
+        <item name="fontFamily">@font/yandex_sans_text_regular</item>
         <item name="android:textSize">@dimen/text_size_12</item>
     </style>
 </resources>

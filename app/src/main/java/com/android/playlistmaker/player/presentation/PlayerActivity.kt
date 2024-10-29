@@ -1,24 +1,23 @@
 package com.android.playlistmaker.player.presentation
 
 import android.os.Bundle
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.android.playlistmaker.R
+import com.android.playlistmaker.app.App.Companion.KEY_FOR_PLAYER
 import com.android.playlistmaker.databinding.ActivityPlayerBinding
-import com.android.playlistmaker.player.domain.Track
+import com.android.playlistmaker.player.domain.models.PlayerTrack
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
-    private var previousTrack: Track? = null
+    private var previousTrack: PlayerTrack? = null
 
     private lateinit var binding: ActivityPlayerBinding
 
@@ -35,23 +34,29 @@ class PlayerActivity : AppCompatActivity() {
             }
         }
 
-        val json = intent.getStringExtra(TRACK)
-        Log.d("PlayerActivity", "Received JSON: $json")
+        val json = intent.getStringExtra(KEY_FOR_PLAYER)
 
-        playerViewModel.setTrackFromJson(json ?: "")
+        if (json.isNullOrEmpty()) {
+            finish()
+            return
+        }
+
+        playerViewModel.setTrackFromJson(json)
 
         playerViewModel.viewState.observe(this) { state ->
-            Log.d("PlayerActivity", "ViewState observed: $state")
             if (state.track != previousTrack) {
                 state.track?.let { updateUIWithTrack(it) }
                 previousTrack = state.track
             }
             updatePlaybackState(state)
+            updateFavoriteButton(state.isFavorite)
         }
 
         binding.playerPlayTrack.setOnClickListener {
-            Log.d("PlayerActivity", "Play button clicked")
             playbackControl()
+        }
+        binding.playerLikeTrack.setOnClickListener {
+            playerViewModel.toggleFavorite()
         }
     }
 
@@ -60,13 +65,11 @@ class PlayerActivity : AppCompatActivity() {
         if (playerViewModel.viewState.value?.playerState == PlayerViewModel.STATE_PLAYING) {
             playerViewModel.pausePlayer()
         }
-        Log.d("PlayerActivity", "Activity paused")
     }
 
     override fun onDestroy() {
         super.onDestroy()
         playerViewModel.releasePlayer()
-        Log.d("PlayerActivity", "Activity destroyed")
     }
 
     private fun initialization() {
@@ -75,22 +78,31 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateUIWithTrack(track: Track) {
+    private fun updateFavoriteButton(isFavorite: Boolean) {
+        if (isFavorite) {
+            binding.playerLikeTrack.setImageResource(R.drawable.red_like_button)
+        } else {
+            binding.playerLikeTrack.setImageResource(R.drawable.like_button)
+        }
+    }
+
+    private fun updateUIWithTrack(track: PlayerTrack) {
         binding.playerTrackName.text = track.trackName
         binding.playerArtistName.text = track.artistName
 
         val coverUrl = track.getCoverArtwork()
         if (coverUrl.isNullOrEmpty()) {
-            Log.e("PlayerActivity", "Cover artwork URL is null or empty")
         } else {
-            Log.d("PlayerActivity", "Loading cover artwork from: $coverUrl")
-            Glide.with(this).load(coverUrl).placeholder(R.drawable.placeholder_album_player)
-                .error(R.drawable.placeholder_album_player).centerCrop()
+            Glide.with(this)
+                .load(coverUrl)
+                .placeholder(R.drawable.placeholder_album_player)
+                .error(R.drawable.placeholder_album_player)
+                .centerCrop()
                 .transform(RoundedCorners(resources.getDimensionPixelSize(R.dimen.dp_8)))
                 .into(binding.trackAlbumPlaceholder)
         }
 
-        handleUiState(if (track.trackTime != 0) UiState.TrackTimeAvailable(track.trackTime) else UiState.TrackTimeUnavailable)
+        handleUiState(if (track.trackTimeMillis != 0) UiState.TrackTimeAvailable(track.trackTimeMillis) else UiState.TrackTimeUnavailable)
         handleUiState(
             if (!track.collectionName.isNullOrEmpty()) UiState.CollectionNameAvailable(track.collectionName) else UiState.CollectionNameUnavailable
         )
@@ -106,45 +118,35 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun updatePlaybackState(state: PlayerViewState) {
-        Log.d("PlayerActivity", "Updating playback state: ${state.playerState}")
         when (state.playerState) {
             PlayerViewModel.STATE_PREPARED -> {
                 binding.playerPlayTrack.isEnabled = true
                 binding.playerPlayTrack.setImageResource(R.drawable.play_button)
-                Log.d("PlayerActivity", "Player state: PREPARED")
             }
 
             PlayerViewModel.STATE_PLAYING -> {
                 binding.playerPlayTrack.setImageResource(R.drawable.pause_button)
-                Log.d("PlayerActivity", "Player state: PLAYING")
             }
 
             PlayerViewModel.STATE_PAUSED, PlayerViewModel.STATE_DEFAULT -> {
                 binding.playerPlayTrack.setImageResource(R.drawable.play_button)
-                Log.d("PlayerActivity", "Player state: PAUSED or DEFAULT")
             }
         }
     }
 
     private fun playbackControl() {
         val state = playerViewModel.viewState.value
-        Log.d("PlayerActivity", "Playback control: current state = ${state?.playerState}")
         when (state?.playerState) {
             PlayerViewModel.STATE_PLAYING -> {
                 playerViewModel.pausePlayer()
-                Log.d("PlayerActivity", "Playback control: PAUSE")
             }
 
             PlayerViewModel.STATE_PREPARED, PlayerViewModel.STATE_PAUSED -> {
                 playerViewModel.startPlayer()
-                Log.d("PlayerActivity", "Playback control: PLAY")
             }
         }
     }
 
-    companion object {
-        private const val TRACK = "TRACK"
-    }
 
     private fun handleUiState(state: UiState) {
         when (state) {

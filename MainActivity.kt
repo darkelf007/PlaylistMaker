@@ -14,24 +14,20 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         Log.d("MainActivity", "MainActivity started")
 
-        // Остальной код
 
         val searchButton = findViewById<Button>(R.id.button_search)
         val mediaButton =findViewById<Button>(R.id.button_media)
         val settingsButton  =findViewById<Button>(R.id.button_settings)
-        //ссылка на страницу поиска
         searchButton.setOnClickListener{
             val displayIntent = Intent(this, SearchActivity::class.java)
             startActivity(displayIntent)
         }
-        //второй вариант
         val bottonClickListener: View.OnClickListener = object : View.OnClickListener {
             override fun onClick(v: View?) {
                 Toast.makeText(this@MainActivity, "Media!", Toast.LENGTH_SHORT).show()
             }
         }
         mediaButton.setOnClickListener(bottonClickListener)
-        //ссылка на страницу настройки
         settingsButton.setOnClickListener {
             val displayIntent = Intent(this, SettingsActivity::class.java)
             startActivity(displayIntent)

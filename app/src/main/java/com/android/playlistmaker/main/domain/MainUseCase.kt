@@ -1,6 +1,6 @@
 package com.android.playlistmaker.main.domain
 
-class MainUseCase(private val repository: MainRepository): MainInteractor {
+class MainUseCase(private val repository: MainRepository) : MainInteractor {
     override fun onSearchClick() {
         repository.onSearchClick()
     }

@@ -3,6 +3,7 @@ package com.android.playlistmaker.app
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.android.playlistmaker.di.dataModule
+import com.android.playlistmaker.di.databaseModule
 import com.android.playlistmaker.di.interactorModule
 import com.android.playlistmaker.di.playerModule
 import com.android.playlistmaker.di.repositoryModule
@@ -17,9 +18,9 @@ class App : Application() {
 
     companion object {
         const val DARK_THEME_KEY = "Dark_theme_key"
+        const val KEY_FOR_PLAYER = "KEY_FOR_PLAYER"
     }
 
-    private val settingsRepository: SettingsRepository by inject()
 
     override fun onCreate() {
         super.onCreate()
@@ -29,11 +30,14 @@ class App : Application() {
             androidContext(this@App)
             modules(
                 listOf(
-                    dataModule, interactorModule, repositoryModule, viewModelModule, playerModule
+                    dataModule, interactorModule, repositoryModule, viewModelModule, playerModule,
+                    databaseModule
                 )
             )
         }
 
+
+        val settingsRepository: SettingsRepository by inject()
         switchTheme(settingsRepository.getDarkThemeEnabled())
 
     }
