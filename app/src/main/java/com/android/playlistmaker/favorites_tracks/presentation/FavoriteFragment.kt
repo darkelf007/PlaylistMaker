@@ -8,10 +8,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.playlistmaker.app.App
 import com.android.playlistmaker.databinding.FavoriteFragmentBinding
-import com.android.playlistmaker.media.domain.models.FavoriteTrack
-import com.android.playlistmaker.media.presentation.FavoriteFragmentViewModel
-import com.android.playlistmaker.media.presentation.FavouriteTrackState
-import com.android.playlistmaker.media.presentation.adapter.FavoriteTrackAdapter
+import com.android.playlistmaker.favorites_tracks.domain.models.FavoriteTrack
+import com.android.playlistmaker.favorites_tracks.presentation.FavoriteFragmentViewModel
+import com.android.playlistmaker.favorites_tracks.presentation.FavouriteTrackState
 import com.android.playlistmaker.player.presentation.PlayerActivity
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
@@ -22,7 +21,7 @@ class FavoriteFragment : Fragment() {
     private var _binding: FavoriteFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private var adapter: FavoriteTrackAdapter? = null
+    private var adapter: com.android.playlistmaker.favorites_tracks.presentation.adapter.FavoriteTrackAdapter? = null
     private var isClickAllowed = true
 
     companion object {
@@ -44,11 +43,12 @@ class FavoriteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = FavoriteTrackAdapter { libraryTrack ->
-            if (clickDebounce()) {
-                clickOnItem(libraryTrack)
+        adapter =
+            com.android.playlistmaker.favorites_tracks.presentation.adapter.FavoriteTrackAdapter { libraryTrack ->
+                if (clickDebounce()) {
+                    clickOnItem(libraryTrack)
+                }
             }
-        }
 
         binding.libraryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.libraryRecyclerView.adapter = adapter

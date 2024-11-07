@@ -1,4 +1,4 @@
-package com.android.playlistmaker.media.presentation
+package com.android.playlistmaker.new_playlist.presentation
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.android.playlistmaker.databinding.PlaylistFragmentBinding
+
 
 class PlaylistFragment : Fragment() {
 

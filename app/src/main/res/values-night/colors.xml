@@ -12,4 +12,5 @@
     <color name="black_white">@color/white</color>
     <color name="switch_Knob_color">@color/blue</color>
     <color name="switch_track_color">#9FBBF3</color>
+    <color name="darkBlue_white">@color/white</color>
 </resources>

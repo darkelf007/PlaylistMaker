@@ -1,13 +1,14 @@
 package com.android.playlistmaker.di
 
 
-import com.android.playlistmaker.media.data.converter.FavoriteTrackDbConverter
-import com.android.playlistmaker.media.data.repository.FavoriteDatabaseRepositoryImpl
-import com.android.playlistmaker.media.domain.converter.FavoriteTrackDataConverter
-import com.android.playlistmaker.media.domain.converter.FavoriteTrackToTrackConverter
-import com.android.playlistmaker.media.domain.db.FavoriteDatabaseInteractor
-import com.android.playlistmaker.media.domain.db.FavoriteDatabaseRepository
-import com.android.playlistmaker.media.domain.impl.FavoriteDatabaseInteractorImpl
+
+import com.android.playlistmaker.favorites_tracks.data.converter.FavoriteTrackDbConverter
+import com.android.playlistmaker.favorites_tracks.data.repository.FavoriteDatabaseRepositoryImpl
+import com.android.playlistmaker.favorites_tracks.domain.converter.FavoriteTrackDataConverter
+import com.android.playlistmaker.favorites_tracks.domain.converter.FavoriteTrackToTrackConverter
+import com.android.playlistmaker.favorites_tracks.domain.db.FavoriteDatabaseInteractor
+import com.android.playlistmaker.favorites_tracks.domain.db.FavoriteDatabaseRepository
+import com.android.playlistmaker.favorites_tracks.domain.impl.FavoriteDatabaseInteractorImpl
 import com.android.playlistmaker.player.data.repository.AudioPlayerDatabaseRepositoryImpl
 import com.android.playlistmaker.player.data.repository.PlayerUseCaseImpl
 import com.android.playlistmaker.player.domain.interactor.AudioPlayerDatabaseInteractorImpl

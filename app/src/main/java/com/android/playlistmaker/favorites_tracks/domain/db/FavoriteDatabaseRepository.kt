@@ -1,6 +1,6 @@
-package com.android.playlistmaker.media.domain.db
+package com.android.playlistmaker.favorites_tracks.domain.db
 
-import com.android.playlistmaker.media.data.dto.FavoriteTrackDto
+import com.android.playlistmaker.favorites_tracks.data.dto.FavoriteTrackDto
 import kotlinx.coroutines.flow.Flow
 
 interface FavoriteDatabaseRepository {

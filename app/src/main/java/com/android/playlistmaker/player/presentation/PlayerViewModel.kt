@@ -5,8 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.playlistmaker.media.domain.db.FavoriteDatabaseInteractor
-import com.android.playlistmaker.media.domain.models.FavoriteTrack
+import com.android.playlistmaker.favorites_tracks.domain.db.FavoriteDatabaseInteractor
+import com.android.playlistmaker.favorites_tracks.domain.models.FavoriteTrack
+
 import com.android.playlistmaker.player.domain.interfaces.PlayerUseCase
 import com.android.playlistmaker.player.domain.models.PlayerTrack
 import com.google.gson.Gson

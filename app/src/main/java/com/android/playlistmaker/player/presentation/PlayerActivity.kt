@@ -17,7 +17,6 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
-    private var previousTrack: PlayerTrack? = null
 
     private lateinit var binding: ActivityPlayerBinding
 
@@ -44,10 +43,7 @@ class PlayerActivity : AppCompatActivity() {
         playerViewModel.setTrackFromJson(json)
 
         playerViewModel.viewState.observe(this) { state ->
-            if (state.track != previousTrack) {
-                state.track?.let { updateUIWithTrack(it) }
-                previousTrack = state.track
-            }
+            state.track?.let { updateUIWithTrack(it) }
             updatePlaybackState(state)
             updateFavoriteButton(state.isFavorite)
         }

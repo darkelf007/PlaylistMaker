@@ -1,4 +1,4 @@
-package com.android.playlistmaker.media.domain.models
+package com.android.playlistmaker.favorites_tracks.domain.models
 
 data class FavoriteTrack(
     val trackId: Int,

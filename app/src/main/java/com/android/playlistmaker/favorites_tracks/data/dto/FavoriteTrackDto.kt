@@ -1,4 +1,4 @@
-package com.android.playlistmaker.media.data.dto
+package com.android.playlistmaker.favorites_tracks.data.dto
 
 data class FavoriteTrackDto(
     val trackId: Int,

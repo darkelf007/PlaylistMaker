@@ -4,9 +4,6 @@
     <string name="media">Медиатека</string>
     <string name="settings">Настройки</string>
     <string name="dark_theme">Темная тема</string>
-    <string name="to_share">Поделиться</string>
-    <string name="write_to_support">Написать в поддержку</string>
-    <string name="user_agreement">Пользовательское соглашение</string>
     <string name="button_back">Кнопка назад</string>
 
     <!-- SettingsActivity -->
@@ -15,6 +12,9 @@
     <string name="support_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="user_agreement_url">https://yandex.ru/legal/practicum_offer/</string>
     <string name="share_dialog">Привет, посетите нашу страничку: https://practicum.yandex.ru/android-developer/</string>
+    <string name="to_share">Поделиться</string>
+    <string name="write_to_support">Написать в поддержку</string>
+    <string name="user_agreement">Пользовательское соглашение</string>
 
     <!-- SearchActivity -->
     <string name="not_found">Ничего не нашлось</string>
@@ -41,5 +41,13 @@
     <string name="your_media_library_is_empty">Ваша медиатека пуста</string>
     <string name="new_playlist">Новый плейлист</string>
     <string name="you_havent_created_any_playlists">Вы не создали \nни одного плейлиста</string>
+
+    <!--New playlist -->
+    <string name="new_playlist_text">Новый плейлист</string>
+    <string name="name_hint">Название*</string>
+    <string name="description">Описание</string>
+    <string name="text_for_button">Создать</string>
+    <string name="cancel">Отмена</string>
+
 
 </resources>

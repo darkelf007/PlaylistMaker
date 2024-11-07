@@ -1,7 +1,7 @@
-package com.android.playlistmaker.media.domain.converter
+package com.android.playlistmaker.favorites_tracks.domain.converter
 
-import com.android.playlistmaker.media.data.dto.FavoriteTrackDto
-import com.android.playlistmaker.media.domain.models.FavoriteTrack
+import com.android.playlistmaker.favorites_tracks.data.dto.FavoriteTrackDto
+import com.android.playlistmaker.favorites_tracks.domain.models.FavoriteTrack
 
 
 class FavoriteTrackToTrackConverter {

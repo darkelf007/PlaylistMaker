@@ -1,4 +1,4 @@
-package com.android.playlistmaker.media.presentation.adapter
+package com.android.playlistmaker.favorites_tracks.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.android.playlistmaker.R
-import com.android.playlistmaker.media.domain.models.FavoriteTrack
+import com.android.playlistmaker.favorites_tracks.domain.models.FavoriteTrack
 import com.bumptech.glide.Glide
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -20,7 +20,11 @@ class FavoriteTrackAdapter(private val clickListener: TrackClickListener) :
 
     fun setTracks(newTracks: List<FavoriteTrack>) {
 
-        val diffCallback = FavoriteTrackDiffCallback(tracks, newTracks)
+        val diffCallback =
+            FavoriteTrackDiffCallback(
+                tracks,
+                newTracks
+            )
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         tracks.clear()
         tracks.addAll(newTracks)
@@ -57,7 +61,9 @@ class FavoriteTrackAdapter(private val clickListener: TrackClickListener) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackHolder {
-        return TrackHolder(parent)
+        return TrackHolder(
+            parent
+        )
     }
 
     override fun onBindViewHolder(holder: TrackHolder, position: Int) {

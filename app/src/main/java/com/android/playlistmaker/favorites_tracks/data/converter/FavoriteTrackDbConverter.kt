@@ -1,7 +1,7 @@
-package com.android.playlistmaker.media.data.converter
+package com.android.playlistmaker.favorites_tracks.data.converter
 
 import com.android.playlistmaker.db.entity.DBTrackEntity
-import com.android.playlistmaker.media.data.dto.FavoriteTrackDto
+import com.android.playlistmaker.favorites_tracks.data.dto.FavoriteTrackDto
 
 
 class FavoriteTrackDbConverter {

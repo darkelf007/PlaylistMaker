@@ -25,4 +25,12 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <!-- NewPlaylist -->
+
+    <style name="TextInputLayoutStyleNewPlaylist" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+
 </resources>

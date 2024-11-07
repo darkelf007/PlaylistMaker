@@ -1,11 +1,11 @@
-package com.android.playlistmaker.media.domain.impl
+package com.android.playlistmaker.favorites_tracks.domain.impl
 
 
-import com.android.playlistmaker.media.domain.converter.FavoriteTrackDataConverter
-import com.android.playlistmaker.media.domain.converter.FavoriteTrackToTrackConverter
-import com.android.playlistmaker.media.domain.db.FavoriteDatabaseInteractor
-import com.android.playlistmaker.media.domain.db.FavoriteDatabaseRepository
-import com.android.playlistmaker.media.domain.models.FavoriteTrack
+import com.android.playlistmaker.favorites_tracks.domain.converter.FavoriteTrackDataConverter
+import com.android.playlistmaker.favorites_tracks.domain.converter.FavoriteTrackToTrackConverter
+import com.android.playlistmaker.favorites_tracks.domain.db.FavoriteDatabaseInteractor
+import com.android.playlistmaker.favorites_tracks.domain.db.FavoriteDatabaseRepository
+import com.android.playlistmaker.favorites_tracks.domain.models.FavoriteTrack
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
