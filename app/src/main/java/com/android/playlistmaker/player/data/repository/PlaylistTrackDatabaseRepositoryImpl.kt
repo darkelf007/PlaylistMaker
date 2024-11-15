@@ -11,7 +11,8 @@ class PlaylistTrackDatabaseRepositoryImpl(
 
     override suspend fun insertTrackToPlaylistTrackDatabase(track: SearchTrack) {
         val playlistTrackEntity = PlaylistTrackEntity(
-            trackId = track.trackId,
+            trackId = track.trackId
+                ?: throw IllegalArgumentException("trackId не может быть null"), // Обработка null
             trackName = track.trackName,
             artistName = track.artistName,
             trackTime = formatTrackTime(track.trackTimeMillis),
@@ -32,3 +33,5 @@ class PlaylistTrackDatabaseRepositoryImpl(
         return String.format("%02d:%02d", minutes, seconds)
     }
 }
+
+

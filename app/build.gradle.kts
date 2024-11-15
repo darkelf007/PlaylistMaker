@@ -21,12 +21,24 @@ android {
     }
 
     buildTypes {
+
+
+        debug {
+            isDebuggable = true
+            buildConfigField ("boolean", "ENABLE_LOGGING", "true")
+        }
+
+
+
         release {
+            buildConfigField ("boolean", "ENABLE_LOGGING", "false")
+
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
+
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -37,6 +49,7 @@ android {
     }
 
     buildFeatures {
+        buildConfig = true
         viewBinding = true
     }
     buildToolsVersion = "34.0.0"

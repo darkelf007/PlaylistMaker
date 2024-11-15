@@ -83,15 +83,16 @@ class PlayerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        val track = arguments?.getParcelable<SearchTrack>("playerTrack")
+        track = arguments?.getParcelable<SearchTrack>("playerTrack")
             ?: throw IllegalArgumentException("playerTrack аргумент отсутствует")
 
-        playerTrack = track.mapToPlayerTrack()
+        track?.let {
+            playerTrack = it.mapToPlayerTrack()
+        } ?: throw IllegalArgumentException("playerTrack аргумент отсутствует")
 
         if (playerTrack.previewUrl == null) {
             binding.playerPlayTrack.isEnabled = false
         }
-
         playerViewModel = getViewModel(parameters = { parametersOf(playerTrack) })
 
         allowToEmit = false
