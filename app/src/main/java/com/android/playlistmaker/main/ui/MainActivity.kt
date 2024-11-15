@@ -7,17 +7,25 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.android.playlistmaker.R
 import com.android.playlistmaker.databinding.ActivityMainBinding
+import com.android.playlistmaker.main.listeners.BottomNavigationListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), BottomNavigationListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var constraintLayout: ConstraintLayout
     private var isKeyboardVisible = false
+
+    private val hiddenBottomNavFragments = setOf(
+        R.id.playerFragment, R.id.newPlaylistFragment
+    )
+
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,14 +34,31 @@ class MainActivity : AppCompatActivity() {
 
         val navMainFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navMainFragment.navController
+        navController = navMainFragment.navController
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigationView.setupWithNavController(navController)
 
         constraintLayout = findViewById(R.id.main_constraint_layout)
 
+        setupDestinationChangeListener()
         setupKeyboardVisibilityListener()
+    }
+
+    private fun setupDestinationChangeListener() {
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            val shouldHideBottomNav = hiddenBottomNavFragments.contains(destination.id)
+
+            if (shouldHideBottomNav) {
+                hideBottomNavigation(true)
+            } else {
+                hideBottomNavigation(isKeyboardVisible)
+            }
+        }
+    }
+
+    override fun toggleBottomNavigationViewVisibility(isVisible: Boolean) {
+        binding.bottomNavigationView.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 
     private fun setupKeyboardVisibilityListener() {
@@ -46,10 +71,20 @@ class MainActivity : AppCompatActivity() {
 
             val isKeyboardNowVisible = keypadHeight > screenHeight * 0.15
 
+            val currentDestinationId = navController.currentDestination?.id
+            val shouldHideBottomNav = hiddenBottomNavFragments.contains(currentDestinationId)
+
+            if (shouldHideBottomNav) {
+                if (bottomNavigationView.visibility != View.GONE) {
+                    bottomNavigationView.visibility = View.GONE
+                }
+                return@addOnGlobalLayoutListener
+            }
+
             if (isKeyboardNowVisible != isKeyboardVisible) {
                 isKeyboardVisible = isKeyboardNowVisible
                 if (isKeyboardVisible) {
-                    bottomNavigationView.visibility = View.GONE
+                    hideBottomNavigation(true)
 
                     val constraintSet = ConstraintSet()
                     constraintSet.clone(constraintLayout)
@@ -62,7 +97,7 @@ class MainActivity : AppCompatActivity() {
                     TransitionManager.beginDelayedTransition(constraintLayout)
                     constraintSet.applyTo(constraintLayout)
                 } else {
-                    bottomNavigationView.visibility = View.VISIBLE
+                    hideBottomNavigation(false)
 
                     val constraintSet = ConstraintSet()
                     constraintSet.clone(constraintLayout)
@@ -77,5 +112,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun hideBottomNavigation(isHide: Boolean) {
+        bottomNavigationView.visibility = if (!isHide) View.VISIBLE else View.GONE
     }
 }

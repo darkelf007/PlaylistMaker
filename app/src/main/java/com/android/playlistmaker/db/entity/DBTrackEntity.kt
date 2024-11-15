@@ -16,5 +16,5 @@ data class DBTrackEntity(
     val primaryGenreName: String?,
     val country: String?,
     val previewUrl: String?,
-    val insertionTimeStamp: Long
+    val insertionTimeStamp: Long?
 )

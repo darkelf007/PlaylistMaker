@@ -7,21 +7,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.playlistmaker.search.domain.SearchInteractor
 import com.android.playlistmaker.search.domain.SearchTrack
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val searchInteractor: SearchInteractor,
-    private val gson: Gson,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+
+    private val _showHistory = MutableLiveData<Boolean>()
+    val showHistory: LiveData<Boolean> get() = _showHistory
+
+    fun evaluateShowHistory(hasFocus: Boolean, query: String) {
+        _showHistory.value =
+            hasFocus && query.isEmpty() && (searchHistory.value?.isNotEmpty() == true)
+    }
 
     private val _tracks = MutableLiveData<List<SearchTrack>>()
     val tracks: LiveData<List<SearchTrack>> get() = _tracks
@@ -35,29 +39,31 @@ class SearchViewModel(
     private val _currentQuery = savedStateHandle.getLiveData<String>("current_query", "")
     val currentQuery: LiveData<String> get() = _currentQuery
 
-    private val queryFlow = MutableStateFlow(_currentQuery.value ?: "")
+    private val queryFlow = MutableSharedFlow<String>(replay = 0)
 
-    private val _navigateToPlayer = MutableLiveData<Event<String>>()
-    val navigateToPlayer: LiveData<Event<String>> get() = _navigateToPlayer
+    private val _navigateToPlayer = MutableLiveData<Event<SearchTrack>>()
+    val navigateToPlayer: LiveData<Event<SearchTrack>> get() = _navigateToPlayer
 
     init {
         observeQuery()
+        loadInitialData()
     }
 
-    fun updateQuery(query: String) {
-        _currentQuery.value = query
-        savedStateHandle["current_query"] = query
-        queryFlow.value = query
+    private fun loadInitialData() {
+        viewModelScope.launch {
+            val initialQuery = _currentQuery.value ?: ""
+            if (initialQuery.isNotEmpty()) {
+                search(initialQuery)
+            }
+        }
     }
+
 
     private fun observeQuery() {
         viewModelScope.launch {
-            queryFlow
-                .drop(1)
-                .distinctUntilChanged()
-                .collect { query ->
-                    search(query)
-                }
+            queryFlow.collect { query ->
+                search(query)
+            }
         }
     }
 
@@ -88,8 +94,8 @@ class SearchViewModel(
 
     fun onTrackClick(searchTrack: SearchTrack) {
         viewModelScope.launch {
-            addTrackToHistory(searchTrack)
-            _navigateToPlayer.value = Event(createTrackJson(searchTrack))
+            val updatedTrack = addTrackToHistory(searchTrack)
+            _navigateToPlayer.value = Event(updatedTrack)
         }
     }
 
@@ -98,7 +104,7 @@ class SearchViewModel(
     }
 
 
-    private fun addTrackToHistory(searchTrack: SearchTrack) {
+    private fun addTrackToHistory(searchTrack: SearchTrack): SearchTrack {
         val history = _searchHistory.value?.toMutableList() ?: mutableListOf()
         history.removeAll { it.trackId == searchTrack.trackId }
         val updatedTrack = searchTrack.copy(insertionTimeStamp = System.currentTimeMillis())
@@ -108,6 +114,7 @@ class SearchViewModel(
         }
         searchInteractor.saveSearchHistory(history)
         _searchHistory.value = history
+        return updatedTrack
     }
 
 
@@ -121,22 +128,23 @@ class SearchViewModel(
         _tracks.value = emptyList()
     }
 
+    fun updateQuery(query: String, hasFocus: Boolean) {
+        _currentQuery.value = query
+        savedStateHandle["current_query"] = query
+        viewModelScope.launch {
+            queryFlow.emit(query)
+        }
+        evaluateShowHistory(hasFocus, query)
+    }
+
     fun showHistory() {
         viewModelScope.launch {
             val history = searchInteractor.getSearchHistory() ?: emptyList()
             _searchHistory.value = history
             _uiState.value = UiState.History(showHistory = true)
+            evaluateShowHistory(true, _currentQuery.value ?: "")
         }
     }
-
-    fun resetUiState() {
-        _uiState.value = UiState.Idle
-    }
-
-    private fun createTrackJson(searchTrack: SearchTrack): String {
-        return gson.toJson(searchTrack)
-    }
-
 
     sealed class UiState {
         data object Idle : UiState()
@@ -158,6 +166,7 @@ class SearchViewModel(
                 content
             }
         }
+
     }
 
 }

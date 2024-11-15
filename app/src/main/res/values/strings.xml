@@ -49,5 +49,13 @@
     <string name="text_for_button">Создать</string>
     <string name="cancel">Отмена</string>
 
+    <string name="complete">Завершить</string>
+    <string name="complete_playlist">Завершить создание плейлиста</string>
+    <string name="data_lost">Все несохраненные данные будут потеряны</string>
+    <string name="add_playlist">Добавлен новый плейлист</string>
+
+    <string name="track_already_added">Трек уже добавлен в плейлист</string>
+    <string name="track_added">Добавлено в плейлист</string>
+    <string name="add_to_playlist">Добавить в плейлист</string>
 
 </resources>

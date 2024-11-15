@@ -4,13 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.playlistmaker.favorites_tracks.domain.converter.FavoriteTrackToTrackConverter
 import com.android.playlistmaker.favorites_tracks.domain.db.FavoriteDatabaseInteractor
 import com.android.playlistmaker.favorites_tracks.domain.models.FavoriteTrack
+import com.android.playlistmaker.search.domain.SearchTrack
 
 import kotlinx.coroutines.launch
 
 class FavoriteFragmentViewModel(
-    private val favoriteDatabaseInteractor: FavoriteDatabaseInteractor
+    private val favoriteDatabaseInteractor: FavoriteDatabaseInteractor,
+    private val favoriteTrackToTrackConverter: FavoriteTrackToTrackConverter
 ) : ViewModel() {
 
     private val _databaseTracksState = MutableLiveData<FavouriteTrackState>()
@@ -51,4 +54,9 @@ class FavoriteFragmentViewModel(
             callback(isFavorite)
         }
     }
+
+    fun convertFavoriteTrackToTrack(favoriteTrack: FavoriteTrack): SearchTrack {
+        return favoriteTrackToTrackConverter.map(favoriteTrack)
+    }
+
 }

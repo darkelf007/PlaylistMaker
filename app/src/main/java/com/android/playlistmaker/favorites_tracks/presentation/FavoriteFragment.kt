@@ -1,18 +1,17 @@
-import android.content.Intent
+package com.android.playlistmaker.favorites_tracks.presentation
+
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.android.playlistmaker.app.App
 import com.android.playlistmaker.databinding.FavoriteFragmentBinding
 import com.android.playlistmaker.favorites_tracks.domain.models.FavoriteTrack
-import com.android.playlistmaker.favorites_tracks.presentation.FavoriteFragmentViewModel
-import com.android.playlistmaker.favorites_tracks.presentation.FavouriteTrackState
-import com.android.playlistmaker.player.presentation.PlayerActivity
-import com.google.gson.Gson
+import com.android.playlistmaker.favorites_tracks.presentation.adapter.FavoriteTrackAdapter
+import com.android.playlistmaker.media.presentation.MediaFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -21,7 +20,7 @@ class FavoriteFragment : Fragment() {
     private var _binding: FavoriteFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private var adapter: com.android.playlistmaker.favorites_tracks.presentation.adapter.FavoriteTrackAdapter? = null
+    private var adapter: FavoriteTrackAdapter? = null
     private var isClickAllowed = true
 
     companion object {
@@ -43,12 +42,13 @@ class FavoriteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter =
-            com.android.playlistmaker.favorites_tracks.presentation.adapter.FavoriteTrackAdapter { libraryTrack ->
-                if (clickDebounce()) {
-                    clickOnItem(libraryTrack)
-                }
+        isClickAllowed = true
+
+        adapter = FavoriteTrackAdapter { libraryTrack ->
+            if (clickDebounce()) {
+                clickOnItem(libraryTrack)
             }
+        }
 
         binding.libraryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.libraryRecyclerView.adapter = adapter
@@ -68,6 +68,7 @@ class FavoriteFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.fillData()
+        isClickAllowed = true
     }
 
     private fun clickDebounce(): Boolean {
@@ -85,11 +86,8 @@ class FavoriteFragment : Fragment() {
     }
 
     private fun clickOnItem(libraryTrack: FavoriteTrack) {
-        val json = Gson().toJson(libraryTrack)
-        val intent = Intent(requireContext(), PlayerActivity::class.java).apply {
-            putExtra(App.KEY_FOR_PLAYER, json)
-        }
-        startActivity(intent)
+        val track = viewModel.convertFavoriteTrackToTrack(libraryTrack)
+        (parentFragment as? MediaFragment)?.navigateToPlayerFragment(track)
     }
 
     private fun render(libraryTracksState: FavouriteTrackState) {
@@ -117,7 +115,6 @@ class FavoriteFragment : Fragment() {
 
     private fun showLoader(isVisible: Boolean) {
         binding.progressBar.visibility = if (isVisible) View.VISIBLE else View.GONE
-
     }
 
     private fun showPlaceHolder(isVisible: Boolean) {

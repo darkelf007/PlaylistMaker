@@ -29,6 +29,26 @@
 
     <style name="TextInputLayoutStyleNewPlaylist" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="android:textColorHint">@color/white</item>
+    </style>
+
+
+    <style name="EditTextNewPlaylistStyle">
+        <item name="android:textColorHint">@color/white</item>
+    </style>
+
+
+    <style name="BackgroundPlayerStyle">
+        <item name="android:background">@color/dark_blue</item>
+    </style>
+
+
+    <style name="PlaylistBottomSheetCommonTextViewStyle">
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="PlaylistBottomSheetModTextViewStyle">
+        <item name="android:textColorHint">@color/white</item>
         <item name="android:textColor">@color/white</item>
     </style>
 

@@ -32,7 +32,7 @@
         style="@style/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_56"
-        android:background="@color/white_black"
+        android:background="@color/white_darkBlue"
         app:itemIconTint="@color/nav_item_icon_color"
         app:itemTextColor="@color/nav_item_text_color"
         app:layout_constraintBottom_toBottomOf="parent"

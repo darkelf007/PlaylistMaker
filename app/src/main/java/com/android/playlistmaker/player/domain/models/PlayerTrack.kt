@@ -1,6 +1,7 @@
 package com.android.playlistmaker.player.domain.models
 
-const val COVER_ARTWORK = "512x512bb.jpg"
+import com.android.playlistmaker.search.domain.COVER_ARTWORK
+
 
 data class PlayerTrack(
     val trackName: String?,
@@ -13,7 +14,7 @@ data class PlayerTrack(
     val primaryGenreName: String?,
     val country: String?,
     val previewUrl: String?,
-    val insertionTimeStamp: Long
+    val insertionTimeStamp: Long? = null
 
 ) {
     fun getCoverArtwork() = artworkUrl100?.replaceAfterLast('/', COVER_ARTWORK)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="ButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_width">match_parent</item>
@@ -36,6 +36,7 @@
         <item name="android:textFontWeight">400</item>
         <item name="android:textSize">@dimen/text_size_13</item>
     </style>
+
 
     <!-- MediaActivity -->
     <style name="new_playlist_button" parent="Widget.MaterialComponents.Button.UnelevatedButton">
@@ -96,7 +97,7 @@
 
     <!-- NewPlaylist -->
 
-    <style name="NewPlaylistButtonStyle">
+    <style name="NewPlaylistButtonStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="backgroundTint">@drawable/create_playlist_button_selector</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:fontFamily">@font/yandex_sans_text_medium</item>
@@ -104,9 +105,30 @@
     </style>
 
     <style name="TextInputLayoutStyleNewPlaylist" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="android:textColorHint">@color/dark_blue</item>
-        <item name="android:textColor">@color/dark_blue</item>
+        <item name="android:textColorHint">@color/darkBlue_white</item>
+        <item name="android:textColor">@color/darkBlue_white</item>
+
     </style>
 
+    <style name="PlaylistBottomSheetModTextViewStyle">
+        <item name="android:textColorHint">@color/black</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="PlaylistBottomSheetCommonTextViewStyle">
+        <item name="android:textColorHint">@color/dark_grey</item>
+        <item name="android:textColor">@color/dark_grey</item>
+    </style>
+
+    <!-- Player -->
+    <style name="BackgroundPlayerStyle">
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="SearchingActivityButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="backgroundTint">@color/dark_blue</item>
+        <item name="cornerRadius">54dp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
 
 </resources>
