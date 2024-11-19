@@ -28,7 +28,7 @@ class PlaylistFragment : Fragment() {
     private val binding get() = _binding!!
     private var isClickAllowed = true
 
-    private var adapter: PlaylistAdapter? = null
+    private lateinit var adapter: PlaylistAdapter
 
     private lateinit var createPlaylistButton: Button
     private lateinit var emptyPlaylistsPlaceholder: ConstraintLayout
@@ -132,10 +132,7 @@ class PlaylistFragment : Fragment() {
                 if (playlistState.data.isEmpty()) {
                     showPlaceholder()
                 } else {
-                    adapter?.playlists?.clear()
-                    adapter?.playlists?.addAll(playlistState.data)
-                    adapter?.notifyDataSetChanged()
-
+                    adapter.submitList(playlistState.data)
                     showContent()
                 }
             }

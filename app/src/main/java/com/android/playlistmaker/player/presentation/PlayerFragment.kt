@@ -51,7 +51,7 @@ class PlayerFragment : Fragment() {
 
     private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
 
-    private var adapter: PlaylistBottomSheetAdapter? = null
+    private lateinit var adapter: PlaylistBottomSheetAdapter
 
     private lateinit var playerTrack: PlayerTrack
 
@@ -362,10 +362,8 @@ class PlayerFragment : Fragment() {
         playerViewModel.checkAndAddTrackToPlaylist(playlist, track)
     }
 
-    fun addPlaylistsToBottomSheetRecyclerView(listOfPlaylists: List<Playlist>) {
-        adapter?.playlists?.clear()
-        adapter?.playlists?.addAll(listOfPlaylists)
-        adapter?.notifyDataSetChanged()
+    private fun addPlaylistsToBottomSheetRecyclerView(listOfPlaylists: List<Playlist>) {
+        adapter.setPlaylists(listOfPlaylists)
     }
 
 

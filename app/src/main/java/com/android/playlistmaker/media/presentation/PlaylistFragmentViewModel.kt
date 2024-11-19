@@ -9,7 +9,6 @@ import com.android.playlistmaker.new_playlist.domain.models.Playlist
 import kotlinx.coroutines.launch
 
 class PlaylistFragmentViewModel(
-
     private val playlistMediaDatabaseInteractor: PlaylistMediaDatabaseInteractor
 ) : ViewModel() {
 
@@ -17,10 +16,7 @@ class PlaylistFragmentViewModel(
     var databasePlaylistState: LiveData<PlaylistState> = _databasePlaylistState
 
     fun fillData() {
-
-        _databasePlaylistState.postValue(
-            PlaylistState.Loading
-        )
+        _databasePlaylistState.postValue(PlaylistState.Loading)
 
         viewModelScope.launch {
             playlistMediaDatabaseInteractor
@@ -29,7 +25,6 @@ class PlaylistFragmentViewModel(
                     processResult(listOfPlaylists)
                 }
         }
-
     }
 
     private fun processResult(listOfPlaylists: List<Playlist>) {
@@ -37,6 +32,5 @@ class PlaylistFragmentViewModel(
             PlaylistState.Success(listOfPlaylists)
         )
     }
-
-
 }
+

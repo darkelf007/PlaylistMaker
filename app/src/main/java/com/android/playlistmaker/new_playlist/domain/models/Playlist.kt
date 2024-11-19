@@ -1,5 +1,6 @@
 package com.android.playlistmaker.new_playlist.domain.models
 
+import android.net.Uri
 import com.android.playlistmaker.db.entity.PlaylistEntity
 
 
@@ -9,7 +10,8 @@ data class Playlist(
     val description: String,
     val filePath: String,
     val listOfTracksId: String = "",
-    val amountOfTracks: Int
+    val amountOfTracks: Int,
+    val imageUri: Uri? = null
 )
 
 fun Playlist.mapToPlaylistEntity(): PlaylistEntity = PlaylistEntity(
@@ -21,12 +23,13 @@ fun Playlist.mapToPlaylistEntity(): PlaylistEntity = PlaylistEntity(
     amountOfTracks = amountOfTracks
 )
 
-fun PlaylistEntity.mapToPlaylist(): Playlist = Playlist(
+fun PlaylistEntity.mapToPlaylist(imageUri: Uri? = null): Playlist = Playlist(
     id = id,
     name = name,
     description = description,
     filePath = filePath,
     listOfTracksId = listOfTracksId,
-    amountOfTracks = amountOfTracks
+    amountOfTracks = amountOfTracks,
+    imageUri = imageUri
 )
 
