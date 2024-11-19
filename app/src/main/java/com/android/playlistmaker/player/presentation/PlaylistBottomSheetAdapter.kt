@@ -11,6 +11,9 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.android.playlistmaker.R
 import com.android.playlistmaker.new_playlist.domain.models.Playlist
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import java.io.File
 
 
@@ -46,7 +49,13 @@ class PlaylistBottomSheetHolder(parent: ViewGroup, val context: Context) : Recyc
 
     fun bind(playlist: Playlist) {
         if (playlist.filePath.isNotEmpty()) {
-            playlistBottomSheetImageView.setImageURI(getUriOfImageFromStorage(playlist.filePath))
+            val uri = getUriOfImageFromStorage(playlist.filePath)
+            Glide.with(context)
+                .load(uri)
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder)
+                .apply(RequestOptions().transform(RoundedCorners(context.resources.getDimensionPixelSize(R.dimen.dp_8))))
+                .into(playlistBottomSheetImageView)
         } else {
             playlistBottomSheetImageView.setImageResource(R.drawable.placeholder)
         }
@@ -55,10 +64,10 @@ class PlaylistBottomSheetHolder(parent: ViewGroup, val context: Context) : Recyc
         playlistTrackAmountTextView.text = pluralizeWord(playlist.amountOfTracks, "трек")
     }
 
-    private fun getUriOfImageFromStorage(fileName: String): Uri {
+    private fun getUriOfImageFromStorage(fileName: String): Uri? {
         val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
         val file = File(filePath, fileName)
-        return file.toUri()
+        return if (file.exists()) file.toUri() else null
     }
 
     private fun pluralizeWord(number: Int, word: String): String {
