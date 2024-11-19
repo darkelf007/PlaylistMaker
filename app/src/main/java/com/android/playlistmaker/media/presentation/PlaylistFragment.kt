@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -99,26 +100,22 @@ class PlaylistFragment : Fragment() {
         return current
     }
 
-    private fun View.show(isVisible: Boolean) {
-        this.visibility = if (isVisible) View.VISIBLE else View.GONE
-    }
-
     private fun showLoader() {
-        emptyPlaylistsPlaceholder.show(false)
-        playlistRecyclerView.show(false)
-        playlistProgressbar.show(true)
+        emptyPlaylistsPlaceholder.isVisible = false
+        playlistRecyclerView.isVisible = false
+        playlistProgressbar.isVisible = true
     }
 
     private fun showPlaceholder() {
-        playlistRecyclerView.show(false)
-        playlistProgressbar.show(false)
-        emptyPlaylistsPlaceholder.show(true)
+        playlistRecyclerView.isVisible = false
+        playlistProgressbar.isVisible = false
+        emptyPlaylistsPlaceholder.isVisible = true
     }
 
     private fun showContent() {
-        playlistProgressbar.show(false)
-        emptyPlaylistsPlaceholder.show(false)
-        playlistRecyclerView.show(true)
+        playlistProgressbar.isVisible = false
+        emptyPlaylistsPlaceholder.isVisible = false
+        playlistRecyclerView.isVisible = true
     }
 
     private fun render(playlistState: PlaylistState) {
