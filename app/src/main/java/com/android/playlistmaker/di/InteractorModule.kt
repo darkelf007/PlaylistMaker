@@ -5,8 +5,8 @@ import com.android.playlistmaker.main.domain.MainInteractor
 import com.android.playlistmaker.main.domain.MainUseCase
 import com.android.playlistmaker.media.domain.db.PlaylistMediaDatabaseInteractor
 import com.android.playlistmaker.media.domain.impl.PlaylistMediaDatabaseInteractorImpl
-import com.android.playlistmaker.new_playlist.domain.db.PlaylistDatabaseInteractor
-import com.android.playlistmaker.new_playlist.domain.impl.PlaylistDatabaseInteractorImpl
+import com.android.playlistmaker.new_playlist.data.Impl.PlaylistInteractorImpl
+import com.android.playlistmaker.new_playlist.domain.db.PlaylistInteractor
 import com.android.playlistmaker.player.domain.interactor.PlaylistTrackDatabaseInteractorImpl
 import com.android.playlistmaker.player.domain.interfaces.PlaylistTrackDatabaseInteractor
 import com.android.playlistmaker.search.data.repository.SearchInteractorImpl
@@ -26,6 +26,7 @@ val interactorModule = module {
     singleOf(::ToggleThemeUseCase) bind ToggleThemeUseCaseInterface::class
     singleOf(::GetThemeUseCase) bind GetThemeUseCaseInterface::class
     singleOf(::PlaylistMediaDatabaseInteractorImpl) bind PlaylistMediaDatabaseInteractor::class
-    singleOf(::PlaylistDatabaseInteractorImpl) bind PlaylistDatabaseInteractor::class
     singleOf(::PlaylistTrackDatabaseInteractorImpl) bind PlaylistTrackDatabaseInteractor::class
+
+    singleOf(::PlaylistInteractorImpl) bind PlaylistInteractor::class
 }

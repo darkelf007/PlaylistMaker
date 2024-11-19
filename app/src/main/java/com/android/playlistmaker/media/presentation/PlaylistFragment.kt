@@ -61,7 +61,6 @@ class PlaylistFragment : Fragment() {
         playlistRecyclerView.adapter = adapter
 
         createPlaylistButton.setOnClickListener {
-            // Обращаемся к родительскому фрагменту (MediaFragment) для выполнения навигации
             (parentFragment as? MediaFragment)?.navigateToNewPlaylistFragment()
         }
 

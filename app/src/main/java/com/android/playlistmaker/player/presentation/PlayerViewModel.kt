@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.android.playlistmaker.favorites_tracks.domain.db.FavoriteDatabaseInteractor
 import com.android.playlistmaker.favorites_tracks.domain.models.FavoriteTrack
 import com.android.playlistmaker.media.domain.db.PlaylistMediaDatabaseInteractor
-import com.android.playlistmaker.new_playlist.domain.db.PlaylistDatabaseInteractor
+import com.android.playlistmaker.new_playlist.domain.db.PlaylistInteractor
 import com.android.playlistmaker.new_playlist.domain.models.Playlist
 import com.android.playlistmaker.player.domain.interfaces.PlayerUseCase
 import com.android.playlistmaker.player.domain.interfaces.PlaylistTrackDatabaseInteractor
@@ -29,7 +29,7 @@ class PlayerViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val playlistMediaDatabaseInteractor: PlaylistMediaDatabaseInteractor,
     private val playlistTrackDatabaseInteractor: PlaylistTrackDatabaseInteractor,
-    private val playlistDatabaseInteractor: PlaylistDatabaseInteractor
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
     private val _viewState = MutableLiveData(PlayerViewState())
@@ -195,7 +195,7 @@ class PlayerViewModel(
 
     private fun returnPlaylistToDatabase(playlist: Playlist) {
         viewModelScope.launch {
-            playlistDatabaseInteractor.insertPlaylistToDatabase(playlist)
+            playlistInteractor.updatePlaylist(playlist)
         }
     }
 
@@ -226,7 +226,6 @@ class PlayerViewModel(
                 )
             )
         } else {
-
             _checkIsTrackInPlaylist.postValue(
                 PlaylistTrackState(
                     nameOfPlaylist = playlist.name, trackIsInPlaylist = true

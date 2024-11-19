@@ -11,8 +11,10 @@ import com.android.playlistmaker.favorites_tracks.domain.impl.FavoriteDatabaseIn
 import com.android.playlistmaker.media.data.converter.FavoriteTrackToSearchTrackConverter
 import com.android.playlistmaker.media.data.repository.PlaylistMediaDatabaseRepositoryImpl
 import com.android.playlistmaker.media.domain.db.PlaylistMediaDatabaseRepository
-import com.android.playlistmaker.new_playlist.data.repository.PlaylistDatabaseRepositoryImpl
-import com.android.playlistmaker.new_playlist.domain.db.PlaylistDatabaseRepository
+import com.android.playlistmaker.new_playlist.data.Impl.FileRepositoryImpl
+import com.android.playlistmaker.new_playlist.data.Impl.PlaylistRepositoryImpl
+import com.android.playlistmaker.new_playlist.domain.db.PlaylistRepository
+import com.android.playlistmaker.new_playlist.domain.repository.FileRepository
 import com.android.playlistmaker.player.data.repository.AudioPlayerDatabaseRepositoryImpl
 import com.android.playlistmaker.player.data.repository.PlayerUseCaseImpl
 import com.android.playlistmaker.player.data.repository.PlaylistTrackDatabaseRepositoryImpl
@@ -50,6 +52,8 @@ val repositoryModule = module {
     singleOf(::AudioPlayerDatabaseInteractorImpl)
     singleOf(::PlaylistMediaDatabaseRepositoryImpl) bind PlaylistMediaDatabaseRepository::class
     singleOf(::PlaylistTrackDatabaseRepositoryImpl) bind PlaylistTrackDatabaseRepository::class
-    singleOf(::PlaylistDatabaseRepositoryImpl) bind PlaylistDatabaseRepository::class
+
+    singleOf(::FileRepositoryImpl) bind FileRepository::class
+    singleOf(::PlaylistRepositoryImpl) bind PlaylistRepository::class
 
 }

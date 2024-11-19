@@ -28,7 +28,7 @@ val viewModelModule = module {
             savedStateHandle = get(),
             playlistMediaDatabaseInteractor = get(),
             playlistTrackDatabaseInteractor = get(),
-            playlistDatabaseInteractor = get()
+            playlistInteractor = get()
         )
     }
 }

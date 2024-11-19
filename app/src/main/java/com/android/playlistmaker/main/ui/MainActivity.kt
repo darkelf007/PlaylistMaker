@@ -7,6 +7,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -36,10 +37,10 @@ class MainActivity : AppCompatActivity(), BottomNavigationListener {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navMainFragment.navController
 
-        bottomNavigationView = findViewById(R.id.bottomNavigationView)
+        bottomNavigationView = binding.bottomNavigationView
         bottomNavigationView.setupWithNavController(navController)
 
-        constraintLayout = findViewById(R.id.main_constraint_layout)
+        constraintLayout = binding.mainConstraintLayout
 
         setupDestinationChangeListener()
         setupKeyboardVisibilityListener()
@@ -48,17 +49,12 @@ class MainActivity : AppCompatActivity(), BottomNavigationListener {
     private fun setupDestinationChangeListener() {
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             val shouldHideBottomNav = hiddenBottomNavFragments.contains(destination.id)
-
-            if (shouldHideBottomNav) {
-                hideBottomNavigation(true)
-            } else {
-                hideBottomNavigation(isKeyboardVisible)
-            }
+            binding.bottomNavigationView.isVisible = !shouldHideBottomNav && !isKeyboardVisible
         }
     }
 
     override fun toggleBottomNavigationViewVisibility(isVisible: Boolean) {
-        binding.bottomNavigationView.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.bottomNavigationView.isVisible = isVisible
     }
 
     private fun setupKeyboardVisibilityListener() {
@@ -75,46 +71,35 @@ class MainActivity : AppCompatActivity(), BottomNavigationListener {
             val shouldHideBottomNav = hiddenBottomNavFragments.contains(currentDestinationId)
 
             if (shouldHideBottomNav) {
-                if (bottomNavigationView.visibility != View.GONE) {
-                    bottomNavigationView.visibility = View.GONE
+                if (binding.bottomNavigationView.isVisible) {
+                    binding.bottomNavigationView.isVisible = false
                 }
                 return@addOnGlobalLayoutListener
             }
 
             if (isKeyboardNowVisible != isKeyboardVisible) {
                 isKeyboardVisible = isKeyboardNowVisible
+                binding.bottomNavigationView.isVisible = !isKeyboardVisible && !shouldHideBottomNav
+                val constraintSet = ConstraintSet()
+                constraintSet.clone(constraintLayout)
                 if (isKeyboardVisible) {
-                    hideBottomNavigation(true)
-
-                    val constraintSet = ConstraintSet()
-                    constraintSet.clone(constraintLayout)
                     constraintSet.connect(
                         R.id.nav_host_fragment,
                         ConstraintSet.BOTTOM,
                         ConstraintSet.PARENT_ID,
                         ConstraintSet.BOTTOM
                     )
-                    TransitionManager.beginDelayedTransition(constraintLayout)
-                    constraintSet.applyTo(constraintLayout)
                 } else {
-                    hideBottomNavigation(false)
-
-                    val constraintSet = ConstraintSet()
-                    constraintSet.clone(constraintLayout)
                     constraintSet.connect(
                         R.id.nav_host_fragment,
                         ConstraintSet.BOTTOM,
                         R.id.bottomNavigationView,
                         ConstraintSet.TOP
                     )
-                    TransitionManager.beginDelayedTransition(constraintLayout)
-                    constraintSet.applyTo(constraintLayout)
                 }
+                TransitionManager.beginDelayedTransition(constraintLayout)
+                constraintSet.applyTo(constraintLayout)
             }
         }
-    }
-
-    private fun hideBottomNavigation(isHide: Boolean) {
-        bottomNavigationView.visibility = if (!isHide) View.VISIBLE else View.GONE
     }
 }

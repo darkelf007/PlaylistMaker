@@ -1,24 +1,29 @@
 package com.android.playlistmaker.new_playlist.presentation
 
+import android.net.Uri
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.android.playlistmaker.new_playlist.domain.db.PlaylistDatabaseInteractor
-import com.android.playlistmaker.new_playlist.domain.models.Playlist
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import androidx.lifecycle.viewModelScope
+import com.android.playlistmaker.new_playlist.domain.db.PlaylistInteractor
+import kotlinx.coroutines.launch
 
-class NewPlaylistFragmentViewModel(private val playlistDatabaseInteractor: PlaylistDatabaseInteractor) :
-    ViewModel() {
-    suspend fun insertPlaylistToDatabase(playlist: Playlist) {
-        playlistDatabaseInteractor.insertPlaylistToDatabase(playlist)
+class NewPlaylistFragmentViewModel(
+    private val playlistInteractor: PlaylistInteractor
+) : ViewModel() {
+
+    private val _creationStatus = MutableLiveData<CreationStatus>()
+    val creationStatus: LiveData<CreationStatus> = _creationStatus
+
+
+    fun createPlaylist(name: String, description: String, uriOfImage: Uri?) {
+        viewModelScope.launch {
+            playlistInteractor.addPlaylist(name, description, uriOfImage)
+            _creationStatus.value = CreationStatus.Success
+        }
     }
 
-    fun getNameForFile(nameOfPlaylist: String): String {
-
-        val currentDateTime = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss")
-        val formattedDateTime = currentDateTime.format(formatter)
-
-        val result = nameOfPlaylist.replace(" ", "_")
-        return "${result}_${formattedDateTime}.jpg"
+    sealed class CreationStatus {
+        object Success : CreationStatus()
     }
 }
