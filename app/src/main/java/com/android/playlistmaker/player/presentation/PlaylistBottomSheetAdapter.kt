@@ -60,7 +60,15 @@ class PlaylistBottomSheetHolder(
                 .load(playlist.imageUri)
                 .placeholder(R.drawable.placeholder)
                 .error(R.drawable.placeholder)
-                .apply(RequestOptions().transform(RoundedCorners(context.resources.getDimensionPixelSize(R.dimen.dp_8))))
+                .apply(
+                    RequestOptions().transform(
+                        RoundedCorners(
+                            context.resources.getDimensionPixelSize(
+                                R.dimen.dp_8
+                            )
+                        )
+                    )
+                )
                 .into(playlistBottomSheetImageView)
         } else {
             playlistBottomSheetImageView.setImageResource(R.drawable.placeholder)

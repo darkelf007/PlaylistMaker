@@ -59,7 +59,15 @@ class PlaylistHolder(
                 .load(playlist.imageUri)
                 .placeholder(R.drawable.placeholder_playlist)
                 .error(R.drawable.placeholder_playlist)
-                .apply(RequestOptions().transform(RoundedCorners(context.resources.getDimensionPixelSize(R.dimen.dp_8))))
+                .apply(
+                    RequestOptions().transform(
+                        RoundedCorners(
+                            context.resources.getDimensionPixelSize(
+                                R.dimen.dp_8
+                            )
+                        )
+                    )
+                )
                 .into(playlistImageView)
         } else {
             playlistImageView.setImageResource(R.drawable.placeholder_playlist)

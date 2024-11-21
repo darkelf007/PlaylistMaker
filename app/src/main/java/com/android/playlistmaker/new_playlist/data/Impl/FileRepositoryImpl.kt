@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import com.android.playlistmaker.new_playlist.domain.repository.FileRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -16,7 +17,7 @@ class FileRepositoryImpl(
     private val context: Context
 ) : FileRepository {
     override suspend fun saveImageToPrivateStorage(uri: Uri, nameOfFile: String): Result<Unit> {
-        return try {
+        return runCatching {
             withContext(Dispatchers.IO) {
                 val filePath =
                     File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
@@ -31,9 +32,9 @@ class FileRepositoryImpl(
                     }
                 }
             }
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
+            Unit
+        }.onFailure {
+            Log.e("FileRepositoryImpl", "Failed to save image", it)
         }
     }
 }

@@ -20,17 +20,14 @@ class PlaylistMediaDatabaseRepositoryImpl(
     override suspend fun getPlaylistsFromDatabase(): Flow<List<Playlist>> = flow {
         val playlistEntityList = playlistDatabase.playlistDao().getPlaylists()
         val playlists = playlistEntityList.map { entity ->
-            val imageUri = if (entity.filePath.isNotEmpty()) {
-                getUriOfImageFromStorage(entity.filePath)
-            } else {
-                null
-            }
+            val imageUri = getUriOfImageFromStorage(entity.filePath)
             entity.mapToPlaylist(imageUri)
         }
         emit(playlists)
     }
 
-    private fun getUriOfImageFromStorage(fileName: String): Uri? {
+    private fun getUriOfImageFromStorage(fileName: String?): Uri? {
+        fileName ?: return null
         val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
         val file = File(filePath, fileName)
         return if (file.exists()) file.toUri() else null
