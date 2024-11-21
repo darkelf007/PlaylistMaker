@@ -7,11 +7,14 @@
     <color name="grey">#E5E7EA</color>
     <color name="dark_grey">#AEAFB4</color>
     <color name="white_black">@color/white</color>
+    <color name="white_darkBlue">@color/white</color>
     <color name="white_blue">@color/white</color>
     <color name="black_blue">@color/black</color>
     <color name="black_white">@color/black</color>
     <color name="switch_Knob_color">@color/dark_grey</color>
     <color name="switch_track_color">@color/grey</color>
+    <color name="darkBlue_white">@color/dark_blue</color>
     <color name="transparent">#00EAE5E5</color>
+    <color name="light_grey">#E6E8EB</color>
 
 </resources>

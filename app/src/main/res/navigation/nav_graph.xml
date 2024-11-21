@@ -10,17 +10,55 @@
         android:id="@+id/searchFragment"
         android:name="com.android.playlistmaker.search.presentation.ui.SearchFragment"
         android:label="Search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_searchFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/mediaFragment"
         android:name="com.android.playlistmaker.media.presentation.MediaFragment"
         android:label="Media"
-        tools:layout="@layout/fragment_media" />
+        tools:layout="@layout/fragment_media">
+
+        <action
+            android:id="@+id/action_mediaFragment_to_newPlaylistFragment"
+            app:destination="@id/newPlaylistFragment" />
+
+        <action
+            android:id="@+id/action_mediaFragment_to_playerFragment"
+            app:destination="@id/playerFragment">
+            <argument
+                android:name="playerTrack"
+                app:argType="com.android.playlistmaker.search.domain.SearchTrack" />
+        </action>
+
+    </fragment>
 
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.android.playlistmaker.settings.ui.SettingsFragment"
         android:label="Settings"
         tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/newPlaylistFragment"
+        android:name="com.android.playlistmaker.new_playlist.presentation.NewPlaylistFragment"
+        android:label="fragment_newplaylist"
+        tools:layout="@layout/fragment_newplaylist" />
+
+    <fragment
+        android:id="@+id/playerFragment"
+        android:name="com.android.playlistmaker.player.presentation.PlayerFragment"
+        android:label="PlayerFragment">
+        <argument
+            android:name="playerTrack"
+            app:argType="com.android.playlistmaker.search.domain.SearchTrack" />
+        <action
+            android:id="@+id/action_playerFragment_to_newPlaylistFragment"
+            app:destination="@id/newPlaylistFragment" />
+    </fragment>
+
+
 </navigation>

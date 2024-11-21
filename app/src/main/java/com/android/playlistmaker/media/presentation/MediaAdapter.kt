@@ -1,10 +1,10 @@
 package com.android.playlistmaker.media.presentation
 
-import FavoriteFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.android.playlistmaker.favorites_tracks.presentation.FavoriteFragment
 
 class MediaAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
     FragmentStateAdapter(fragmentManager, lifecycle) {
