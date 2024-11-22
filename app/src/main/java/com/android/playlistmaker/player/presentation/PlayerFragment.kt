@@ -55,7 +55,7 @@ class PlayerFragment : Fragment() {
 
     private lateinit var playerTrack: PlayerTrack
 
-    private lateinit var playerViewModel: PlayerViewModel
+    private lateinit var viewModel: PlayerViewModel
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -93,12 +93,12 @@ class PlayerFragment : Fragment() {
         if (playerTrack.previewUrl == null) {
             binding.playerPlayTrack.isEnabled = false
         }
-        playerViewModel = getViewModel(parameters = { parametersOf(playerTrack) })
+        viewModel = getViewModel(parameters = { parametersOf(playerTrack) })
 
         allowToEmit = false
 
-        playerViewModel.preparePlayer(playerTrack.previewUrl ?: "")
-        playerViewModel.assignValToPlayerTrackForRender()
+        viewModel.preparePlayer(playerTrack.previewUrl ?: "")
+        viewModel.assignValToPlayerTrackForRender()
 
         adapter = PlaylistBottomSheetAdapter(requireContext()) { playlist ->
             clickOnItem(playlist)
@@ -154,19 +154,19 @@ class PlayerFragment : Fragment() {
         }
 
         createPlaylistButton.setOnClickListener {
-            playerViewModel.releasePlayer()
+            viewModel.releasePlayer()
             findNavController().navigate(R.id.action_playerFragment_to_newPlaylistFragment)
         }
 
         initialization()
 
         lifecycleScope.launch {
-            playerViewModel.currentPosition.collectLatest { position ->
+            viewModel.currentPosition.collectLatest { position ->
                 binding.previewTrackLength.text = DateTimeUtil.formatTime(position)
             }
         }
 
-        playerViewModel.viewState.observe(viewLifecycleOwner, Observer { state ->
+        viewModel.viewState.observe(viewLifecycleOwner, Observer { state ->
             state.track?.let { updateUIWithTrack(it) }
             updatePlaybackState(state)
             updateFavoriteButton(state.isFavorite)
@@ -176,14 +176,14 @@ class PlayerFragment : Fragment() {
             playbackControl()
         }
         binding.playerLikeTrack.setOnClickListener {
-            playerViewModel.toggleFavorite()
+            viewModel.toggleFavorite()
         }
 
-        playerViewModel.playlistsFromDatabase.observe(viewLifecycleOwner) { listOfPlaylists ->
+        viewModel.playlistsFromDatabase.observe(viewLifecycleOwner) { listOfPlaylists ->
             addPlaylistsToBottomSheetRecyclerView(listOfPlaylists)
         }
 
-        playerViewModel.checkIsTrackInPlaylist.observe(viewLifecycleOwner) { playlistTrackState ->
+        viewModel.checkIsTrackInPlaylist.observe(viewLifecycleOwner) { playlistTrackState ->
             if (allowToEmit) {
                 if (playlistTrackState.trackIsInPlaylist) {
                     val toastPhrase =
@@ -193,29 +193,29 @@ class PlayerFragment : Fragment() {
                     val toastPhrase =
                         getString(R.string.track_added) + " ${playlistTrackState.nameOfPlaylist}"
                     Toast.makeText(requireContext(), toastPhrase, Toast.LENGTH_SHORT).show()
-                    playerViewModel.getPlaylists()
+                    viewModel.getPlaylists()
                     bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
                 }
             }
 
         }
 
-        playerViewModel.allowToCleanTimer = true
+        viewModel.allowToCleanTimer = true
     }
 
     override fun onResume() {
         super.onResume()
         hideBottomNavigation(true)
-        playerViewModel.getPlaylists()
-        if (playerViewModel.allowToCleanTimer) {
+        viewModel.getPlaylists()
+        if (viewModel.allowToCleanTimer) {
             binding.trackLengthValue.text = "00:00"
         }
     }
 
     override fun onPause() {
         super.onPause()
-        if (playerViewModel.viewState.value?.playerState == PlayerViewModel.STATE_PLAYING) {
-            playerViewModel.pausePlayer()
+        if (viewModel.viewState.value?.playerState == PlayerViewModel.STATE_PLAYING) {
+            viewModel.pausePlayer()
         }
     }
 
@@ -231,7 +231,7 @@ class PlayerFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        playerViewModel.releasePlayer()
+        viewModel.releasePlayer()
     }
 
     private fun initialization() {
@@ -306,14 +306,14 @@ class PlayerFragment : Fragment() {
     }
 
     private fun playbackControl() {
-        val state = playerViewModel.viewState.value
+        val state = viewModel.viewState.value
         when (state?.playerState) {
             PlayerViewModel.STATE_PLAYING -> {
-                playerViewModel.pausePlayer()
+                viewModel.pausePlayer()
             }
 
             PlayerViewModel.STATE_PREPARED, PlayerViewModel.STATE_PAUSED -> {
-                playerViewModel.startPlayer()
+                viewModel.startPlayer()
             }
         }
     }
@@ -359,7 +359,7 @@ class PlayerFragment : Fragment() {
 
     private fun clickOnItem(playlist: Playlist) {
         allowToEmit = true
-        playerViewModel.checkAndAddTrackToPlaylist(playlist, track)
+        viewModel.checkAndAddTrackToPlaylist(playlist, track)
     }
 
     private fun addPlaylistsToBottomSheetRecyclerView(listOfPlaylists: List<Playlist>) {

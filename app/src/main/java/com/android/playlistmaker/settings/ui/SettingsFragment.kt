@@ -13,7 +13,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class SettingsFragment : Fragment() {
 
     private lateinit var binding: FragmentSettingsBinding
-    private val settingsViewModel: SettingsViewModel by viewModel()
+    private val viewModel: SettingsViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,7 +31,7 @@ class SettingsFragment : Fragment() {
         if (savedInstanceState != null) {
             binding.switchTheme.isChecked = savedInstanceState.getBoolean("DARK_THEME", false)
         } else {
-            binding.switchTheme.isChecked = settingsViewModel.darkThemeEnabled.value ?: false
+            binding.switchTheme.isChecked = viewModel.darkThemeEnabled.value ?: false
         }
     }
 
@@ -41,7 +41,7 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        settingsViewModel.darkThemeEnabled.observe(viewLifecycleOwner) { enabled ->
+        viewModel.darkThemeEnabled.observe(viewLifecycleOwner) { enabled ->
             if (binding.switchTheme.isChecked != enabled) {
                 binding.switchTheme.isChecked = enabled
             }
@@ -49,25 +49,25 @@ class SettingsFragment : Fragment() {
                 if (enabled) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
             )
         }
-        settingsViewModel.supportEmailTrigger.observe(viewLifecycleOwner) { details ->
+        viewModel.supportEmailTrigger.observe(viewLifecycleOwner) { details ->
             details?.let {
                 val intent = IntentUtils.createEmailIntent(it.email, it.subject, it.message)
                 startActivity(intent)
-                settingsViewModel.clearSupportEmailTrigger()
+                viewModel.clearSupportEmailTrigger()
             }
         }
-        settingsViewModel.userAgreementTrigger.observe(viewLifecycleOwner) { url ->
+        viewModel.userAgreementTrigger.observe(viewLifecycleOwner) { url ->
             url?.let {
                 val intent = IntentUtils.createWebIntent(it)
                 startActivity(intent)
-                settingsViewModel.clearUserAgreementTrigger()
+                viewModel.clearUserAgreementTrigger()
             }
         }
-        settingsViewModel.shareTrigger.observe(viewLifecycleOwner) { message ->
+        viewModel.shareTrigger.observe(viewLifecycleOwner) { message ->
             message?.let {
                 val intent = IntentUtils.createShareIntent(it)
                 startActivity(intent)
-                settingsViewModel.clearShareTrigger()
+                viewModel.clearShareTrigger()
             }
         }
     }
@@ -75,16 +75,16 @@ class SettingsFragment : Fragment() {
     private fun setupListeners() {
 
         binding.switchTheme.setOnCheckedChangeListener { _, isChecked ->
-            settingsViewModel.switchTheme(isChecked)
+            viewModel.switchTheme(isChecked)
         }
         binding.layoutTextWriteToSupport.setOnClickListener {
-            settingsViewModel.triggerSupportEmail()
+            viewModel.triggerSupportEmail()
         }
         binding.layoutUserAgreement.setOnClickListener {
-            settingsViewModel.triggerUserAgreement()
+            viewModel.triggerUserAgreement()
         }
         binding.layoutToShare.setOnClickListener {
-            settingsViewModel.triggerShare()
+            viewModel.triggerShare()
         }
     }
 }

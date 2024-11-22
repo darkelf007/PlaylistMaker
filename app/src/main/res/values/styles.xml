@@ -101,7 +101,7 @@
         <item name="backgroundTint">@drawable/create_playlist_button_selector</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:fontFamily">@font/yandex_sans_text_medium</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/text_size_16</item>
     </style>
 
     <style name="TextInputLayoutStyleNewPlaylist" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -129,6 +129,32 @@
         <item name="backgroundTint">@color/dark_blue</item>
         <item name="cornerRadius">54dp</item>
         <item name="android:textColor">@color/white</item>
+    </style>
+
+    <!-- Playlist_info -->
+
+    <style name="PlaylistInfoCommonTextViewStyle">
+        <item name="android:fontFamily">@font/yandex_sans_text_regular</item>
+        <item name="android:background">@color/light_grey</item>
+        <item name="android:textSize">@dimen/text_size_18</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="PlaylistInfoBoldTextViewStyle">
+        <item name="android:fontFamily">@font/yandex_sans_text_bold</item>
+        <item name="android:textSize">@dimen/text_size_24</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="PlaylistInfoBottomSheetTextViewStyle">
+        <item name="android:fontFamily">@font/yandex_sans_text_regular</item>
+        <item name="android:textSize">@dimen/text_size_16</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="TrackListViewStyle">
+        <item name="android:textColor">@color/dark_grey</item>
+        <item name="tint">@color/dark_grey</item>
     </style>
 
 </resources>
