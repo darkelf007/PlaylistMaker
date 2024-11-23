@@ -62,7 +62,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationListener {
     }
 
     private fun updateBottomNavigationVisibility() {
-        val shouldHideBottomNav = hiddenBottomNavFragments.contains(navController.currentDestination?.id)
+        val shouldHideBottomNav =
+            hiddenBottomNavFragments.contains(navController.currentDestination?.id)
         binding.bottomNavigationView.isVisible = !isKeyboardVisible && !shouldHideBottomNav
     }
 

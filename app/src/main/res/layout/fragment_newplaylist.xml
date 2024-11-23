@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     android:theme="@style/Base.Theme.PlaylistMaker"
-    tools:context=".new_playlist.presentation.NewPlaylistFragment">
+    tools:context=".new_playlist.presentation.BasePlaylistFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -118,6 +118,7 @@
             android:background="@drawable/rounded_button_background"
             android:text="@string/text_for_button"
             android:textAllCaps="false"
+            android:enabled="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

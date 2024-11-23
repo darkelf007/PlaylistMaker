@@ -11,10 +11,13 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.android.playlistmaker.R
 import com.android.playlistmaker.databinding.FragmentPlaylistInfoBinding
 import com.android.playlistmaker.main.listeners.BottomNavigationListener
+import com.android.playlistmaker.new_playlist.domain.models.Playlist
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -71,6 +74,11 @@ class PlaylistInfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val playlistId = arguments?.getLong("playlistId") ?: return
+        viewModel.getPlaylistById(playlistId).observe(viewLifecycleOwner, Observer { playlist ->
+            playlist?.let { updateUIWithPlaylist(it) }
+        })
+
         backArrow = binding.playlistInfoBack
         playlistCover = binding.playlistInfoCover
         nameOfPlaylist = binding.nameOfPlaylistInfo
@@ -95,8 +103,11 @@ class PlaylistInfoFragment : Fragment() {
 
 
         backArrow.setOnClickListener {
-            findNavController().navigateUp()
+            findNavController().popBackStack(R.id.mediaFragment ,false)
+
         }
+
+
 
         sharePlaylist.setOnClickListener {
 
@@ -130,4 +141,10 @@ class PlaylistInfoFragment : Fragment() {
 
     }
 
+    private fun updateUIWithPlaylist(playlist: Playlist) {
+        nameOfPlaylist.text = playlist.name
+        yearOfPlaylistCreation.text = playlist.filePath
+        totalAmountOfMinutes.text = "${playlist.amountOfTracks} tracks"
+
+    }
 }

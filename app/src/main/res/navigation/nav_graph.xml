@@ -11,6 +11,9 @@
         android:name="com.android.playlistmaker.search.presentation.ui.SearchFragment"
         android:label="Search"
         tools:layout="@layout/fragment_search">
+        <argument
+            android:name="playlistId"
+            app:argType="long" />
         <action
             android:id="@+id/action_searchFragment_to_playerFragment"
             app:destination="@id/playerFragment" />
@@ -33,6 +36,9 @@
                 android:name="playerTrack"
                 app:argType="com.android.playlistmaker.search.domain.SearchTrack" />
         </action>
+        <action
+            android:id="@+id/action_mediaFragment_to_playlistInfoFragment"
+            app:destination="@id/playlistInfoFragment" />
 
     </fragment>
 
@@ -45,7 +51,7 @@
     <fragment
         android:id="@+id/newPlaylistFragment"
         android:name="com.android.playlistmaker.new_playlist.presentation.NewPlaylistFragment"
-        android:label="fragment_newplaylist"
+        android:label="Новый плейлист"
         tools:layout="@layout/fragment_newplaylist" />
 
     <fragment
@@ -59,6 +65,25 @@
             android:id="@+id/action_playerFragment_to_newPlaylistFragment"
             app:destination="@id/newPlaylistFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/playlistInfoFragment"
+        android:name="com.android.playlistmaker.playlist_info.presentation.PlaylistInfoFragment"
+        android:label="fragment_playlist_info"
+        tools:layout="@layout/fragment_playlist_info" >
+        <argument
+            android:name="playlistId"
+            app:argType="long" />
+
+        <action
+            android:id="@+id/action_playlistInfoFragment_to_editPlaylistFragment"
+            app:destination="@id/editPlaylistFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editPlaylistFragment"
+        android:name="com.android.playlistmaker.new_playlist.presentation.EditPlaylistFragment"
+        android:label="Редактировать плейлист" />
 
 
 </navigation>

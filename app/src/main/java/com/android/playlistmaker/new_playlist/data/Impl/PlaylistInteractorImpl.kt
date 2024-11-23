@@ -32,6 +32,10 @@ class PlaylistInteractorImpl(
         playlistRepository.updatePlaylist(playlist)
     }
 
+    override suspend fun getPlaylistById(id: Long): Playlist? {
+        return playlistRepository.getPlaylistById(id)
+    }
+
     private fun getNameForFile(nameOfPlaylist: String): String {
         val currentDateTime = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss")
