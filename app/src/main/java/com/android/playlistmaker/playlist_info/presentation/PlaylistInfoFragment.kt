@@ -6,21 +6,26 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.playlistmaker.R
 import com.android.playlistmaker.databinding.FragmentPlaylistInfoBinding
 import com.android.playlistmaker.main.listeners.BottomNavigationListener
 import com.android.playlistmaker.new_playlist.domain.models.Playlist
 import com.android.playlistmaker.search.domain.SearchTrack
 import com.android.playlistmaker.search.presentation.adapter.TrackAdapter
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistInfoFragment : Fragment() {
 
     private val viewModel: PlaylistInfoFragmentViewModel by viewModel()
+    private lateinit var menuBottomSheetBehavior: BottomSheetBehavior<View>
     private lateinit var binding: FragmentPlaylistInfoBinding
     private lateinit var trackAdapter: TrackAdapter
 
@@ -52,6 +57,12 @@ class PlaylistInfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         Log.d("PlaylistInfoFragment", "onViewCreated called")
         super.onViewCreated(view, savedInstanceState)
+
+
+
+        val menuBottomSheet = view.findViewById<LinearLayout>(R.id.playlist_menu_bottom_sheet)
+        menuBottomSheetBehavior = BottomSheetBehavior.from(menuBottomSheet)
+        menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         val playlistId = args.playlistId
         Log.d("PlaylistInfoFragment", "Received playlistId: $playlistId")
@@ -88,6 +99,7 @@ class PlaylistInfoFragment : Fragment() {
 
         binding.playlistInfoMenu.setOnClickListener {
             Log.d("PlaylistInfoFragment", "Menu button clicked")
+            toggleMenuBottomSheet()
         }
 
         binding.sharePlaylist.setOnClickListener {
@@ -103,7 +115,7 @@ class PlaylistInfoFragment : Fragment() {
 
         binding.deletePlaylist.setOnClickListener {
             Log.d("PlaylistInfoFragment", "Delete Playlist button clicked")
-
+            showDeletePlaylistDialog()
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(
@@ -140,4 +152,26 @@ class PlaylistInfoFragment : Fragment() {
             PlaylistInfoFragmentDirections.actionPlaylistInfoFragmentToPlayerFragment(track)
         findNavController().navigate(action)
     }
+    private fun toggleMenuBottomSheet() {
+        if (menuBottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN) {
+            menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        } else {
+            menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+    }
+
+    private fun showDeletePlaylistDialog() {
+        MaterialAlertDialogBuilder(requireContext(), R.style.MyDialogTheme)
+            .setTitle(getString(R.string.delete_playlist_title))
+            .setMessage(getString(R.string.delete_playlist_ask))
+            .setNegativeButton(getString(R.string.no)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+                viewModel.deletePlaylist(viewModel.playlist.value!!)
+                findNavController().navigateUp()
+            }
+            .show()
+    }
+
 }

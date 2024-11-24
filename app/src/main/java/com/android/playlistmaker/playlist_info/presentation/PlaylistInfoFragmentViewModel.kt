@@ -41,4 +41,10 @@ class PlaylistInfoFragmentViewModel(
             }
         }
     }
+
+    fun deletePlaylist(playlist: Playlist) {
+        viewModelScope.launch {
+            currentPlaylistInteractor.deletePlaylist(playlist)
+        }
+    }
 }
