@@ -27,16 +27,17 @@ abstract class BasePlaylistFragment : Fragment() {
 
     lateinit var binding: FragmentNewplaylistBinding
 
-    private val pickMediaLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) {
-            binding.loadImageImageview.scaleType = ImageView.ScaleType.CENTER_CROP
-            binding.loadImageImageview.setImageURI(uri)
-            imageIsLoaded = true
-            uriOfImage = uri
-        } else {
-            Log.d("PhotoPicker", "No media selected")
+    private val pickMediaLauncher =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                binding.loadImageImageview.scaleType = ImageView.ScaleType.CENTER_CROP
+                binding.loadImageImageview.setImageURI(uri)
+                imageIsLoaded = true
+                uriOfImage = uri
+            } else {
+                Log.d("PhotoPicker", "No media selected")
+            }
         }
-    }
 
     override fun onAttach(context: Context) {
 

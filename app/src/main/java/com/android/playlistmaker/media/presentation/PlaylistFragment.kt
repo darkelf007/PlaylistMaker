@@ -1,16 +1,17 @@
 package com.android.playlistmaker.media.presentation
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.playlistmaker.databinding.PlaylistFragmentBinding
@@ -47,7 +48,10 @@ class PlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+
         adapter = PlaylistAdapter(requireContext()) { playlist ->
+            Log.d("PlaylistFragment", "Clicked on playlist: ${playlist.id}")
             if (clickDebounce()) {
                 clickOnItem(playlist)
             }
@@ -81,22 +85,23 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun clickOnItem(playlist: Playlist) {
-        Toast.makeText(
-            requireContext(), "You clicked on playlist with id ${playlist.id}", Toast.LENGTH_SHORT
-        ).show()
+        Log.d("PlaylistFragment", "Navigating to PlaylistInfoFragment with ID: ${playlist.id}")
+        val action = MediaFragmentDirections.actionMediaFragmentToPlaylistInfoFragment(playlist.id)
+        findNavController().navigate(action)
     }
 
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
+        Log.d("PlaylistFragment", "clickDebounce called. isClickAllowed: $current")
         if (isClickAllowed) {
             isClickAllowed = false
-
-            viewLifecycleOwner.lifecycleScope.launch {
+            Log.d("PlaylistFragment", "isClickAllowed set to false")
+            lifecycleScope.launch {
                 delay(CLICK_DEBOUNCE_DELAY)
                 isClickAllowed = true
+                Log.d("PlaylistFragment", "isClickAllowed set to true after delay")
             }
         }
-
         return current
     }
 

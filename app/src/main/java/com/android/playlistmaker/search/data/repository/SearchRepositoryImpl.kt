@@ -21,6 +21,7 @@ class SearchRepositoryImpl(private val dataSource: SearchDataSource) : SearchRep
             artistName = this.artistName,
             trackTimeMillis = this.trackTimeMillis,
             artworkUrl100 = this.artworkUrl100,
+            artworkUrl60 = this.artworkUrl60,
             trackId = this.trackId,
             collectionName = this.collectionName,
             releaseDate = this.releaseDate,

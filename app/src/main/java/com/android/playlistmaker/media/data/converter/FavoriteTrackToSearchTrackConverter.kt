@@ -11,6 +11,7 @@ class FavoriteTrackToSearchTrackConverter {
             artistName = favoriteTrack.artistName,
             trackTimeMillis = favoriteTrack.trackTimeMillis,
             artworkUrl100 = favoriteTrack.artworkUrl100,
+            artworkUrl60 = favoriteTrack.artworkUrl60,
             collectionName = favoriteTrack.collectionName,
             releaseDate = favoriteTrack.releaseDate,
             primaryGenreName = favoriteTrack.primaryGenreName,

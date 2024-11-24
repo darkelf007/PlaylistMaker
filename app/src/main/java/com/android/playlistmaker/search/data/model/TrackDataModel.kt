@@ -7,6 +7,7 @@ data class TrackDataModel(
     val artistName: String,
     @SerializedName("trackTimeMillis") val trackTimeMillis: Int,
     @SerializedName("artworkUrl100") val artworkUrl100: String,
+    @SerializedName("artworkUrl60") val artworkUrl60: String,
     val trackId: Int,
     val collectionName: String,
     val releaseDate: String,

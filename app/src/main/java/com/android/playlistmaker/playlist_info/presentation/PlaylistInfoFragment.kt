@@ -2,51 +2,31 @@ package com.android.playlistmaker.playlist_info.presentation
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
-import com.android.playlistmaker.R
+import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.playlistmaker.databinding.FragmentPlaylistInfoBinding
 import com.android.playlistmaker.main.listeners.BottomNavigationListener
 import com.android.playlistmaker.new_playlist.domain.models.Playlist
+import com.android.playlistmaker.search.domain.SearchTrack
+import com.android.playlistmaker.search.presentation.adapter.TrackAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
 
 class PlaylistInfoFragment : Fragment() {
 
-    private var bottomNavigationListener: BottomNavigationListener? = null
-
     private val viewModel: PlaylistInfoFragmentViewModel by viewModel()
     private lateinit var binding: FragmentPlaylistInfoBinding
+    private lateinit var trackAdapter: TrackAdapter
 
-    private lateinit var backArrow: ImageView
-    private lateinit var playlistCover: ImageView
-    private lateinit var nameOfPlaylist: TextView
-    private lateinit var yearOfPlaylistCreation: TextView
-    private lateinit var totalAmountOfMinutes: TextView
-    private lateinit var totalNumberOfTracks: TextView
-    private lateinit var sharePlaylist: ImageView
-    private lateinit var menuOfPlaylist: ImageView
+    private var bottomNavigationListener: BottomNavigationListener? = null
 
-    private lateinit var playlistInfoBottomSheet: LinearLayout
-    private lateinit var playlistInfoBottomSheetRecyclerView: RecyclerView
-
-    private lateinit var playlistMenuBottomSheet: LinearLayout
-    private lateinit var playlistCoverBottomSheet: ImageView
-    private lateinit var nameOfPlaylistBottomSheet: TextView
-    private lateinit var totalNumberOfTracksBottomSheet: TextView
-    private lateinit var sharePlaylistBottomSheet: FrameLayout
-    private lateinit var editPlaylistBottomSheet: FrameLayout
-    private lateinit var deletePlaylistBottomSheet: FrameLayout
+    private val args: PlaylistInfoFragmentArgs by navArgs()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -63,88 +43,101 @@ class PlaylistInfoFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
         binding = FragmentPlaylistInfoBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d("PlaylistInfoFragment", "onViewCreated called")
         super.onViewCreated(view, savedInstanceState)
 
-        val playlistId = arguments?.getLong("playlistId") ?: return
-        viewModel.getPlaylistById(playlistId).observe(viewLifecycleOwner, Observer { playlist ->
-            playlist?.let { updateUIWithPlaylist(it) }
-        })
+        val playlistId = args.playlistId
+        Log.d("PlaylistInfoFragment", "Received playlistId: $playlistId")
 
-        backArrow = binding.playlistInfoBack
-        playlistCover = binding.playlistInfoCover
-        nameOfPlaylist = binding.nameOfPlaylistInfo
-        yearOfPlaylistCreation = binding.yearOfPlaylistInfo
-        totalAmountOfMinutes = binding.totalMinutesPlaylistInfo
-        totalNumberOfTracks = binding.amountOfTracksPlaylistInfo
-        sharePlaylist = binding.playlistInfoShare
-        menuOfPlaylist = binding.playlistInfoMenu
+        setupRecyclerView()
 
+        setupListeners()
 
-        playlistInfoBottomSheet = binding.playlistInfoBottomSheet
-        playlistInfoBottomSheetRecyclerView = binding.playlistInfoBottomSheetRecyclerview
+        observeViewModel()
 
+        viewModel.loadPlaylistData(playlistId)
+    }
 
-        playlistMenuBottomSheet = binding.playlistMenuBottomSheet
-        playlistCoverBottomSheet = binding.playlistInfoCoverMin
-        nameOfPlaylistBottomSheet = binding.nameOfPlaylistInfoMin
-        totalNumberOfTracksBottomSheet = binding.amountOfTracksPlaylistInfoMin
-        sharePlaylistBottomSheet = binding.sharePlaylist
-        editPlaylistBottomSheet = binding.editPlaylist
-        deletePlaylistBottomSheet = binding.deletePlaylist
-
-
-        backArrow.setOnClickListener {
-            findNavController().popBackStack(R.id.mediaFragment ,false)
-
+    private fun setupRecyclerView() {
+        trackAdapter = TrackAdapter(emptyList(), resources).apply {
+            itemClickListener = { track -> navigateToPlayerFragment(track) }
         }
 
+        binding.playlistInfoBottomSheetRecyclerview.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = trackAdapter
+        }
+    }
 
-
-        sharePlaylist.setOnClickListener {
-
+    private fun setupListeners() {
+        binding.playlistInfoBack.setOnClickListener {
+            Log.d("PlaylistInfoFragment", "Back button clicked")
+            findNavController().popBackStack()
         }
 
-        menuOfPlaylist.setOnClickListener {
-
+        binding.playlistInfoShare.setOnClickListener {
+            Log.d("PlaylistInfoFragment", "Share button clicked")
         }
 
-        sharePlaylistBottomSheet.setOnClickListener {
-
+        binding.playlistInfoMenu.setOnClickListener {
+            Log.d("PlaylistInfoFragment", "Menu button clicked")
         }
 
-        editPlaylistBottomSheet.setOnClickListener {
-
+        binding.sharePlaylist.setOnClickListener {
+            Log.d("PlaylistInfoFragment", "Share Playlist button clicked")
         }
 
-        deletePlaylistBottomSheet.setOnClickListener {
+        binding.editPlaylist.setOnClickListener {
+            Log.d("PlaylistInfoFragment", "Edit Playlist button clicked")
+            val action =
+                PlaylistInfoFragmentDirections.actionPlaylistInfoFragmentToEditPlaylistFragment()
+            findNavController().navigate(action)
+        }
+
+        binding.deletePlaylist.setOnClickListener {
+            Log.d("PlaylistInfoFragment", "Delete Playlist button clicked")
 
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
-
                 override fun handleOnBackPressed() {
+                    Log.d("PlaylistInfoFragment", "Back pressed")
                     findNavController().navigateUp()
                 }
+            }
+        )
+    }
 
-            })
+    private fun observeViewModel() {
+        viewModel.playlist.observe(viewLifecycleOwner) { playlist ->
+            playlist?.let { updateUIWithPlaylist(it) }
+        }
 
+        viewModel.tracks.observe(viewLifecycleOwner) { tracks ->
+            trackAdapter.updateTracks(tracks)
+        }
     }
 
     private fun updateUIWithPlaylist(playlist: Playlist) {
-        nameOfPlaylist.text = playlist.name
-        yearOfPlaylistCreation.text = playlist.filePath
-        totalAmountOfMinutes.text = "${playlist.amountOfTracks} tracks"
+        Log.d("PlaylistInfoFragment", "Updating UI with playlist: $playlist")
+        binding.nameOfPlaylistInfo.text = playlist.name
+        binding.yearOfPlaylistInfo.text = playlist.filePath
+        binding.totalMinutesPlaylistInfo.text = "${playlist.amountOfTracks} tracks"
+    }
 
+    private fun navigateToPlayerFragment(track: SearchTrack) {
+        Log.d("PlaylistInfoFragment", "Navigating to PlayerFragment with track: $track")
+        val action =
+            PlaylistInfoFragmentDirections.actionPlaylistInfoFragmentToPlayerFragment(track)
+        findNavController().navigate(action)
     }
 }

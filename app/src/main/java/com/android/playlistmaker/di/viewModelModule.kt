@@ -20,7 +20,7 @@ val viewModelModule = module {
     viewModelOf(::SearchViewModel)
     viewModelOf(::FavoriteFragmentViewModel)
     viewModelOf(::PlaylistFragmentViewModel)
-    viewModel { PlaylistInfoFragmentViewModel(get(),get(),get(),get(),get()) }
+    viewModel { PlaylistInfoFragmentViewModel(get()) }
     viewModel { NewPlaylistViewModel(get()) }
     viewModel { EditPlaylistViewModel(get()) }
 
