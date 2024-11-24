@@ -1,5 +1,6 @@
 package com.android.playlistmaker.playlist_info.data
 
+import android.util.Log
 import com.android.playlistmaker.db.dao.PlaylistDao
 import com.android.playlistmaker.db.dao.PlaylistTrackDao
 import com.android.playlistmaker.db.entity.mapToSearchTrack
@@ -20,10 +21,11 @@ class CurrentPlaylistRepositoryImpl(
 
     override suspend fun getPlaylistById(playlistId: Long): Playlist? {
         val playlistEntity = playlistDao.getPlaylistById(playlistId)
+        Log.d("Repository", "Playlist entity: $playlistEntity")
         return playlistEntity?.mapToPlaylist()
     }
 
-    override suspend fun deletePlaylist(playlist: Playlist) { // Реализация метода
+    override suspend fun deletePlaylist(playlist: Playlist) {
         playlistDao.deletePlaylist(playlist.mapToPlaylistEntity())
     }
 }

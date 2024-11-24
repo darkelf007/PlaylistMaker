@@ -205,7 +205,7 @@ class PlayerFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        hideBottomNavigation(true)
+        bottomNavigationListener?.toggleBottomNavigationViewVisibility(false)
         viewModel.getPlaylists()
         if (viewModel.allowToCleanTimer) {
             binding.trackLengthValue.text = "00:00"
@@ -221,7 +221,7 @@ class PlayerFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        hideBottomNavigation(false)
+        bottomNavigationListener?.toggleBottomNavigationViewVisibility(true)
     }
 
     override fun onDestroyView() {
@@ -353,9 +353,6 @@ class PlayerFragment : Fragment() {
         data object BackButtonClicked : UiState()
     }
 
-    private fun hideBottomNavigation(isHide: Boolean) {
-        bottomNavigationListener?.toggleBottomNavigationViewVisibility(!isHide)
-    }
 
     private fun clickOnItem(playlist: Playlist) {
         allowToEmit = true

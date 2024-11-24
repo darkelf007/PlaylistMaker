@@ -23,7 +23,7 @@ abstract class BasePlaylistFragment : Fragment() {
 
     private var bottomNavigationListener: BottomNavigationListener? = null
     private var imageIsLoaded = false
-    private var uriOfImage: Uri? = null
+    var uriOfImage: Uri? = null
 
     lateinit var binding: FragmentNewplaylistBinding
 
@@ -120,7 +120,7 @@ abstract class BasePlaylistFragment : Fragment() {
         binding.newPlaylistButton.isEnabled = isNotBlank
     }
 
-    private fun checkForDialogOutput() {
+    fun checkForDialogOutput() {
         if (imageIsLoaded || binding.editNameNewPlaylist.text.toString().isNotEmpty() ||
             binding.editDescriptionNewPlaylist.text.toString().isNotEmpty()
         ) {
@@ -130,7 +130,7 @@ abstract class BasePlaylistFragment : Fragment() {
         }
     }
 
-    private fun pickMedia() {
+    fun pickMedia() {
         pickMediaLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 

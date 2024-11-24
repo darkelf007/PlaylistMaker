@@ -28,7 +28,7 @@ class FileRepositoryImpl(
                 context.contentResolver.openInputStream(uri)?.use { inputStream ->
                     FileOutputStream(file).use { outputStream ->
                         val bitmap: Bitmap = BitmapFactory.decodeStream(inputStream)
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
                     }
                 }
             }

@@ -1,7 +1,9 @@
 package com.android.playlistmaker.playlist_info.presentation
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +23,7 @@ import com.android.playlistmaker.search.presentation.adapter.TrackAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.File
 
 class PlaylistInfoFragment : Fragment() {
 
@@ -42,10 +45,6 @@ class PlaylistInfoFragment : Fragment() {
         }
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        bottomNavigationListener = null
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -59,6 +58,10 @@ class PlaylistInfoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
+        val infoBottomSheet = view.findViewById<LinearLayout>(R.id.playlist_info_bottom_sheet)
+        val infoBottomSheetBehavior = BottomSheetBehavior.from(infoBottomSheet).apply {
+            state = BottomSheetBehavior.STATE_COLLAPSED
+        }
 
         val menuBottomSheet = view.findViewById<LinearLayout>(R.id.playlist_menu_bottom_sheet)
         menuBottomSheetBehavior = BottomSheetBehavior.from(menuBottomSheet)
@@ -74,6 +77,22 @@ class PlaylistInfoFragment : Fragment() {
         observeViewModel()
 
         viewModel.loadPlaylistData(playlistId)
+
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        bottomNavigationListener = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        bottomNavigationListener?.toggleBottomNavigationViewVisibility(false)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        bottomNavigationListener?.toggleBottomNavigationViewVisibility(true)
     }
 
     private fun setupRecyclerView() {
@@ -108,8 +127,8 @@ class PlaylistInfoFragment : Fragment() {
 
         binding.editPlaylist.setOnClickListener {
             Log.d("PlaylistInfoFragment", "Edit Playlist button clicked")
-            val action =
-                PlaylistInfoFragmentDirections.actionPlaylistInfoFragmentToEditPlaylistFragment()
+            val action = PlaylistInfoFragmentDirections
+                .actionPlaylistInfoFragmentToEditPlaylistFragment(playlistId = args.playlistId)
             findNavController().navigate(action)
         }
 
@@ -131,6 +150,7 @@ class PlaylistInfoFragment : Fragment() {
 
     private fun observeViewModel() {
         viewModel.playlist.observe(viewLifecycleOwner) { playlist ->
+            Log.d("PlaylistInfoFragment", "Observed playlist: $playlist")
             playlist?.let { updateUIWithPlaylist(it) }
         }
 
@@ -144,7 +164,30 @@ class PlaylistInfoFragment : Fragment() {
         binding.nameOfPlaylistInfo.text = playlist.name
         binding.yearOfPlaylistInfo.text = playlist.filePath
         binding.totalMinutesPlaylistInfo.text = "${playlist.amountOfTracks} tracks"
+
+        val uri = getValidUri(playlist.filePath)
+        Log.d("PlaylistInfoFragment", "Resolved URI: $uri")
+        if (uri != null) {
+            Log.d("PlaylistInfoFragment", "Setting image URI: $uri")
+            binding.playlistInfoCover.setImageURI(uri)
+        } else {
+            Log.d("PlaylistInfoFragment", "Setting default placeholder image")
+            binding.playlistInfoCover.setImageResource(R.drawable.placeholder_playlist_info)
+        }
     }
+
+    private fun getValidUri(filePath: String): Uri? {
+        val file = File(
+            requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+            "myalbum/$filePath"
+        )
+        Log.d(
+            "PlaylistInfoFragment",
+            "Checking file existence: ${file.absolutePath}, exists: ${file.exists()}"
+        )
+        return if (file.exists()) Uri.fromFile(file) else null
+    }
+
 
     private fun navigateToPlayerFragment(track: SearchTrack) {
         Log.d("PlaylistInfoFragment", "Navigating to PlayerFragment with track: $track")
@@ -152,9 +195,10 @@ class PlaylistInfoFragment : Fragment() {
             PlaylistInfoFragmentDirections.actionPlaylistInfoFragmentToPlayerFragment(track)
         findNavController().navigate(action)
     }
+
     private fun toggleMenuBottomSheet() {
         if (menuBottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN) {
-            menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         } else {
             menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }

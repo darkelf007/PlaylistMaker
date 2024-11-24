@@ -91,7 +91,11 @@
     <fragment
         android:id="@+id/editPlaylistFragment"
         android:name="com.android.playlistmaker.new_playlist.presentation.EditPlaylistFragment"
-        android:label="Редактировать плейлист" />
+        android:label="Редактировать плейлист">
+    <argument
+        android:name="playlistId"
+        app:argType="long" />
+</fragment>
 
 
 </navigation>

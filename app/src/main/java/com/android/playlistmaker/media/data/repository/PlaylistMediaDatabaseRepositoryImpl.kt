@@ -3,6 +3,7 @@ package com.android.playlistmaker.media.data.repository
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import androidx.core.net.toUri
 import com.android.playlistmaker.db.AppDatabase
 import com.android.playlistmaker.media.domain.db.PlaylistMediaDatabaseRepository
@@ -29,6 +30,8 @@ class PlaylistMediaDatabaseRepositoryImpl(
     private fun getUriOfImageFromStorage(fileName: String?): Uri? {
         fileName ?: return null
         val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
+        Log.d("FileRepositoryImpl", "Saving image to: ${filePath.absolutePath}")
+
         val file = File(filePath, fileName)
         return if (file.exists()) file.toUri() else null
     }
