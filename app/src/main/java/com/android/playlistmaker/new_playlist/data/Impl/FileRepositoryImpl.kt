@@ -19,15 +19,26 @@ class FileRepositoryImpl(
     override suspend fun saveImageToPrivateStorage(uri: Uri, nameOfFile: String): Result<Unit> {
         return runCatching {
             withContext(Dispatchers.IO) {
-                val filePath =
-                    File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
+
+                val filePath = File(
+                    context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                    "myalbum"
+                )
                 if (!filePath.exists()) {
                     filePath.mkdirs()
                 }
-                val file = File(filePath, nameOfFile)
+
+
+                val sanitizedFileName = File(nameOfFile).name
+
+
+                val file = File(filePath, sanitizedFileName)
+
+
                 context.contentResolver.openInputStream(uri)?.use { inputStream ->
                     FileOutputStream(file).use { outputStream ->
                         val bitmap: Bitmap = BitmapFactory.decodeStream(inputStream)
+
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
                     }
                 }
@@ -38,3 +49,4 @@ class FileRepositoryImpl(
         }
     }
 }
+

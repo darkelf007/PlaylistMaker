@@ -124,7 +124,6 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun render(playlistState: PlaylistState) {
-
         when (playlistState) {
             is PlaylistState.Loading -> {
                 showLoader()
@@ -134,6 +133,12 @@ class PlaylistFragment : Fragment() {
                 if (playlistState.data.isEmpty()) {
                     showPlaceholder()
                 } else {
+                    playlistState.data.forEach { playlist ->
+                        Log.d(
+                            "PlaylistFragment",
+                            "Rendering playlist: id=${playlist.id}, filePath=${playlist.filePath}"
+                        )
+                    }
                     adapter.submitList(playlistState.data)
                     showContent()
                 }

@@ -28,13 +28,21 @@ import java.io.File
 class PlaylistInfoFragment : Fragment() {
 
     private val viewModel: PlaylistInfoFragmentViewModel by viewModel()
-    private lateinit var menuBottomSheetBehavior: BottomSheetBehavior<View>
+
+    private lateinit var menuBottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+
+    private lateinit var playlistMenuBottomSheet: LinearLayout
+
+
     private lateinit var binding: FragmentPlaylistInfoBinding
     private lateinit var trackAdapter: TrackAdapter
 
     private var bottomNavigationListener: BottomNavigationListener? = null
 
     private val args: PlaylistInfoFragmentArgs by navArgs()
+
+    private lateinit var overlay: View
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -57,15 +65,42 @@ class PlaylistInfoFragment : Fragment() {
         Log.d("PlaylistInfoFragment", "onViewCreated called")
         super.onViewCreated(view, savedInstanceState)
 
+        overlay = binding.overlay
+        playlistMenuBottomSheet = binding.playlistMenuBottomSheet
 
         val infoBottomSheet = view.findViewById<LinearLayout>(R.id.playlist_info_bottom_sheet)
+
         val infoBottomSheetBehavior = BottomSheetBehavior.from(infoBottomSheet).apply {
             state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
-        val menuBottomSheet = view.findViewById<LinearLayout>(R.id.playlist_menu_bottom_sheet)
-        menuBottomSheetBehavior = BottomSheetBehavior.from(menuBottomSheet)
-        menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        menuBottomSheetBehavior = BottomSheetBehavior.from(playlistMenuBottomSheet).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+
+
+
+        bottomSheetBehavior = BottomSheetBehavior.from(playlistMenuBottomSheet).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+        bottomSheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                overlay.visibility = if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    View.GONE
+                } else {
+                    View.VISIBLE
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            }
+        })
+
+
+
 
         val playlistId = args.playlistId
         Log.d("PlaylistInfoFragment", "Received playlistId: $playlistId")
@@ -177,16 +212,19 @@ class PlaylistInfoFragment : Fragment() {
     }
 
     private fun getValidUri(filePath: String): Uri? {
-        val file = File(
-            requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-            "myalbum/$filePath"
-        )
+        val file = if (filePath.startsWith("myalbum/")) {
+            File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), filePath)
+        } else {
+            File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum/$filePath")
+        }
         Log.d(
             "PlaylistInfoFragment",
             "Checking file existence: ${file.absolutePath}, exists: ${file.exists()}"
         )
         return if (file.exists()) Uri.fromFile(file) else null
     }
+
+
 
 
     private fun navigateToPlayerFragment(track: SearchTrack) {

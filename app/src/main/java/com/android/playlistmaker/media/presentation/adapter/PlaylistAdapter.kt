@@ -1,6 +1,8 @@
 package com.android.playlistmaker.media.presentation.adapter
 
 import android.content.Context
+import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -13,6 +15,7 @@ import com.android.playlistmaker.new_playlist.domain.models.Playlist
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import java.io.File
 
 class PlaylistAdapter(
     private val context: Context,
@@ -54,28 +57,39 @@ class PlaylistHolder(
         itemView.findViewById(R.id.number_of_tracks_textview)
 
     fun bind(playlist: Playlist) {
-        if (playlist.imageUri != null) {
-            Glide.with(context)
-                .load(playlist.imageUri)
-                .placeholder(R.drawable.placeholder_playlist)
-                .error(R.drawable.placeholder_playlist)
-                .apply(
-                    RequestOptions().transform(
-                        RoundedCorners(
-                            context.resources.getDimensionPixelSize(
-                                R.dimen.dp_8
-                            )
-                        )
-                    )
-                )
-                .into(playlistImageView)
+        val filePath = playlist.filePath
+        Log.d("PlaylistAdapter", "Binding playlist: id=${playlist.id}, filePath=$filePath")
+
+        if (filePath.isNotEmpty()) {
+            val file = File(
+                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                if (filePath.startsWith("myalbum/")) filePath else "myalbum/$filePath"
+            )
+            Log.d("PlaylistAdapter", "Checking file: ${file.absolutePath}, exists=${file.exists()}")
+
+            if (file.exists()) {
+                Glide.with(context)
+                    .load(file)
+                    .placeholder(R.drawable.placeholder_playlist)
+                    .error(R.drawable.placeholder_playlist)
+                    .apply(RequestOptions().transform(
+                        RoundedCorners(context.resources.getDimensionPixelSize(R.dimen.dp_8))
+                    ))
+                    .into(playlistImageView)
+            } else {
+                Log.e("PlaylistAdapter", "File does not exist: ${file.absolutePath}")
+                playlistImageView.setImageResource(R.drawable.placeholder_playlist)
+            }
         } else {
+            Log.d("PlaylistAdapter", "File path is empty, setting placeholder")
             playlistImageView.setImageResource(R.drawable.placeholder_playlist)
         }
 
         nameOfPlaylistTextView.text = playlist.name
         numberOfTracksTextView.text = getTrackCountString(playlist.amountOfTracks)
     }
+
+
 
     private fun getTrackCountString(count: Int): String {
         return context.resources.getQuantityString(R.plurals.number_of_tracks, count, count)
