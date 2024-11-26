@@ -61,9 +61,16 @@ abstract class BasePlaylistFragment : Fragment() {
         return binding.root
     }
 
+    abstract fun getButtonText(): String
+    abstract fun getHeaderText(): String
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        binding.newPlaylistButton.text = getButtonText()
+        binding.newPlaylistHeader.text = getHeaderText()
 
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
@@ -112,9 +119,9 @@ abstract class BasePlaylistFragment : Fragment() {
     }
 
     private fun hideBottomNavigation(isHide: Boolean) {
+        Log.d("HideBottomNav", "hideBottomNavigation called with isHide: $isHide")
         bottomNavigationListener?.toggleBottomNavigationViewVisibility(!isHide)
     }
-
     private fun enableNewPlaylistButton(text: String?) {
         val isNotBlank = !text.isNullOrBlank()
         binding.newPlaylistButton.isEnabled = isNotBlank

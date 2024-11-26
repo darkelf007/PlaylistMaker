@@ -29,4 +29,12 @@ class NewPlaylistFragment : BasePlaylistFragment() {
         viewModel.createPlaylist(name, description, uri)
     }
 
+
+    override fun getButtonText(): String {
+        return getString(R.string.create_new_playlist_text_button)
+    }
+
+    override fun getHeaderText(): String {
+        return getString(R.string.new_playlist_text)
+    }
 }

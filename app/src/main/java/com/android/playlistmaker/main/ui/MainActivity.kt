@@ -3,6 +3,7 @@ package com.android.playlistmaker.main.ui
 import android.graphics.Rect
 import android.os.Bundle
 import android.transition.TransitionManager
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
@@ -21,7 +22,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationListener {
     private var isKeyboardVisible = false
 
     private val hiddenBottomNavFragments = setOf(
-        R.id.playerFragment, R.id.newPlaylistFragment
+        R.id.playerFragment,
+        R.id.newPlaylistFragment,
+        R.id.editPlaylistFragment
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +46,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationListener {
     override fun toggleBottomNavigationViewVisibility(isVisible: Boolean) {
         binding.bottomNavigationView.isVisible = isVisible
     }
-
     private fun setupKeyboardVisibilityListener() {
         val contentView = findViewById<View>(android.R.id.content)
         contentView.viewTreeObserver.addOnGlobalLayoutListener {
@@ -52,11 +54,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationListener {
             val screenHeight = contentView.rootView.height
             val keypadHeight = screenHeight - r.bottom
             val isKeyboardNowVisible = keypadHeight > screenHeight * 0.15
-
             if (isKeyboardNowVisible != isKeyboardVisible) {
                 isKeyboardVisible = isKeyboardNowVisible
                 updateBottomNavigationVisibility()
-                adjustConstraintsForKeyboard()
             }
         }
     }
@@ -67,17 +67,4 @@ class MainActivity : AppCompatActivity(), BottomNavigationListener {
         binding.bottomNavigationView.isVisible = !isKeyboardVisible && !shouldHideBottomNav
     }
 
-    private fun adjustConstraintsForKeyboard() {
-        val constraintSet = ConstraintSet()
-        constraintSet.clone(binding.mainConstraintLayout)
-        val bottomId = if (isKeyboardVisible) ConstraintSet.PARENT_ID else R.id.bottomNavigationView
-        constraintSet.connect(
-            R.id.nav_host_fragment,
-            ConstraintSet.BOTTOM,
-            bottomId,
-            ConstraintSet.TOP
-        )
-        TransitionManager.beginDelayedTransition(binding.mainConstraintLayout)
-        constraintSet.applyTo(binding.mainConstraintLayout)
-    }
 }

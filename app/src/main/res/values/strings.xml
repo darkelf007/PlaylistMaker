@@ -46,7 +46,7 @@
     <string name="new_playlist_text">Новый плейлист</string>
     <string name="name_hint">Название*</string>
     <string name="description">Описание</string>
-    <string name="text_for_button">Создать</string>
+    <string name="create_new_playlist_text_button">Создать</string>
     <string name="cancel">Отмена</string>
 
     <string name="complete">Завершить</string>
@@ -80,13 +80,23 @@
     <string name="share_empty_playlist">В этом плейлисте нет списка треков, которым можно поделиться</string>
     <string name="delete_playlist_ask">Хотите удалить плейлист?</string>
 
-    <!--/PlaylistInfoFragment-->
+    <plurals name="minutes_plural">
+        <item quantity="one">%d минута</item>
+        <item quantity="few">%d минуты</item>
+        <item quantity="many">%d минут</item>
+        <item quantity="other">%d минут</item>
+    </plurals>
+
+    <plurals name="tracks_plural">
+        <item quantity="one">%d трек</item>
+        <item quantity="few">%d трека</item>
+        <item quantity="many">%d треков</item>
+        <item quantity="other">%d треков</item>
+    </plurals>
 
     <!--EditPlaylistFragment-->
 
     <string name="edit_current_playlist">Редактировать</string>
     <string name="save_button_edit">Сохранить</string>
-
-    <!--/EditPlaylistFragment-->
 
 </resources>

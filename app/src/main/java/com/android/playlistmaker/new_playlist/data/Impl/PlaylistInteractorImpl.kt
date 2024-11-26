@@ -20,7 +20,8 @@ class PlaylistInteractorImpl(
             description = description.trim(),
             filePath = filePath,
             listOfTracksId = "",
-            amountOfTracks = 0
+            amountOfTracks = 0,
+            trackTime = 0
         )
         playlistRepository.addPlaylist(playlist)
         if (uriOfImage != null && filePath.isNotEmpty()) {

@@ -1,6 +1,7 @@
 package com.android.playlistmaker.player.presentation
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -55,6 +56,7 @@ class PlaylistBottomSheetHolder(
         itemView.findViewById(R.id.playlist_track_amount_textview)
 
     fun bind(playlist: Playlist) {
+        Log.d("PlaylistAdapter", "Image URI: ${playlist.imageUri}")
         if (playlist.imageUri != null) {
             Glide.with(context)
                 .load(playlist.imageUri)

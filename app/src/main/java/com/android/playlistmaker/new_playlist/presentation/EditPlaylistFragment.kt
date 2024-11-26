@@ -11,6 +11,7 @@ import android.widget.ImageView
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.android.playlistmaker.R
+import com.android.playlistmaker.main.listeners.BottomNavigationListener
 import com.android.playlistmaker.new_playlist.domain.models.Playlist
 import com.android.playlistmaker.new_playlist.presentation.viewmodel.EditPlaylistViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -24,14 +25,35 @@ class EditPlaylistFragment : BasePlaylistFragment() {
     private val viewModel: EditPlaylistViewModel by viewModel()
     private val args: EditPlaylistFragmentArgs by navArgs()
 
+    override fun onResume() {
+        super.onResume()
+        Log.d("EditPlaylistFragment", "onResume: Hiding bottom navigation")
+        hideBottomNavigation(true)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("EditPlaylistFragment", "onStop: Showing bottom navigation")
+        hideBottomNavigation(false)
+    }
+
+    private fun hideBottomNavigation(isHide: Boolean) {
+        (requireActivity() as BottomNavigationListener).toggleBottomNavigationViewVisibility(!isHide)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.newPlaylistButton.text = getString(R.string.save_button_edit)
+
+        binding.newPlaylistHeader.text = getString(R.string.edit_current_playlist)
 
 
         viewModel.loadPlaylistData(args.playlistId)
 
 
         setupObserver()
+
 
 
         binding.newPlaylistButton.setOnClickListener {
@@ -53,6 +75,13 @@ class EditPlaylistFragment : BasePlaylistFragment() {
 
     }
 
+    override fun getButtonText(): String {
+        return getString(R.string.save_button_edit)
+    }
+
+    override fun getHeaderText(): String {
+        return getString(R.string.edit_current_playlist)
+    }
 
     override fun setupObserver() {
         viewModel.playlist.observe(viewLifecycleOwner) { playlist ->

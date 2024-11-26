@@ -1,6 +1,7 @@
 package com.android.playlistmaker.playlist_info.presentation
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -8,7 +9,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -28,6 +31,10 @@ import java.io.File
 class PlaylistInfoFragment : Fragment() {
 
     private val viewModel: PlaylistInfoFragmentViewModel by viewModel()
+
+    private lateinit var coverMin: ImageView
+    private lateinit var nameMin: TextView
+    private lateinit var amountOfTracksMin: TextView
 
     private lateinit var menuBottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
@@ -67,6 +74,9 @@ class PlaylistInfoFragment : Fragment() {
 
         overlay = binding.overlay
         playlistMenuBottomSheet = binding.playlistMenuBottomSheet
+        coverMin = binding.playlistInfoCoverMin
+        nameMin = binding.nameOfPlaylistInfoMin
+        amountOfTracksMin = binding.amountOfTracksPlaylistInfoMin
 
         val infoBottomSheet = view.findViewById<LinearLayout>(R.id.playlist_info_bottom_sheet)
 
@@ -85,7 +95,8 @@ class PlaylistInfoFragment : Fragment() {
         bottomSheetBehavior = BottomSheetBehavior.from(playlistMenuBottomSheet).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
-        bottomSheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheetBehavior?.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 overlay.visibility = if (newState == BottomSheetBehavior.STATE_HIDDEN) {
@@ -98,8 +109,6 @@ class PlaylistInfoFragment : Fragment() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
             }
         })
-
-
 
 
         val playlistId = args.playlistId
@@ -133,6 +142,7 @@ class PlaylistInfoFragment : Fragment() {
     private fun setupRecyclerView() {
         trackAdapter = TrackAdapter(emptyList(), resources).apply {
             itemClickListener = { track -> navigateToPlayerFragment(track) }
+            itemLongClickListener = { track -> showDeleteTrackDialog(track) }
         }
 
         binding.playlistInfoBottomSheetRecyclerview.apply {
@@ -148,6 +158,7 @@ class PlaylistInfoFragment : Fragment() {
         }
 
         binding.playlistInfoShare.setOnClickListener {
+            handleSharePlaylist()
             Log.d("PlaylistInfoFragment", "Share button clicked")
         }
 
@@ -157,13 +168,16 @@ class PlaylistInfoFragment : Fragment() {
         }
 
         binding.sharePlaylist.setOnClickListener {
+            handleSharePlaylist()
             Log.d("PlaylistInfoFragment", "Share Playlist button clicked")
         }
 
         binding.editPlaylist.setOnClickListener {
             Log.d("PlaylistInfoFragment", "Edit Playlist button clicked")
-            val action = PlaylistInfoFragmentDirections
-                .actionPlaylistInfoFragmentToEditPlaylistFragment(playlistId = args.playlistId)
+            val action =
+                PlaylistInfoFragmentDirections.actionPlaylistInfoFragmentToEditPlaylistFragment(
+                    playlistId = args.playlistId
+                )
             findNavController().navigate(action)
         }
 
@@ -172,50 +186,75 @@ class PlaylistInfoFragment : Fragment() {
             showDeletePlaylistDialog()
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner,
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     Log.d("PlaylistInfoFragment", "Back pressed")
                     findNavController().navigateUp()
                 }
-            }
-        )
+            })
     }
 
     private fun observeViewModel() {
         viewModel.playlist.observe(viewLifecycleOwner) { playlist ->
             Log.d("PlaylistInfoFragment", "Observed playlist: $playlist")
-            playlist?.let { updateUIWithPlaylist(it) }
+            playlist?.let {
+            updateUIWithPlaylist(it)
+            updateMiniUIWithPlaylist(it)
+        }
+
         }
 
         viewModel.tracks.observe(viewLifecycleOwner) { tracks ->
             trackAdapter.updateTracks(tracks)
+             updateMiniTrackCount(tracks.size)
         }
     }
 
     private fun updateUIWithPlaylist(playlist: Playlist) {
         Log.d("PlaylistInfoFragment", "Updating UI with playlist: $playlist")
-        binding.nameOfPlaylistInfo.text = playlist.name
-        binding.yearOfPlaylistInfo.text = playlist.filePath
-        binding.totalMinutesPlaylistInfo.text = "${playlist.amountOfTracks} tracks"
 
-        val uri = getValidUri(playlist.filePath)
-        Log.d("PlaylistInfoFragment", "Resolved URI: $uri")
-        if (uri != null) {
-            Log.d("PlaylistInfoFragment", "Setting image URI: $uri")
-            binding.playlistInfoCover.setImageURI(uri)
-        } else {
-            Log.d("PlaylistInfoFragment", "Setting default placeholder image")
-            binding.playlistInfoCover.setImageResource(R.drawable.placeholder_playlist_info)
+
+        binding.nameOfPlaylistInfo.text = playlist.name
+        binding.description.text = playlist.description
+
+
+        val tracksText = resources.getQuantityString(
+            R.plurals.tracks_plural, playlist.amountOfTracks, playlist.amountOfTracks
+        )
+        binding.amountOfTracksPlaylistInfo.text = tracksText
+
+
+    val uri = getValidUri(playlist.filePath)
+    if (uri != null && playlist.filePath.isNotBlank()) {
+        Log.d("PlaylistInfoFragment", "Setting image URI: $uri")
+        binding.playlistInfoCover.setImageURI(uri)
+    } else {
+        Log.d("PlaylistInfoFragment", "File not found or path is empty. Setting placeholder image.")
+        binding.playlistInfoCover.setImageResource(R.drawable.placeholder_playlist_info)
+    }
+
+
+        viewModel.tracks.observe(viewLifecycleOwner) { tracks ->
+            val totalMinutes = tracks.sumOf { it.trackTimeMillis } / 60000
+            Log.d("PlaylistInfoFragment", "Total time in minutes from tracks: $totalMinutes")
+
+            val minutesText = resources.getQuantityString(
+                R.plurals.minutes_plural, totalMinutes, totalMinutes
+            )
+            binding.totalMinutesPlaylistInfo.text = minutesText
         }
     }
+
 
     private fun getValidUri(filePath: String): Uri? {
         val file = if (filePath.startsWith("myalbum/")) {
             File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), filePath)
         } else {
-            File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum/$filePath")
+            File(
+                requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                "myalbum/$filePath"
+            )
         }
         Log.d(
             "PlaylistInfoFragment",
@@ -223,8 +262,6 @@ class PlaylistInfoFragment : Fragment() {
         )
         return if (file.exists()) Uri.fromFile(file) else null
     }
-
-
 
 
     private fun navigateToPlayerFragment(track: SearchTrack) {
@@ -243,17 +280,92 @@ class PlaylistInfoFragment : Fragment() {
     }
 
     private fun showDeletePlaylistDialog() {
-        MaterialAlertDialogBuilder(requireContext(), R.style.MyDialogTheme)
-            .setTitle(getString(R.string.delete_playlist_title))
+        MaterialAlertDialogBuilder(
+            requireContext(), R.style.MyDialogTheme
+        ).setTitle(getString(R.string.delete_playlist_title))
             .setMessage(getString(R.string.delete_playlist_ask))
             .setNegativeButton(getString(R.string.no)) { dialog, _ ->
                 dialog.dismiss()
-            }
-            .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+            }.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
                 viewModel.deletePlaylist(viewModel.playlist.value!!)
                 findNavController().navigateUp()
+            }.show()
+    }
+
+    private fun showDeleteTrackDialog(track: SearchTrack) {
+        MaterialAlertDialogBuilder(
+            requireContext(), R.style.MyDialogTheme
+        ).setTitle(getString(R.string.delete_track_title))
+            .setMessage(getString(R.string.delete_track_message))
+            .setNegativeButton(getString(R.string.no)) { dialog, _ ->
+                dialog.dismiss()
+            }.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+                viewModel.deleteTrackFromPlaylist(args.playlistId, track.trackId)
+            }.show()
+    }
+
+    private fun handleSharePlaylist() {
+        viewModel.playlist.value?.let { playlist ->
+            if (playlist.amountOfTracks == 0) {
+                showNoTracksDialog()
+            } else {
+                sharePlaylistDetails(playlist, viewModel.tracks.value ?: emptyList())
             }
-            .show()
+        }
+    }
+
+    private fun showNoTracksDialog() {
+        MaterialAlertDialogBuilder(
+            requireContext(), R.style.MyDialogTheme
+        ).setMessage(getString(R.string.share_empty_playlist))
+            .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                dialog.dismiss()
+            }.show()
+    }
+
+
+    private fun sharePlaylistDetails(playlist: Playlist, tracks: List<SearchTrack>) {
+        val trackDetails = tracks.mapIndexed { index, track ->
+            "${index + 1}. ${track.artistName} - ${track.trackName} (${track.trackTimeMillis / 60000}:${(track.trackTimeMillis % 60000) / 1000})"
+        }.joinToString("\n")
+
+        val message = buildString {
+            append("${playlist.name}\n")
+            append("${playlist.description}\n")
+            append(
+                " ${
+                    resources.getQuantityString(
+                        R.plurals.tracks_plural, playlist.amountOfTracks, playlist.amountOfTracks
+                    )
+                }\n\n"
+            )
+            append(trackDetails)
+        }
+
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, message)
+            type = "text/plain"
+        }
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_playlist)))
+    }
+    private fun updateMiniUIWithPlaylist(playlist: Playlist) {
+        nameMin.text = playlist.name
+
+        val uri = getValidUri(playlist.filePath)
+        if (uri != null && playlist.filePath.isNotBlank()) {
+            coverMin.setImageURI(uri)
+        } else {
+            coverMin.setImageResource(R.drawable.placeholder_playlist_info)
+        }
+    }
+    private fun updateMiniTrackCount(trackCount: Int) {
+        val trackText = resources.getQuantityString(
+            R.plurals.tracks_plural,
+            trackCount,
+            trackCount
+        )
+        amountOfTracksMin.text = trackText
     }
 
 }
