@@ -2,16 +2,14 @@ package com.android.playlistmaker.search.presentation.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.playlistmaker.R
@@ -26,12 +24,11 @@ class SearchFragment : Fragment() {
     private val viewModel: SearchViewModel by viewModel()
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var trackAdapterHistory: TrackAdapter
-    private var isClickAllowed = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -39,17 +36,8 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        trackAdapter = TrackAdapter(mutableListOf(), resources)
-        trackAdapterHistory = TrackAdapter(mutableListOf(), resources)
-
-        binding.trackList.adapter = trackAdapter
-        binding.trackList.layoutManager = LinearLayoutManager(
-            context, LinearLayoutManager.VERTICAL, false
-        )
-
-        binding.searchHistoryRecyclerView.adapter = trackAdapterHistory
-        binding.searchHistoryRecyclerView.layoutManager = LinearLayoutManager(context)
-
+        setupAdapters()
+        setupRecyclerViews()
         setupObservers()
         setupListeners()
 
@@ -59,39 +47,60 @@ class SearchFragment : Fragment() {
             binding.inputEditText.setSelection(query.length)
             viewModel.updateQuery(query, binding.inputEditText.hasFocus())
         }
+
+    }
+
+
+    private fun setupAdapters() {
+        trackAdapter = TrackAdapter(mutableListOf(), resources)
+        trackAdapter.itemClickListener = { track ->
+            viewModel.onTrackClick(track)
+        }
+
+        trackAdapterHistory = TrackAdapter(mutableListOf(), resources)
+        trackAdapterHistory.itemClickListener = { track ->
+            viewModel.onTrackClick(track)
+        }
+    }
+
+    private fun setupRecyclerViews() {
+        binding.trackList.apply {
+            adapter = trackAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
+
+        binding.searchHistoryRecyclerView.apply {
+            adapter = trackAdapterHistory
+            layoutManager = LinearLayoutManager(context)
+        }
     }
 
     private fun setupObservers() {
-        viewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
+        viewModel.uiState.observe(viewLifecycleOwner) { state ->
             handleUiState(state)
-        })
+        }
 
-        viewModel.navigateToPlayer.observe(viewLifecycleOwner, Observer { event ->
+        viewModel.navigateToPlayer.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { track ->
                 hideKeyboard()
                 val action = SearchFragmentDirections.actionSearchFragmentToPlayerFragment(track)
                 findNavController().navigate(action)
             }
-        })
+        }
 
-        viewModel.tracks.observe(viewLifecycleOwner, Observer { tracks ->
+        viewModel.tracks.observe(viewLifecycleOwner) { tracks ->
             trackAdapter.updateTracks(tracks)
             binding.trackList.scrollToPosition(0)
-        })
+        }
 
-        viewModel.searchHistory.observe(viewLifecycleOwner, Observer { tracksHistory ->
+        viewModel.searchHistory.observe(viewLifecycleOwner) { tracksHistory ->
             trackAdapterHistory.updateTracks(tracksHistory)
-        })
+        }
 
-        viewModel.showHistory.observe(viewLifecycleOwner, Observer { shouldShow ->
-            binding.searchHistory.visibility = if (shouldShow) View.VISIBLE else View.GONE
+        viewModel.showHistory.observe(viewLifecycleOwner) { shouldShow ->
+            binding.searchHistory.isVisible = shouldShow
             binding.clearSearchHistory.isVisible = shouldShow
-        })
-    }
-
-    override fun onResume() {
-        super.onResume()
-        isClickAllowed = true
+        }
     }
 
     private fun setupListeners() {
@@ -101,137 +110,112 @@ class SearchFragment : Fragment() {
             viewModel.clearTracks()
         }
 
-        binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && viewModel.currentQuery.value.isNullOrEmpty()) {
-                viewModel.showHistory()
-            } else {
+        binding.inputEditText.apply {
+            setOnFocusChangeListener { _, hasFocus ->
+                viewModel.evaluateShowHistory(hasFocus, text.toString())
                 if (!hasFocus) {
                     hideKeyboard()
                 }
-                viewModel.evaluateShowHistory(
-                    hasFocus, viewModel.currentQuery.value ?: ""
-                )
+            }
+
+            setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    val query = text.toString()
+                    viewModel.updateQuery(query, hasFocus())
+                    hideKeyboard()
+                    true
+                } else {
+                    false
+                }
+            }
+
+            doOnTextChanged { text, _, _, _ ->
+                binding.clearIcon.isVisible = !text.isNullOrEmpty()
+                viewModel.updateQuery(text.toString(), hasFocus())
             }
         }
-
-        binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val query = binding.inputEditText.text.toString()
-                viewModel.updateQuery(query, binding.inputEditText.hasFocus())
-                hideKeyboard()
-                true
-            } else {
-                false
-            }
-        }
-
-        val simpleTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                //
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.clearIcon.isVisible = clearButtonVisibility(s)
-                viewModel.updateQuery(s.toString(), binding.inputEditText.hasFocus())
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                //
-            }
-        }
-        binding.inputEditText.addTextChangedListener(simpleTextWatcher)
 
         binding.clearSearchHistory.setOnClickListener {
             viewModel.clearSearchHistory()
         }
-
-        trackAdapterHistory.itemClickListener = { track ->
-            viewModel.onTrackClick(track)
-        }
-
-        trackAdapter.itemClickListener = { track ->
-            viewModel.onTrackClick(track)
-        }
     }
 
     private fun handleUiState(state: SearchViewModel.UiState) {
-        when (state) {
-            is SearchViewModel.UiState.Idle -> {
-                binding.downloadIconFrame.isVisible = false
-                binding.trackList.isVisible = false
-                binding.placeholderImage.isVisible = false
-                binding.placeholderText.isVisible = false
-                binding.buttonUpdate.isVisible = false
-                binding.searchHistory.isVisible = false
-            }
-
-            is SearchViewModel.UiState.Loading -> {
-                binding.downloadIconFrame.isVisible = true
-                binding.trackList.isVisible = false
-                binding.placeholderImage.isVisible = false
-                binding.placeholderText.isVisible = false
-                binding.buttonUpdate.isVisible = false
-                binding.searchHistory.isVisible = false
-            }
-
-            is SearchViewModel.UiState.Success -> {
-                binding.downloadIconFrame.isVisible = false
-                binding.trackList.isVisible = true
-                binding.placeholderImage.isVisible = false
-                binding.placeholderText.isVisible = false
-                binding.buttonUpdate.isVisible = false
-                binding.searchHistory.isVisible = false
-            }
-
-            is SearchViewModel.UiState.History -> {
-                binding.downloadIconFrame.isVisible = false
-                binding.trackList.isVisible = false
-                binding.placeholderImage.isVisible = false
-                binding.placeholderText.isVisible = false
-                binding.buttonUpdate.isVisible = false
-                binding.searchHistory.isVisible =
-                    state.showHistory && viewModel.searchHistory.value?.isNotEmpty() == true
-                binding.clearSearchHistory.isVisible = binding.searchHistory.isVisible
-            }
-
-            is SearchViewModel.UiState.Empty -> {
-                binding.downloadIconFrame.isVisible = false
-                binding.trackList.isVisible = false
-                binding.placeholderImage.isVisible = true
-                binding.placeholderText.isVisible = true
-                binding.placeholderImage.setImageResource(R.drawable.not_found)
-                binding.placeholderText.text = getString(R.string.not_found)
-                binding.buttonUpdate.isVisible = false
-                binding.searchHistory.isVisible = false
-            }
-
-            is SearchViewModel.UiState.Error -> {
-                binding.downloadIconFrame.isVisible = false
-                binding.trackList.isVisible = false
-                binding.placeholderImage.isVisible = true
-                binding.placeholderText.isVisible = true
-                binding.placeholderImage.setImageResource(R.drawable.net_error)
-                binding.placeholderText.text = getString(R.string.net_error)
-                binding.buttonUpdate.isVisible = true
-                binding.buttonUpdate.setOnClickListener {
-                    val query = binding.inputEditText.text.toString()
-                    viewModel.search(query)
+        with(binding) {
+            when (state) {
+                is SearchViewModel.UiState.Idle -> {
+                    downloadIconFrame.isVisible = false
+                    trackList.isVisible = false
+                    placeholderImage.isVisible = false
+                    placeholderText.isVisible = false
+                    buttonUpdate.isVisible = false
+                    searchHistory.isVisible = false
                 }
-                binding.searchHistory.isVisible = false
+
+                is SearchViewModel.UiState.Loading -> {
+                    downloadIconFrame.isVisible = true
+                    trackList.isVisible = false
+                    placeholderImage.isVisible = false
+                    placeholderText.isVisible = false
+                    buttonUpdate.isVisible = false
+                    searchHistory.isVisible = false
+                }
+
+                is SearchViewModel.UiState.Success -> {
+                    downloadIconFrame.isVisible = false
+                    trackList.isVisible = true
+                    placeholderImage.isVisible = false
+                    placeholderText.isVisible = false
+                    buttonUpdate.isVisible = false
+                    searchHistory.isVisible = false
+                }
+
+                is SearchViewModel.UiState.History -> {
+                    downloadIconFrame.isVisible = false
+                    trackList.isVisible = false
+                    placeholderImage.isVisible = false
+                    placeholderText.isVisible = false
+                    buttonUpdate.isVisible = false
+                    searchHistory.isVisible =
+                        state.showHistory && viewModel.searchHistory.value?.isNotEmpty() == true
+                    clearSearchHistory.isVisible = binding.searchHistory.isVisible
+                }
+
+                is SearchViewModel.UiState.Empty -> {
+                    downloadIconFrame.isVisible = false
+                    trackList.isVisible = false
+                    placeholderImage.isVisible = true
+                    placeholderText.isVisible = true
+                    placeholderImage.setImageResource(R.drawable.not_found)
+                    placeholderText.text = getString(R.string.not_found)
+                    buttonUpdate.isVisible = false
+                    searchHistory.isVisible = false
+                }
+
+                is SearchViewModel.UiState.Error -> {
+                    downloadIconFrame.isVisible = false
+                    trackList.isVisible = false
+                    placeholderImage.isVisible = true
+                    placeholderText.isVisible = true
+                    placeholderImage.setImageResource(R.drawable.net_error)
+                    placeholderText.text = getString(R.string.net_error)
+                    buttonUpdate.isVisible = true
+                    buttonUpdate.setOnClickListener {
+                        val query = inputEditText.text.toString()
+                        viewModel.search(query)
+                    }
+                    searchHistory.isVisible = false
+                }
             }
         }
-    }
-
-    private fun clearButtonVisibility(s: CharSequence?): Boolean {
-        return !s.isNullOrEmpty()
     }
 
     private fun hideKeyboard() {
         val imm =
-            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         val view = requireActivity().currentFocus
-        if (view != null) {
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        view?.let {
+            imm?.hideSoftInputFromWindow(it.windowToken, 0)
         }
     }
 

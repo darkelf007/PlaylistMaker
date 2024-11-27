@@ -1,6 +1,5 @@
 package com.android.playlistmaker.playlist_info.presentation
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -33,20 +32,11 @@ class PlaylistInfoFragmentViewModel(
     fun loadPlaylistData(playlistId: Long) {
         viewModelScope.launch {
             val playlist = currentPlaylistInteractor.getPlaylistById(playlistId)
-            Log.d("ViewModel", "Loaded playlist: $playlist")
             _playlist.postValue(playlist)
 
             playlist?.let {
                 val trackIds = it.listOfTracksId.split(",").mapNotNull { id -> id.toIntOrNull() }
-                Log.d("ViewModel", "Extracted track IDs: $trackIds")
                 val trackList = currentPlaylistInteractor.getTracksByIds(trackIds)
-                Log.d("ViewModel", "Loaded tracks: $trackList")
-                trackList.forEach { track ->
-                    Log.d(
-                        "ViewModel",
-                        "Track ID: ${track.trackId}, Name: ${track.trackName}, Time (ms): ${track.trackTimeMillis}"
-                    )
-                }
                 _tracks.postValue(trackList)
             }
         }
@@ -57,23 +47,23 @@ class PlaylistInfoFragmentViewModel(
             currentPlaylistInteractor.deletePlaylist(playlist)
         }
     }
+
     fun deleteTrackFromPlaylist(playlistId: Long, trackId: Int) {
         viewModelScope.launch {
             currentPlaylistInteractor.deleteTrackFromPlaylist(playlistId, trackId)
 
             val updatedPlaylist = currentPlaylistInteractor.getPlaylistById(playlistId)
             _playlist.postValue(updatedPlaylist)
-             val trackIds = updatedPlaylist?.listOfTracksId
-            ?.takeIf { it.isNotEmpty() }
-            ?.split(",")
-            ?.mapNotNull { it.toIntOrNull() }
-
-        if (trackIds.isNullOrEmpty()) {
-            _tracks.postValue(emptyList())
-        } else {
-            val updatedTracks = currentPlaylistInteractor.getTracksByIds(trackIds)
-            _tracks.postValue(updatedTracks)
-        }
+            val trackIds = updatedPlaylist?.listOfTracksId
+                ?.takeIf { it.isNotEmpty() }
+                ?.split(",")
+                ?.mapNotNull { it.toIntOrNull() }
+            if (trackIds.isNullOrEmpty()) {
+                _tracks.postValue(emptyList())
+            } else {
+                val updatedTracks = currentPlaylistInteractor.getTracksByIds(trackIds)
+                _tracks.postValue(updatedTracks)
+            }
         }
     }
 }

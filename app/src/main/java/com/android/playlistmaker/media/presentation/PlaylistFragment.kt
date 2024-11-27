@@ -1,7 +1,6 @@
 package com.android.playlistmaker.media.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,7 +50,6 @@ class PlaylistFragment : Fragment() {
 
 
         adapter = PlaylistAdapter(requireContext()) { playlist ->
-            Log.d("PlaylistFragment", "Clicked on playlist: ${playlist.id}")
             if (clickDebounce()) {
                 clickOnItem(playlist)
             }
@@ -85,21 +83,17 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun clickOnItem(playlist: Playlist) {
-        Log.d("PlaylistFragment", "Navigating to PlaylistInfoFragment with ID: ${playlist.id}")
         val action = MediaFragmentDirections.actionMediaFragmentToPlaylistInfoFragment(playlist.id)
         findNavController().navigate(action)
     }
 
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
-        Log.d("PlaylistFragment", "clickDebounce called. isClickAllowed: $current")
         if (isClickAllowed) {
             isClickAllowed = false
-            Log.d("PlaylistFragment", "isClickAllowed set to false")
             lifecycleScope.launch {
                 delay(CLICK_DEBOUNCE_DELAY)
                 isClickAllowed = true
-                Log.d("PlaylistFragment", "isClickAllowed set to true after delay")
             }
         }
         return current
@@ -133,12 +127,6 @@ class PlaylistFragment : Fragment() {
                 if (playlistState.data.isEmpty()) {
                     showPlaceholder()
                 } else {
-                    playlistState.data.forEach { playlist ->
-                        Log.d(
-                            "PlaylistFragment",
-                            "Rendering playlist: id=${playlist.id}, filePath=${playlist.filePath}"
-                        )
-                    }
                     adapter.submitList(playlistState.data)
                     showContent()
                 }

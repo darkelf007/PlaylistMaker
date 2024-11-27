@@ -16,10 +16,10 @@ class FavoriteDatabaseInteractorImpl(
     private val favoriteTrackDataConverter: FavoriteTrackDataConverter
 ) : FavoriteDatabaseInteractor {
 
-    override suspend fun getPlayerTracksFromDatabase(): Flow<List<FavoriteTrack>> {
+    override fun getPlayerTracksFromDatabase(): Flow<List<FavoriteTrack>> {
         return favoriteDatabaseRepository.getPlayerTracksFromDatabase()
-            .map { list ->
-                favoriteTrackToTrackConverter.mapList(list)
+            .map { dtoList ->
+                favoriteTrackToTrackConverter.mapList(dtoList)
             }
     }
 

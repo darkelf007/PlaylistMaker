@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.navigation.fragment.findNavController
@@ -27,13 +26,11 @@ class EditPlaylistFragment : BasePlaylistFragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.d("EditPlaylistFragment", "onResume: Hiding bottom navigation")
         hideBottomNavigation(true)
     }
 
     override fun onStop() {
         super.onStop()
-        Log.d("EditPlaylistFragment", "onStop: Showing bottom navigation")
         hideBottomNavigation(false)
     }
 
@@ -92,22 +89,18 @@ class EditPlaylistFragment : BasePlaylistFragment() {
     }
 
     private fun updateUIWithPlaylist(playlist: Playlist) {
-        Log.d("EditPlaylistFragment", "Updating UI with playlist: $playlist")
         binding.editNameNewPlaylist.setText(playlist.name)
         binding.editDescriptionNewPlaylist.setText(playlist.description)
 
         if (playlist.filePath.isNotEmpty()) {
             val uri = getValidUri(playlist.filePath)
             if (uri != null) {
-                Log.d("EditPlaylistFragment", "Resolved URI: $uri")
                 binding.loadImageImageview.scaleType = ImageView.ScaleType.CENTER_CROP
                 binding.loadImageImageview.setImageURI(uri)
             } else {
-                Log.d("EditPlaylistFragment", "File does not exist: ${playlist.filePath}")
                 binding.loadImageImageview.setImageResource(R.drawable.placeholder_playlist)
             }
         } else {
-            Log.d("EditPlaylistFragment", "No image file path found")
             binding.loadImageImageview.setImageResource(R.drawable.placeholder_playlist)
         }
     }
@@ -124,17 +117,11 @@ class EditPlaylistFragment : BasePlaylistFragment() {
             requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
             validFilePath
         )
-        Log.d(
-            "EditPlaylistFragment",
-            "Checking file existence: ${file.absolutePath}, exists: ${file.exists()}"
-        )
         return if (file.exists()) Uri.fromFile(file) else null
     }
 
 
     override fun handleAction(name: String, description: String, uri: Uri?) {
-        Log.d("EditPlaylistFragment", "handleAction called with name=$name, description=$description, uri=$uri")
-
         val currentPlaylist = viewModel.playlist.value
 
         viewModel.updatePlaylist(
@@ -146,7 +133,6 @@ class EditPlaylistFragment : BasePlaylistFragment() {
                     "myalbum"
                 )
                 if (!myAlbumDir.exists()) {
-                    Log.d("EditPlaylistFragment", "Directory does not exist, creating: $myAlbumDir")
                     myAlbumDir.mkdirs()
                 }
 
@@ -154,18 +140,14 @@ class EditPlaylistFragment : BasePlaylistFragment() {
                 deleteOldFile(currentPlaylist?.filePath)
 
                 val file = File(myAlbumDir, getNameForFile(name))
-                Log.d("EditPlaylistFragment", "Saving new image to: ${file.absolutePath}")
 
                 saveImageToFile(it, file)
 
                 "myalbum/${file.name}"
             }
         )
-        Log.d("EditPlaylistFragment", "Updated playlist with new data")
         findNavController().navigateUp()
     }
-
-
 
 
     private fun getNameForFile(nameOfPlaylist: String): String {
@@ -178,19 +160,11 @@ class EditPlaylistFragment : BasePlaylistFragment() {
 
 
     private fun saveImageToFile(sourceUri: Uri, destinationFile: File) {
-        Log.d("EditPlaylistFragment", "Starting saveImageToFile with sourceUri=$sourceUri, destinationFile=${destinationFile.absolutePath}")
         requireContext().contentResolver.openInputStream(sourceUri)?.use { inputStream ->
             FileOutputStream(destinationFile).use { outputStream ->
                 val bitmap = BitmapFactory.decodeStream(inputStream)
-                val success = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-                if (success) {
-                    Log.d("EditPlaylistFragment", "Image successfully saved to: ${destinationFile.absolutePath}")
-                } else {
-                    Log.e("EditPlaylistFragment", "Failed to save image")
-                }
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
             }
-        } ?: run {
-            Log.e("EditPlaylistFragment", "Failed to open input stream for URI: $sourceUri")
         }
     }
 
@@ -201,18 +175,13 @@ class EditPlaylistFragment : BasePlaylistFragment() {
                 filePath
             )
             if (file.exists()) {
-                val deleted = file.delete()
-                Log.d("EditPlaylistFragment", "Old file deleted: $deleted, path: ${file.absolutePath}")
-            } else {
-                Log.d("EditPlaylistFragment", "File not found for deletion: ${file.absolutePath}")
+                file.delete()
             }
-        } else {
-            Log.d("EditPlaylistFragment", "No file path provided for deletion")
         }
     }
-
-
-
-
-
 }
+
+
+
+
+

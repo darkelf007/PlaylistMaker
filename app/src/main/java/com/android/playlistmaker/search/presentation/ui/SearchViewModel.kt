@@ -22,10 +22,6 @@ class SearchViewModel(
     private val _showHistory = MutableLiveData<Boolean>()
     val showHistory: LiveData<Boolean> get() = _showHistory
 
-    fun evaluateShowHistory(hasFocus: Boolean, query: String) {
-        _showHistory.value =
-            hasFocus && query.isEmpty() && (searchHistory.value?.isNotEmpty() == true)
-    }
 
     private val _tracks = MutableLiveData<List<SearchTrack>>()
     val tracks: LiveData<List<SearchTrack>> get() = _tracks
@@ -44,9 +40,18 @@ class SearchViewModel(
     private val _navigateToPlayer = MutableLiveData<Event<SearchTrack>>()
     val navigateToPlayer: LiveData<Event<SearchTrack>> get() = _navigateToPlayer
 
+
     init {
         observeQuery()
         loadInitialData()
+        loadSearchHistory()
+    }
+
+    private fun loadSearchHistory() {
+        viewModelScope.launch {
+            val history = searchInteractor.getSearchHistory() ?: emptyList()
+            _searchHistory.value = history
+        }
     }
 
     private fun loadInitialData() {
@@ -58,6 +63,10 @@ class SearchViewModel(
         }
     }
 
+    fun evaluateShowHistory(hasFocus: Boolean, query: String) {
+        _showHistory.value =
+            hasFocus && query.isEmpty() && (searchHistory.value?.isNotEmpty() == true)
+    }
 
     private fun observeQuery() {
         viewModelScope.launch {

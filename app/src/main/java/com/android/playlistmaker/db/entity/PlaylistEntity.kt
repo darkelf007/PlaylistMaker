@@ -1,6 +1,5 @@
 package com.android.playlistmaker.db.entity
 
-import android.util.Log
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.android.playlistmaker.search.domain.SearchTrack
@@ -19,21 +18,7 @@ data class PlaylistEntity(
 
 
 fun PlaylistTrackEntity.mapToSearchTrack(): SearchTrack {
-    val trackTimeMillis = try {
-        trackTime?.let {
-            val parts = it.split(":").map { part -> part.toIntOrNull() ?: 0 }
-            if (parts.size == 2) {
-                (parts[0] * 60 + parts[1]) * 1000
-            } else {
-                0
-            }
-        } ?: 0
-    } catch (e: Exception) {
-        Log.e("Mapping", "Error parsing track time: $trackTime", e)
-        0
-    }
-
-    Log.d("Mapping", "Mapping track ID: $trackId, trackTime (raw): $trackTime, trackTimeMillis (parsed): $trackTimeMillis")
+    val trackTimeMillis = parseTrackTimeToMillis(trackTime)
 
     return SearchTrack(
         trackId = this.trackId,
@@ -49,4 +34,16 @@ fun PlaylistTrackEntity.mapToSearchTrack(): SearchTrack {
         previewUrl = this.previewUrl,
         insertionTimeStamp = this.insertTimeStamp ?: 0L
     )
+}
+
+private fun parseTrackTimeToMillis(trackTime: String?): Int {
+    if (trackTime.isNullOrEmpty()) return 0
+
+    val parts = trackTime.split(":")
+    if (parts.size != 2) return 0
+
+    val minutes = parts[0].toIntOrNull() ?: 0
+    val seconds = parts[1].toIntOrNull() ?: 0
+
+    return (minutes * 60 + seconds) * 1000
 }

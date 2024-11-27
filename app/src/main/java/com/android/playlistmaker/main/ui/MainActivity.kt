@@ -2,11 +2,8 @@ package com.android.playlistmaker.main.ui
 
 import android.graphics.Rect
 import android.os.Bundle
-import android.transition.TransitionManager
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -46,6 +43,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationListener {
     override fun toggleBottomNavigationViewVisibility(isVisible: Boolean) {
         binding.bottomNavigationView.isVisible = isVisible
     }
+
     private fun setupKeyboardVisibilityListener() {
         val contentView = findViewById<View>(android.R.id.content)
         contentView.viewTreeObserver.addOnGlobalLayoutListener {

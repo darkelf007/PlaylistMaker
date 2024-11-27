@@ -1,7 +1,6 @@
 package com.android.playlistmaker.db.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -15,9 +14,6 @@ interface PlaylistTrackDao {
 
     @Query("SELECT * FROM playlist_track_table WHERE trackId IN (:ids) ORDER BY insertTimeStamp DESC")
     suspend fun getTracksByListIds(ids: List<Int>): List<PlaylistTrackEntity>
-
-    @Delete
-    suspend fun deletePlaylistTrack(track: PlaylistTrackEntity)
 
     @Query("DELETE FROM playlist_track_table WHERE trackId =:id")
     suspend fun deleteTrackById(id: Int)
