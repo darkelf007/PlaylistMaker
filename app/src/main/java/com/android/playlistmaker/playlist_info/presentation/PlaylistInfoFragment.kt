@@ -181,7 +181,6 @@ class PlaylistInfoFragment : Fragment() {
         } else {
             binding.playlistInfoCover.apply {
                 setImageResource(R.drawable.placeholder_playlist_info)
-                scaleType = ImageView.ScaleType.CENTER_CROP
             }
         }
     }
