@@ -8,8 +8,11 @@ import androidx.lifecycle.viewModelScope
 import com.android.playlistmaker.search.domain.SearchInteractor
 import com.android.playlistmaker.search.domain.SearchTrack
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
@@ -64,15 +67,26 @@ class SearchViewModel(
     }
 
     fun evaluateShowHistory(hasFocus: Boolean, query: String) {
+        if (query.isEmpty() && hasFocus) {
+            _uiState.value =
+                UiState.History(showHistory = searchHistory.value?.isNotEmpty() == true)
+        } else if (query.isEmpty()) {
+            _uiState.value = UiState.Idle
+        }
         _showHistory.value =
             hasFocus && query.isEmpty() && (searchHistory.value?.isNotEmpty() == true)
     }
 
     private fun observeQuery() {
         viewModelScope.launch {
-            queryFlow.collect { query ->
-                search(query)
-            }
+            queryFlow
+                .debounce(500)
+                .distinctUntilChanged()
+                .collect { query ->
+                    if (query.isNotBlank()) {
+                        search(query)
+                    }
+                }
         }
     }
 

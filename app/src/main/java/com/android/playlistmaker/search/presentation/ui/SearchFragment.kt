@@ -178,7 +178,7 @@ class SearchFragment : Fragment() {
                     buttonUpdate.isVisible = false
                     searchHistory.isVisible =
                         state.showHistory && viewModel.searchHistory.value?.isNotEmpty() == true
-                    clearSearchHistory.isVisible = binding.searchHistory.isVisible
+                    clearSearchHistory.isVisible = searchHistory.isVisible
                 }
 
                 is SearchViewModel.UiState.Empty -> {
