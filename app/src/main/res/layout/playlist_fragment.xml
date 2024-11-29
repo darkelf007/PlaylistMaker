@@ -11,6 +11,9 @@
 
         android:id="@+id/new_playlist"
         style="@style/new_playlist_button"
+
+        android:fontFamily="@font/yandex_sans_text_bold"
+
         android:text="@string/new_playlist" />
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"

@@ -28,6 +28,7 @@
             android:layout_weight="1"
             android:fontFamily="@font/yandex_sans_text_medium"
             android:text="@string/search"
+            android:textColor="@color/darkBlue_white"
             android:textSize="@dimen/text_size_22" />
     </LinearLayout>
 
@@ -124,6 +125,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_24"
+        android:textColor="@color/dark_blue"
         android:fontFamily="@font/yandex_sans_text_medium"
         android:gravity="center"
         android:text="@string/you_were_searched"
@@ -149,7 +151,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_12"
-        android:backgroundTint="@color/black_white"
+        android:backgroundTint="@color/dark_blue"
         android:elevation="4dp"
         android:fontFamily="@font/yandex_sans_text_medium"
         android:gravity="center"

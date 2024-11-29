@@ -53,7 +53,6 @@
         <item name="android:textColor">@color/white_black</item>
         <item name="android:textSize">@dimen/text_size_14</item>
         <item name="android:letterSpacing">0</item>
-        <item name="fontFamily">@font/yandex_sans_text_medium</item>
         <item name="android:layout_marginTop">@dimen/dp_24</item>
 
     </style>
@@ -125,9 +124,11 @@
         <item name="android:background">@color/white</item>
     </style>
 
-    <style name="SearchingActivityButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+    <style name="PlayerActivityButtonStyle" >
         <item name="backgroundTint">@color/dark_blue</item>
         <item name="cornerRadius">54dp</item>
+        <item name="android:textSize">@dimen/text_size_14</item>
+
         <item name="android:textColor">@color/white</item>
     </style>
 
