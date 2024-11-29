@@ -22,4 +22,8 @@
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" >
         <item name="android:background">@color/dark_blue</item>
     </style>
+
+    <style name="Theme.PlaylistMaker.Search" parent="Base.Theme.PlaylistMaker" >
+        <item name="android:background">@color/transparent</item>
+    </style>
 </resources>

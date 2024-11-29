@@ -36,6 +36,8 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.updateUiState(SearchViewModel.UiState.Idle)
+
         setupAdapters()
         setupRecyclerViews()
         setupObservers()
@@ -200,10 +202,12 @@ class SearchFragment : Fragment() {
                     placeholderImage.setImageResource(R.drawable.net_error)
                     placeholderText.text = getString(R.string.net_error)
                     buttonUpdate.isVisible = true
+
                     buttonUpdate.setOnClickListener {
                         val query = inputEditText.text.toString()
                         viewModel.search(query)
                     }
+
                     searchHistory.isVisible = false
                 }
             }
@@ -222,5 +226,6 @@ class SearchFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        viewModel.updateQuery("", false)
     }
 }

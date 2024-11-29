@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_search"
-    android:focusableInTouchMode="true"
-    android:focusable="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/Theme.PlaylistMaker">
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:theme="@style/Theme.PlaylistMaker.Search">
 
 
     <LinearLayout
@@ -125,10 +125,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_24"
-        android:textColor="@color/dark_blue"
         android:fontFamily="@font/yandex_sans_text_medium"
         android:gravity="center"
         android:text="@string/you_were_searched"
+        android:textColor="@color/dark_blue"
         android:textSize="@dimen/text_size_19"
         app:fontWeight="500"
         app:layout_constraintEnd_toEndOf="parent"
@@ -151,13 +151,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_12"
-        android:backgroundTint="@color/dark_blue"
+        android:backgroundTint="@color/darkBlue_white"
         android:elevation="4dp"
         android:fontFamily="@font/yandex_sans_text_medium"
         android:gravity="center"
         android:text="@string/clear_history"
         android:textAllCaps="false"
-        android:textColor="@color/white_black"
+        android:textColor="@color/white_darkBlue"
         android:textFontWeight="500"
         android:textSize="@dimen/text_size_14"
         app:cornerRadius="@dimen/dp_54"
@@ -216,10 +216,10 @@
         android:textFontWeight="500"
         android:textSize="@dimen/text_size_14"
         android:visibility="gone"
+        app:cornerRadius="@dimen/dp_54"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/placeholderText"
-        app:cornerRadius="@dimen/dp_54"
         tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
