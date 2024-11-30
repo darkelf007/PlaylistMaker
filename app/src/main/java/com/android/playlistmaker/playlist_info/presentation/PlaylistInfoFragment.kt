@@ -5,11 +5,15 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -160,6 +164,10 @@ class PlaylistInfoFragment : Fragment() {
             trackAdapter.updateTracks(tracks)
             updateMiniTrackCount(tracks.size)
             updateTotalMinutes(tracks)
+
+            if (tracks.isEmpty()) {
+                showAutoDismissDialog()
+            }
         }
     }
 
@@ -306,5 +314,25 @@ class PlaylistInfoFragment : Fragment() {
             R.plurals.tracks_plural, trackCount, trackCount
         )
         binding.amountOfTracksPlaylistInfoMin.text = trackText
+    }
+
+    private fun showAutoDismissDialog() {
+        val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.NotificationTheme)
+            .setMessage(getString(R.string.notification_empty_playlist))
+            .create()
+
+        dialog.show()
+
+        val messageView = dialog.findViewById<TextView>(android.R.id.message)
+        messageView?.apply {
+            textSize = 18f
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.dark_blue))
+        }
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (dialog.isShowing) {
+                dialog.dismiss()
+            }
+        }, 3000)
     }
 }

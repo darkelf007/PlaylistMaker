@@ -79,6 +79,7 @@
     <string name="ok">OK</string>
     <string name="share_empty_playlist">В этом плейлисте нет списка треков, которым можно поделиться</string>
     <string name="delete_playlist_ask">Хотите удалить плейлист?</string>
+    <string name="notification_empty_playlist">В этом плейлисте нет треков</string>
 
     <plurals name="minutes_plural">
         <item quantity="one">%d минута</item>
