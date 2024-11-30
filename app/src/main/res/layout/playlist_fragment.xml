@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:theme="@style/Theme.PlaylistMaker">
 
-    <com.google.android.material.button.MaterialButton
+    <Button
 
         android:id="@+id/new_playlist"
         style="@style/new_playlist_button"

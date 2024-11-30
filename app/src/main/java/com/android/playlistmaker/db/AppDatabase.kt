@@ -10,7 +10,7 @@ import com.android.playlistmaker.db.entity.PlaylistEntity
 import com.android.playlistmaker.db.entity.PlaylistTrackEntity
 
 @Database(
-    version = 12,
+    version = 13,
     entities = [DBTrackEntity::class, PlaylistEntity::class, PlaylistTrackEntity::class]
 )
 abstract class AppDatabase : RoomDatabase() {

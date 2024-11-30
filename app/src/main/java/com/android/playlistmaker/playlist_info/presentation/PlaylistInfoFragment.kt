@@ -244,6 +244,7 @@ class PlaylistInfoFragment : Fragment() {
     }
 
     private fun handleSharePlaylist() {
+        menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         viewModel.playlist.value?.let { playlist ->
             if (playlist.amountOfTracks == 0) {
                 showNoTracksDialog()
