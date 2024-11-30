@@ -1,6 +1,5 @@
 package com.android.playlistmaker.search.presentation.ui
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -83,35 +82,34 @@ class SearchViewModel(
             hasFocus && query.isEmpty() && (searchHistory.value?.isNotEmpty() == true)
     }
 
-private fun observeQuery() {
-    viewModelScope.launch {
-        queryFlow
-            .debounce(500)
-            .distinctUntilChanged()
-            .flatMapLatest { query ->
-                if (query.isNotBlank()) {
-                    searchInteractor.search(query)
-                        .flowOn(Dispatchers.IO)
-                        .catch { e ->
-                            emit(emptyList())
-                        }
-                } else {
-                    flowOf(emptyList())
+    private fun observeQuery() {
+        viewModelScope.launch {
+            queryFlow
+                .debounce(500)
+                .distinctUntilChanged()
+                .flatMapLatest { query ->
+                    if (query.isNotBlank()) {
+                        searchInteractor.search(query)
+                            .flowOn(Dispatchers.IO)
+                            .catch { e ->
+                                emit(emptyList())
+                            }
+                    } else {
+                        flowOf(emptyList())
+                    }
                 }
-            }
-            .collect { response ->
-                if (response.isNotEmpty()) {
-                    _tracks.value = response
-                    updateUiState(UiState.Success)
-                } else if (currentQuery.value?.isNotBlank() == true) {
-                    updateUiState(UiState.Empty)
-                } else {
-                    updateUiState(UiState.Idle)
+                .collect { response ->
+                    if (response.isNotEmpty()) {
+                        _tracks.value = response
+                        updateUiState(UiState.Success)
+                    } else if (currentQuery.value?.isNotBlank() == true) {
+                        updateUiState(UiState.Empty)
+                    } else {
+                        updateUiState(UiState.Idle)
+                    }
                 }
-            }
+        }
     }
-}
-
 
 
     fun search(query: String) {
@@ -138,7 +136,6 @@ private fun observeQuery() {
                 }
         }
     }
-
 
 
     fun onTrackClick(searchTrack: SearchTrack) {
@@ -190,6 +187,7 @@ private fun observeQuery() {
 
         evaluateShowHistory(hasFocus, query)
     }
+
     fun showHistory() {
         viewModelScope.launch {
             val history = searchInteractor.getSearchHistory() ?: emptyList()

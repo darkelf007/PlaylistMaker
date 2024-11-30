@@ -187,12 +187,10 @@ class PlayerViewModel(
 
     }
 
-    private fun insertTrackToDatabase(track: SearchTrack) {
-
+    private fun insertTrackToDatabase(track: SearchTrack, playlist: Playlist) {
         viewModelScope.launch {
-            playlistTrackDatabaseInteractor.insertTrackToPlaylistTrackDatabase(track)
+            playlistTrackDatabaseInteractor.insertTrackToPlaylistTrackDatabase(track, playlist.id)
         }
-
     }
 
     private fun returnPlaylistToDatabase(playlist: Playlist) {
@@ -217,20 +215,23 @@ class PlayerViewModel(
             track?.let { listIdOfPlaylistTracks.add(it.trackId) }
             val listString = convertListToString(listIdOfPlaylistTracks)
             val modifiedPlaylist: Playlist = playlist.copy(
-                listOfTracksId = listString, amountOfTracks = playlist.amountOfTracks + 1
+                listOfTracksId = listString,
+                amountOfTracks = playlist.amountOfTracks + 1
             )
             returnPlaylistToDatabase(modifiedPlaylist)
-            track?.let { insertTrackToDatabase(it) }
+            track?.let { insertTrackToDatabase(it, playlist) }
 
             _checkIsTrackInPlaylist.postValue(
                 PlaylistTrackState(
-                    nameOfPlaylist = playlist.name, trackIsInPlaylist = false
+                    nameOfPlaylist = playlist.name,
+                    trackIsInPlaylist = false
                 )
             )
         } else {
             _checkIsTrackInPlaylist.postValue(
                 PlaylistTrackState(
-                    nameOfPlaylist = playlist.name, trackIsInPlaylist = true
+                    nameOfPlaylist = playlist.name,
+                    trackIsInPlaylist = true
                 )
             )
         }

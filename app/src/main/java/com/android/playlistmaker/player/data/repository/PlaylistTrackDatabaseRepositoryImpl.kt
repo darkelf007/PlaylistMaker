@@ -9,8 +9,9 @@ class PlaylistTrackDatabaseRepositoryImpl(
     private val playlistTrackDatabase: AppDatabase
 ) : PlaylistTrackDatabaseRepository {
 
-    override suspend fun insertTrackToPlaylistTrackDatabase(track: SearchTrack) {
+    override suspend fun insertTrackToPlaylistTrackDatabase(track: SearchTrack, playlistId: Long) {
         val playlistTrackEntity = PlaylistTrackEntity(
+            playlistId = playlistId,
             trackId = track.trackId,
             trackName = track.trackName,
             artistName = track.artistName,
@@ -22,9 +23,10 @@ class PlaylistTrackDatabaseRepositoryImpl(
             primaryGenreName = track.primaryGenreName,
             country = track.country,
             previewUrl = track.previewUrl,
-            insertTimeStamp = System.currentTimeMillis(),
+            insertTimeStamp = System.currentTimeMillis()
 
-            )
+
+        )
         playlistTrackDatabase.playlistTrackDao().insertTrack(playlistTrackEntity)
     }
 

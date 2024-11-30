@@ -28,19 +28,18 @@ class CurrentPlaylistRepositoryImpl(
         playlistDao.deletePlaylist(playlist.mapToPlaylistEntity())
     }
 
-    override suspend fun deleteTrackFromPlaylist(playlistId: Long, trackId: Int) {
-        playlistTrackDao.deleteTrackById(trackId)
+    override suspend fun getTracksByPlaylistId(playlistId: Long): List<SearchTrack> {
+        val trackEntities = playlistTrackDao.getTracksByPlaylistId(playlistId)
+        return trackEntities.map { it.mapToSearchTrack() }
+    }
 
+
+    override suspend fun deleteTrackFromPlaylist(playlistId: Long, trackId: Int) {
+        playlistTrackDao.deleteTrackFromPlaylist(playlistId, trackId)
+        val trackCount = playlistTrackDao.getTrackCountInPlaylist(playlistId)
         val playlist = playlistDao.getPlaylistById(playlistId)?.mapToPlaylist()
         playlist?.let {
-            val updatedTrackIds = it.listOfTracksId.split(",")
-                .filter { id -> id.toIntOrNull() != trackId }
-                .joinToString(",")
-
-            val updatedPlaylist = it.copy(
-                listOfTracksId = updatedTrackIds,
-                amountOfTracks = if (updatedTrackIds.isEmpty()) 0 else updatedTrackIds.split(",").size
-            )
+            val updatedPlaylist = it.copy(amountOfTracks = trackCount)
             playlistDao.updatePlaylist(updatedPlaylist.mapToPlaylistEntity())
         }
     }

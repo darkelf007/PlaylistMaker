@@ -34,11 +34,8 @@ class PlaylistInfoFragmentViewModel(
             val playlist = currentPlaylistInteractor.getPlaylistById(playlistId)
             _playlist.postValue(playlist)
 
-            playlist?.let {
-                val trackIds = it.listOfTracksId.split(",").mapNotNull { id -> id.toIntOrNull() }
-                val trackList = currentPlaylistInteractor.getTracksByIds(trackIds)
-                _tracks.postValue(trackList)
-            }
+            val trackList = currentPlaylistInteractor.getTracksByPlaylistId(playlistId)
+            _tracks.postValue(trackList)
         }
     }
 
@@ -54,16 +51,9 @@ class PlaylistInfoFragmentViewModel(
 
             val updatedPlaylist = currentPlaylistInteractor.getPlaylistById(playlistId)
             _playlist.postValue(updatedPlaylist)
-            val trackIds = updatedPlaylist?.listOfTracksId
-                ?.takeIf { it.isNotEmpty() }
-                ?.split(",")
-                ?.mapNotNull { it.toIntOrNull() }
-            if (trackIds.isNullOrEmpty()) {
-                _tracks.postValue(emptyList())
-            } else {
-                val updatedTracks = currentPlaylistInteractor.getTracksByIds(trackIds)
-                _tracks.postValue(updatedTracks)
-            }
+
+            val updatedTracks = currentPlaylistInteractor.getTracksByPlaylistId(playlistId)
+            _tracks.postValue(updatedTracks)
         }
     }
 }

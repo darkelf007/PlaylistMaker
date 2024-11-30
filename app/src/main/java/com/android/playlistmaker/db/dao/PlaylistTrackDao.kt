@@ -10,12 +10,36 @@ import com.android.playlistmaker.db.entity.PlaylistTrackEntity
 interface PlaylistTrackDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertTrack(track: PlaylistTrackEntity)
+    suspend fun insertTrack(playlistTrackEntity: PlaylistTrackEntity)
+
+
+    @Query(
+        """
+    SELECT * FROM playlist_track_table
+    WHERE playlistId = :playlistId
+    ORDER BY insertTimeStamp DESC
+"""
+    )
+    suspend fun getTracksByPlaylistId(playlistId: Long): List<PlaylistTrackEntity>
+
+    @Query(
+        """
+    DELETE FROM playlist_track_table
+    WHERE playlistId = :playlistId AND trackId = :trackId
+"""
+    )
+    suspend fun deleteTrackFromPlaylist(playlistId: Long, trackId: Int)
 
     @Query("SELECT * FROM playlist_track_table WHERE trackId IN (:ids) ORDER BY insertTimeStamp DESC")
     suspend fun getTracksByListIds(ids: List<Int>): List<PlaylistTrackEntity>
 
-    @Query("DELETE FROM playlist_track_table WHERE trackId =:id")
-    suspend fun deleteTrackById(id: Int)
+
+    @Query(
+        """
+    SELECT COUNT(*) FROM playlist_track_table
+    WHERE playlistId = :playlistId
+"""
+    )
+    suspend fun getTrackCountInPlaylist(playlistId: Long): Int
 
 }

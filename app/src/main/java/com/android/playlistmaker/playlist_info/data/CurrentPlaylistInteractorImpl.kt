@@ -23,6 +23,10 @@ class CurrentPlaylistInteractorImpl(
         currentPlaylistRepository.deletePlaylist(playlist)
     }
 
+    override suspend fun getTracksByPlaylistId(playlistId: Long): List<SearchTrack> {
+        return currentPlaylistRepository.getTracksByPlaylistId(playlistId)
+    }
+
     override suspend fun deleteTrackFromPlaylist(playlistId: Long, trackId: Int) {
         currentPlaylistRepository.deleteTrackFromPlaylist(playlistId, trackId)
     }

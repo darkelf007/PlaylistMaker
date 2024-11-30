@@ -8,7 +8,7 @@ import com.android.playlistmaker.search.domain.SearchTrack
 class PlaylistTrackDatabaseInteractorImpl(
     private val playlistTrackDatabaseRepository: PlaylistTrackDatabaseRepository
 ) : PlaylistTrackDatabaseInteractor {
-    override suspend fun insertTrackToPlaylistTrackDatabase(track: SearchTrack) {
-        playlistTrackDatabaseRepository.insertTrackToPlaylistTrackDatabase(track)
+    override suspend fun insertTrackToPlaylistTrackDatabase(track: SearchTrack, playlistId: Long) {
+        playlistTrackDatabaseRepository.insertTrackToPlaylistTrackDatabase(track, playlistId)
     }
 }
