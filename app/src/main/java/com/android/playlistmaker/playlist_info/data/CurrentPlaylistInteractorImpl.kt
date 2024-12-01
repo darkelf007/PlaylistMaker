@@ -30,4 +30,16 @@ class CurrentPlaylistInteractorImpl(
     override suspend fun deleteTrackFromPlaylist(playlistId: Long, trackId: Int) {
         currentPlaylistRepository.deleteTrackFromPlaylist(playlistId, trackId)
     }
+
+    override fun getPlaylistCoverPath(filePath: String): String? {
+        return currentPlaylistRepository.getPlaylistCoverPath(filePath)
+    }
+
+    override suspend fun isTrackInOtherPlaylists(trackId: Int): Boolean {
+        return currentPlaylistRepository.isTrackInOtherPlaylists(trackId)
+    }
+
+    override suspend fun deleteTrackCompletely(trackId: Int) {
+        currentPlaylistRepository.deleteTrackCompletely(trackId)
+    }
 }

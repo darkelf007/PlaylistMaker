@@ -139,6 +139,7 @@ class PlayerFragment : Fragment() {
         bottomSheetBehavior?.removeBottomSheetCallback(bottomSheetCallback)
         _binding = null
     }
+
     override fun onDestroy() {
         super.onDestroy()
         viewModel.releasePlayer()
@@ -160,7 +161,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun setupBottomSheetCallback() {
-       bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 binding.overlay.isVisible = newState != BottomSheetBehavior.STATE_HIDDEN
             }
@@ -168,9 +169,9 @@ class PlayerFragment : Fragment() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 binding.overlay.alpha = slideOffset.coerceAtLeast(0f)
             }
+        }
+        bottomSheetBehavior?.addBottomSheetCallback(bottomSheetCallback)
     }
-    bottomSheetBehavior?.addBottomSheetCallback(bottomSheetCallback)
-}
 
     private fun setupAddToPlaylistButton() {
         binding.addToPlaylistButton.setOnClickListener {

@@ -3,6 +3,8 @@ package com.android.playlistmaker.new_playlist.presentation
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -139,16 +141,18 @@ abstract class BasePlaylistFragment : Fragment() {
     }
 
     private fun showDialog() {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.complete_playlist))
-            .setMessage(getString(R.string.data_lost))
-            .setNeutralButton(getString(R.string.cancel)) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setPositiveButton(getString(R.string.complete)) { dialog, _ ->
-                findNavController().navigateUp()
-            }
-            .show()
+        Handler(Looper.getMainLooper()).post {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.complete_playlist))
+                .setMessage(getString(R.string.data_lost))
+                .setNeutralButton(getString(R.string.cancel)) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setPositiveButton(getString(R.string.complete)) { dialog, _ ->
+                    findNavController().navigateUp()
+                }
+                .show()
+        }
     }
 
     abstract fun setupObserver()

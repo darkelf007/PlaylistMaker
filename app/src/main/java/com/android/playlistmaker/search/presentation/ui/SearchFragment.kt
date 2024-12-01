@@ -114,7 +114,7 @@ class SearchFragment : Fragment() {
 
         binding.inputEditText.apply {
             setOnFocusChangeListener { _, hasFocus ->
-                viewModel.evaluateShowHistory(hasFocus, text.toString())
+                viewModel.evaluateShowHistory(hasFocus, binding.inputEditText.text.toString())
                 if (!hasFocus) {
                     hideKeyboard()
                 }
@@ -131,9 +131,10 @@ class SearchFragment : Fragment() {
                 }
             }
 
-            doOnTextChanged { text, _, _, _ ->
+            binding.inputEditText.doOnTextChanged { text, _, _, _ ->
                 binding.clearIcon.isVisible = !text.isNullOrEmpty()
-                viewModel.updateQuery(text.toString(), hasFocus())
+                val query = text.toString()
+                viewModel.updateQuery(query, binding.inputEditText.hasFocus())
             }
         }
 

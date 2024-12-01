@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TrackDao {
 
+    @Query("SELECT * FROM track_table WHERE trackId = :trackId")
+    suspend fun getTrackById(trackId: Int): DBTrackEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTrack(track: DBTrackEntity)
 

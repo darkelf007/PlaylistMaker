@@ -9,4 +9,7 @@ interface CurrentPlaylistRepository {
     suspend fun deletePlaylist(playlist: Playlist)
     suspend fun deleteTrackFromPlaylist(playlistId: Long, trackId: Int)
     suspend fun getTracksByPlaylistId(playlistId: Long): List<SearchTrack>
+    fun getPlaylistCoverPath(filePath: String): String?
+    suspend fun isTrackInOtherPlaylists(trackId: Int): Boolean
+    suspend fun deleteTrackCompletely(trackId: Int)
 }

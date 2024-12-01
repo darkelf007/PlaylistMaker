@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
@@ -169,6 +168,57 @@ class PlaylistInfoFragment : Fragment() {
                 showAutoDismissDialog()
             }
         }
+
+        viewModel.coverUri.observe(viewLifecycleOwner) { uri ->
+            updatePlaylistPicture(uri)
+            updateMiniPlaylistPicture(uri)
+        }
+    }
+
+
+    private fun updateMiniPlaylistPicture(uri: Uri?) {
+        binding.playlistInfoCoverMin.apply {
+            if (uri != null && isValidUri(uri)) {
+                try {
+                    setImageURI(uri)
+                    scaleType = ImageView.ScaleType.CENTER_CROP
+                } catch (e: Exception) {
+                    setImageResource(R.drawable.placeholder_playlist_info)
+                    scaleType = ImageView.ScaleType.CENTER_INSIDE
+                }
+            } else {
+                setImageResource(R.drawable.placeholder_playlist_info)
+                scaleType = ImageView.ScaleType.CENTER_INSIDE
+            }
+        }
+    }
+
+    private fun updatePlaylistPicture(uri: Uri?) {
+        binding.playlistInfoCover.apply {
+            if (uri != null && isValidUri(uri)) {
+                try {
+                    setImageURI(uri)
+                    scaleType = ImageView.ScaleType.CENTER_CROP
+                } catch (e: Exception) {
+                    setImageResource(R.drawable.placeholder_playlist_info)
+                    scaleType = ImageView.ScaleType.CENTER_INSIDE
+                }
+            } else {
+                setImageResource(R.drawable.placeholder_playlist_info)
+                scaleType = ImageView.ScaleType.CENTER_INSIDE
+            }
+        }
+    }
+
+
+    private fun isValidUri(uri: Uri): Boolean {
+        if (uri.path.isNullOrBlank()) {
+            return false
+        }
+        val file = File(uri.path ?: return false)
+        val exists = file.exists()
+        val canRead = file.canRead()
+        return exists && canRead
     }
 
     private fun updateUIWithPlaylist(playlist: Playlist) {
@@ -179,18 +229,6 @@ class PlaylistInfoFragment : Fragment() {
             R.plurals.tracks_plural, playlist.amountOfTracks, playlist.amountOfTracks
         )
         binding.amountOfTracksPlaylistInfo.text = tracksText
-
-        val uri = getValidUri(playlist.filePath)
-        if (uri != null && playlist.filePath.isNotBlank()) {
-            binding.playlistInfoCover.apply {
-                setImageURI(uri)
-                scaleType = ImageView.ScaleType.CENTER_CROP
-            }
-        } else {
-            binding.playlistInfoCover.apply {
-                setImageResource(R.drawable.placeholder_playlist_info)
-            }
-        }
     }
 
     private fun updateTotalMinutes(tracks: List<SearchTrack>) {
@@ -199,18 +237,6 @@ class PlaylistInfoFragment : Fragment() {
             R.plurals.minutes_plural, totalMinutes, totalMinutes
         )
         binding.totalMinutesPlaylistInfo.text = minutesText
-    }
-
-    private fun getValidUri(filePath: String): Uri? {
-        val file = if (filePath.startsWith("myalbum/")) {
-            File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), filePath)
-        } else {
-            File(
-                requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                "myalbum/$filePath"
-            )
-        }
-        return if (file.exists()) Uri.fromFile(file) else null
     }
 
     private fun navigateToPlayerFragment(track: SearchTrack) {
@@ -300,13 +326,6 @@ class PlaylistInfoFragment : Fragment() {
 
     private fun updateMiniUIWithPlaylist(playlist: Playlist) {
         binding.nameOfPlaylistInfoMin.text = playlist.name
-
-        val uri = getValidUri(playlist.filePath)
-        if (uri != null && playlist.filePath.isNotBlank()) {
-            binding.playlistInfoCoverMin.setImageURI(uri)
-        } else {
-            binding.playlistInfoCoverMin.setImageResource(R.drawable.placeholder_playlist_info)
-        }
     }
 
     private fun updateMiniTrackCount(trackCount: Int) {

@@ -12,6 +12,13 @@ interface PlaylistTrackDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertTrack(playlistTrackEntity: PlaylistTrackEntity)
 
+    @Query(
+        """
+    SELECT COUNT(*) FROM playlist_track_table
+    WHERE trackId = :trackId
+"""
+    )
+    suspend fun getTrackUsageCount(trackId: Int): Int
 
     @Query(
         """

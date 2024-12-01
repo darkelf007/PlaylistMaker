@@ -72,40 +72,42 @@ class SearchViewModel(
     }
 
     fun evaluateShowHistory(hasFocus: Boolean, query: String) {
-        if (query.isEmpty() && hasFocus) {
-            _uiState.value =
-                UiState.History(showHistory = searchHistory.value?.isNotEmpty() == true)
-        } else if (query.isEmpty()) {
-            _uiState.value = UiState.Idle
-        }
-        _showHistory.value =
+        val shouldShowHistory =
             hasFocus && query.isEmpty() && (searchHistory.value?.isNotEmpty() == true)
+        _showHistory.value = shouldShowHistory
+        _uiState.value = when {
+            shouldShowHistory -> UiState.History(showHistory = true)
+            query.isEmpty() -> UiState.Idle
+            else -> _uiState.value
+        }
     }
 
     private fun observeQuery() {
         viewModelScope.launch {
             queryFlow
-                .debounce(500)
+                .debounce(600)
                 .distinctUntilChanged()
                 .flatMapLatest { query ->
                     if (query.isNotBlank()) {
+                        updateUiState(UiState.Loading)
                         searchInteractor.search(query)
                             .flowOn(Dispatchers.IO)
                             .catch { e ->
+                                updateUiState(UiState.Error(e.message ?: "Unknown Error"))
                                 emit(emptyList())
                             }
                     } else {
-                        flowOf(emptyList())
+                        flowOf<List<SearchTrack>>(emptyList())
                     }
                 }
                 .collect { response ->
-                    if (response.isNotEmpty()) {
-                        _tracks.value = response
-                        updateUiState(UiState.Success)
-                    } else if (currentQuery.value?.isNotBlank() == true) {
-                        updateUiState(UiState.Empty)
-                    } else {
-                        updateUiState(UiState.Idle)
+                    if (currentQuery.value?.isNotBlank() == true) {
+                        if (response.isNotEmpty()) {
+                            _tracks.value = response
+                            updateUiState(UiState.Success)
+                        } else {
+                            updateUiState(UiState.Empty)
+                        }
                     }
                 }
         }
@@ -181,12 +183,12 @@ class SearchViewModel(
         savedStateHandle["current_query"] = query
 
         viewModelScope.launch {
-            queryFlow.emit("")
             queryFlow.emit(query)
         }
 
         evaluateShowHistory(hasFocus, query)
     }
+
 
     fun showHistory() {
         viewModelScope.launch {
