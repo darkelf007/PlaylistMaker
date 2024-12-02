@@ -1,28 +1,31 @@
 package com.android.playlistmaker.player.data.repository
 
-import com.android.playlistmaker.db.PlaylistTrackDatabase
+import com.android.playlistmaker.db.AppDatabase
 import com.android.playlistmaker.db.entity.PlaylistTrackEntity
 import com.android.playlistmaker.player.domain.interfaces.PlaylistTrackDatabaseRepository
 import com.android.playlistmaker.search.domain.SearchTrack
 
 class PlaylistTrackDatabaseRepositoryImpl(
-    private val playlistTrackDatabase: PlaylistTrackDatabase
+    private val playlistTrackDatabase: AppDatabase
 ) : PlaylistTrackDatabaseRepository {
 
-    override suspend fun insertTrackToPlaylistTrackDatabase(track: SearchTrack) {
+    override suspend fun insertTrackToPlaylistTrackDatabase(track: SearchTrack, playlistId: Long) {
         val playlistTrackEntity = PlaylistTrackEntity(
-            trackId = track.trackId
-                ?: throw IllegalArgumentException("trackId не может быть null"), // Обработка null
+            playlistId = playlistId,
+            trackId = track.trackId,
             trackName = track.trackName,
             artistName = track.artistName,
             trackTime = formatTrackTime(track.trackTimeMillis),
             artworkUrl = track.artworkUrl100,
+            artworkUrl60 = track.artworkUrl60,
             collectionName = track.collectionName,
             releaseDate = track.releaseDate,
             primaryGenreName = track.primaryGenreName,
             country = track.country,
             previewUrl = track.previewUrl,
             insertTimeStamp = System.currentTimeMillis()
+
+
         )
         playlistTrackDatabase.playlistTrackDao().insertTrack(playlistTrackEntity)
     }

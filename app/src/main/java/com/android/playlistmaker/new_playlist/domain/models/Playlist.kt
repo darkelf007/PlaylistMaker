@@ -11,6 +11,7 @@ data class Playlist(
     val filePath: String,
     val listOfTracksId: String = "",
     val amountOfTracks: Int,
+    val trackTime: Int,
     val imageUri: Uri? = null
 )
 
@@ -20,6 +21,7 @@ fun Playlist.mapToPlaylistEntity(): PlaylistEntity = PlaylistEntity(
     description = description,
     filePath = filePath,
     listOfTracksId = listOfTracksId,
+    trackTime = trackTime,
     amountOfTracks = amountOfTracks
 )
 
@@ -30,6 +32,7 @@ fun PlaylistEntity.mapToPlaylist(imageUri: Uri? = null): Playlist = Playlist(
     filePath = filePath,
     listOfTracksId = listOfTracksId,
     amountOfTracks = amountOfTracks,
-    imageUri = imageUri
+    imageUri = imageUri,
+    trackTime = trackTime
 )
 

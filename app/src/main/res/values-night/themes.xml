@@ -19,5 +19,11 @@
         <item name="android:fontFamily">@font/yandex_sans_text_medium</item>
     </style>
 
-    <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
+    <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" >
+        <item name="android:background">@color/dark_blue</item>
+    </style>
+
+    <style name="Theme.PlaylistMaker.Search" parent="Base.Theme.PlaylistMaker" >
+        <item name="android:background">@color/transparent</item>
+    </style>
 </resources>

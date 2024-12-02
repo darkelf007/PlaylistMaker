@@ -20,7 +20,8 @@ class PlaylistInteractorImpl(
             description = description.trim(),
             filePath = filePath,
             listOfTracksId = "",
-            amountOfTracks = 0
+            amountOfTracks = 0,
+            trackTime = 0
         )
         playlistRepository.addPlaylist(playlist)
         if (uriOfImage != null && filePath.isNotEmpty()) {
@@ -30,6 +31,10 @@ class PlaylistInteractorImpl(
 
     override suspend fun updatePlaylist(playlist: Playlist) {
         playlistRepository.updatePlaylist(playlist)
+    }
+
+    override suspend fun getPlaylistById(id: Long): Playlist? {
+        return playlistRepository.getPlaylistById(id)
     }
 
     private fun getNameForFile(nameOfPlaylist: String): String {

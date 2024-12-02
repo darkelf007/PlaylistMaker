@@ -3,9 +3,11 @@ package com.android.playlistmaker.di
 import com.android.playlistmaker.favorites_tracks.presentation.FavoriteFragmentViewModel
 import com.android.playlistmaker.main.ui.MainViewModel
 import com.android.playlistmaker.media.presentation.PlaylistFragmentViewModel
-import com.android.playlistmaker.new_playlist.presentation.NewPlaylistFragmentViewModel
+import com.android.playlistmaker.new_playlist.presentation.viewmodel.EditPlaylistViewModel
+import com.android.playlistmaker.new_playlist.presentation.viewmodel.NewPlaylistViewModel
 import com.android.playlistmaker.player.domain.models.PlayerTrack
 import com.android.playlistmaker.player.presentation.PlayerViewModel
+import com.android.playlistmaker.playlist_info.presentation.PlaylistInfoFragmentViewModel
 import com.android.playlistmaker.search.presentation.ui.SearchViewModel
 import com.android.playlistmaker.settings.ui.SettingsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -17,8 +19,10 @@ val viewModelModule = module {
     viewModelOf(::SettingsViewModel)
     viewModelOf(::SearchViewModel)
     viewModelOf(::FavoriteFragmentViewModel)
-    viewModelOf(::NewPlaylistFragmentViewModel)
     viewModelOf(::PlaylistFragmentViewModel)
+    viewModel { PlaylistInfoFragmentViewModel(get()) }
+    viewModel { NewPlaylistViewModel(get()) }
+    viewModel { EditPlaylistViewModel(get()) }
 
     viewModel { (playerTrack: PlayerTrack) ->
         PlayerViewModel(

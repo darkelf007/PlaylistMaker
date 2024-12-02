@@ -6,9 +6,13 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.android.playlistmaker.db.entity.DBTrackEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TrackDao {
+
+    @Query("SELECT * FROM track_table WHERE trackId = :trackId")
+    suspend fun getTrackById(trackId: Int): DBTrackEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTrack(track: DBTrackEntity)
@@ -17,7 +21,7 @@ interface TrackDao {
     suspend fun deleteTrack(track: DBTrackEntity)
 
     @Query("SELECT * FROM track_table ORDER BY insertionTimeStamp DESC")
-    suspend fun getTracksOrderedByInsertionTime(): List<DBTrackEntity>
+    fun getTracksOrderedByInsertionTime(): Flow<List<DBTrackEntity>>
 
     @Query("SELECT trackId FROM track_table")
     suspend fun getTracksId(): List<Int>

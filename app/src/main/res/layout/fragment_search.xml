@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_search"
-    android:focusableInTouchMode="true"
-    android:focusable="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/Theme.PlaylistMaker">
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:theme="@style/Theme.PlaylistMaker.Search">
 
 
     <LinearLayout
@@ -28,6 +28,7 @@
             android:layout_weight="1"
             android:fontFamily="@font/yandex_sans_text_medium"
             android:text="@string/search"
+            android:textColor="@color/darkBlue_white"
             android:textSize="@dimen/text_size_22" />
     </LinearLayout>
 
@@ -91,9 +92,12 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/track_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:paddingVertical="@dimen/dp_8"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/border"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/search_view"
         tools:layout_editor_absoluteX="0dp"
         tools:listitem="@layout/layout_track_card" />
@@ -127,6 +131,7 @@
         android:fontFamily="@font/yandex_sans_text_medium"
         android:gravity="center"
         android:text="@string/you_were_searched"
+        android:textColor="@color/dark_blue"
         android:textSize="@dimen/text_size_19"
         app:fontWeight="500"
         app:layout_constraintEnd_toEndOf="parent"
@@ -142,20 +147,21 @@
         app:layout_constraintBottom_toTopOf="@id/clear_search_history"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_history_text" />
+        app:layout_constraintTop_toBottomOf="@id/search_history_text"
+        />
 
     <Button
         android:id="@+id/clear_search_history"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_12"
-        android:backgroundTint="@color/black_white"
+        android:backgroundTint="@color/darkBlue_white"
         android:elevation="4dp"
         android:fontFamily="@font/yandex_sans_text_medium"
         android:gravity="center"
         android:text="@string/clear_history"
         android:textAllCaps="false"
-        android:textColor="@color/white_black"
+        android:textColor="@color/white_darkBlue"
         android:textFontWeight="500"
         android:textSize="@dimen/text_size_14"
         app:cornerRadius="@dimen/dp_54"
@@ -214,10 +220,10 @@
         android:textFontWeight="500"
         android:textSize="@dimen/text_size_14"
         android:visibility="gone"
+        app:cornerRadius="@dimen/dp_54"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/placeholderText"
-        app:cornerRadius="@dimen/dp_54"
         tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

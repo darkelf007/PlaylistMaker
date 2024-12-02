@@ -13,7 +13,9 @@ import com.android.playlistmaker.search.presentation.viewholder.TrackViewHolder
 class TrackAdapter(private var searchTracks: List<SearchTrack>, private val resources: Resources) :
     RecyclerView.Adapter<TrackViewHolder>() {
 
+
     var itemClickListener: ((SearchTrack) -> Unit)? = null
+    var itemLongClickListener: ((SearchTrack) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val view =
@@ -26,6 +28,11 @@ class TrackAdapter(private var searchTracks: List<SearchTrack>, private val reso
         holder.bind(track)
         holder.itemView.setOnClickListener {
             itemClickListener?.invoke(track)
+        }
+
+        holder.itemView.setOnLongClickListener {
+            itemLongClickListener?.invoke(track)
+            true
         }
     }
 

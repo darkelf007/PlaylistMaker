@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Environment
 import androidx.core.net.toUri
-import com.android.playlistmaker.db.PlaylistDatabase
+import com.android.playlistmaker.db.AppDatabase
 import com.android.playlistmaker.media.domain.db.PlaylistMediaDatabaseRepository
 import com.android.playlistmaker.new_playlist.domain.models.Playlist
 import com.android.playlistmaker.new_playlist.domain.models.mapToPlaylist
@@ -14,7 +14,7 @@ import java.io.File
 
 
 class PlaylistMediaDatabaseRepositoryImpl(
-    private val playlistDatabase: PlaylistDatabase,
+    private val playlistDatabase: AppDatabase,
     private val context: Context
 ) : PlaylistMediaDatabaseRepository {
     override suspend fun getPlaylistsFromDatabase(): Flow<List<Playlist>> = flow {

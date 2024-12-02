@@ -8,6 +8,7 @@ data class PlayerTrack(
     val artistName: String?,
     val trackTimeMillis: Int,
     val artworkUrl100: String?,
+    val artworkUrl60: String?,
     val trackId: Int,
     val collectionName: String,
     val releaseDate: String?,

@@ -16,6 +16,7 @@
             android:id="@+id/Media_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/darkBlue_white"
             android:fontFamily="@font/yandex_sans_text_medium"
             android:layout_marginStart="@dimen/dp_12"
             android:text="@string/media_library"

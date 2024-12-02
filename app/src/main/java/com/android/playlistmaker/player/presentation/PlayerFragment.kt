@@ -5,17 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.android.playlistmaker.R
 import com.android.playlistmaker.databinding.FragmentPlayerBinding
 import com.android.playlistmaker.main.listeners.BottomNavigationListener
@@ -34,28 +32,21 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerFragment : Fragment() {
+
+    private lateinit var bottomSheetCallback: BottomSheetBehavior.BottomSheetCallback
+
     private var bottomNavigationListener: BottomNavigationListener? = null
 
     private var _binding: FragmentPlayerBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var addToPlaylistButton: ImageButton
-    private lateinit var createPlaylistButton: Button
-    private lateinit var playlistRecyclerView: RecyclerView
-    private lateinit var bottomSheetContainer: LinearLayout
-    private lateinit var overlay: View
-
     private var track: SearchTrack? = null
-
     private var allowToEmit = false
-
     private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
 
     private lateinit var adapter: PlaylistBottomSheetAdapter
-
     private lateinit var playerTrack: PlayerTrack
-
-    private lateinit var playerViewModel: PlayerViewModel
+    private lateinit var viewModel: PlayerViewModel
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -81,109 +72,150 @@ class PlayerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        hideKeyboard()
 
 
         track = arguments?.getParcelable<SearchTrack>("playerTrack")
             ?: throw IllegalArgumentException("playerTrack аргумент отсутствует")
 
-        track?.let {
-            playerTrack = it.mapToPlayerTrack()
-        } ?: throw IllegalArgumentException("playerTrack аргумент отсутствует")
+        playerTrack = track?.mapToPlayerTrack()
+            ?: throw IllegalArgumentException("playerTrack аргумент отсутствует")
 
         if (playerTrack.previewUrl == null) {
             binding.playerPlayTrack.isEnabled = false
         }
-        playerViewModel = getViewModel(parameters = { parametersOf(playerTrack) })
+
+        viewModel = getViewModel(parameters = { parametersOf(playerTrack) })
 
         allowToEmit = false
 
-        playerViewModel.preparePlayer(playerTrack.previewUrl ?: "")
-        playerViewModel.assignValToPlayerTrackForRender()
+        viewModel.preparePlayer(playerTrack.previewUrl ?: "")
+        viewModel.assignValToPlayerTrackForRender()
 
         adapter = PlaylistBottomSheetAdapter(requireContext()) { playlist ->
             clickOnItem(playlist)
         }
 
-        addToPlaylistButton = binding.addToPlaylistButton
-        createPlaylistButton = binding.createPlaylistBottomSheetButton
-        overlay = binding.overlay
-        playlistRecyclerView = binding.playlistsBottomSheetRecyclerview
-
-        playlistRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        playlistRecyclerView.adapter = adapter
-
-        bottomSheetContainer = binding.playlistBottomSheet
-
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.playlistBottomSheet).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 
+        initialization()
+        setupOnBackPressedCallback()
+        setupBottomSheetCallback()
+        setupAddToPlaylistButton()
+        setupCreatePlaylistButton()
+        setupRecyclerView()
+        setupObservers()
+        setupPlaybackControlButton()
+        setupLikeTrackButton()
+
+        viewModel.allowToCleanTimer = true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        bottomNavigationListener?.toggleBottomNavigationViewVisibility(false)
+        viewModel.getPlaylists()
+        if (viewModel.allowToCleanTimer) {
+            binding.trackLengthValue.text = "00:00"
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (viewModel.viewState.value?.playerState == PlayerViewModel.STATE_PLAYING) {
+            viewModel.pausePlayer()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        bottomNavigationListener?.toggleBottomNavigationViewVisibility(true)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bottomSheetBehavior?.removeBottomSheetCallback(bottomSheetCallback)
+        _binding = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.releasePlayer()
+    }
+
+    private fun initialization() {
+        binding.backButton.setOnClickListener {
+            handleUiState(UiState.BackButtonClicked)
+        }
+    }
+
+    private fun setupOnBackPressedCallback() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
-
                 override fun handleOnBackPressed() {
                     findNavController().navigateUp()
                 }
-
             })
+    }
 
-        bottomSheetBehavior?.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-
+    private fun setupBottomSheetCallback() {
+        bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> {
-                        overlay.visibility = View.GONE
-                    }
-
-                    else -> {
-                        overlay.visibility = View.VISIBLE
-                    }
-                }
+                binding.overlay.isVisible = newState != BottomSheetBehavior.STATE_HIDDEN
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                if (slideOffset >= 0f) {
-                    overlay.alpha = slideOffset
-                }
+                binding.overlay.alpha = slideOffset.coerceAtLeast(0f)
             }
-        })
+        }
+        bottomSheetBehavior?.addBottomSheetCallback(bottomSheetCallback)
+    }
 
-        addToPlaylistButton.setOnClickListener {
+    private fun setupAddToPlaylistButton() {
+        binding.addToPlaylistButton.setOnClickListener {
             bottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
         }
+    }
 
-        createPlaylistButton.setOnClickListener {
-            playerViewModel.releasePlayer()
+    private fun setupCreatePlaylistButton() {
+        binding.createPlaylistBottomSheetButton.setOnClickListener {
+            viewModel.releasePlayer()
             findNavController().navigate(R.id.action_playerFragment_to_newPlaylistFragment)
         }
+    }
 
-        initialization()
+    private fun setupPlaybackControlButton() {
+        binding.playerPlayTrack.setOnClickListener {
+            playbackControl()
+        }
+    }
 
+    private fun setupLikeTrackButton() {
+        binding.playerLikeTrack.setOnClickListener {
+            viewModel.toggleFavorite()
+        }
+    }
+
+    private fun setupObservers() {
         lifecycleScope.launch {
-            playerViewModel.currentPosition.collectLatest { position ->
+            viewModel.currentPosition.collectLatest { position ->
                 binding.previewTrackLength.text = DateTimeUtil.formatTime(position)
             }
         }
 
-        playerViewModel.viewState.observe(viewLifecycleOwner, Observer { state ->
+        viewModel.viewState.observe(viewLifecycleOwner, Observer { state ->
             state.track?.let { updateUIWithTrack(it) }
             updatePlaybackState(state)
             updateFavoriteButton(state.isFavorite)
         })
 
-        binding.playerPlayTrack.setOnClickListener {
-            playbackControl()
-        }
-        binding.playerLikeTrack.setOnClickListener {
-            playerViewModel.toggleFavorite()
-        }
-
-        playerViewModel.playlistsFromDatabase.observe(viewLifecycleOwner) { listOfPlaylists ->
+        viewModel.playlistsFromDatabase.observe(viewLifecycleOwner) { listOfPlaylists ->
             addPlaylistsToBottomSheetRecyclerView(listOfPlaylists)
         }
 
-        playerViewModel.checkIsTrackInPlaylist.observe(viewLifecycleOwner) { playlistTrackState ->
+        viewModel.checkIsTrackInPlaylist.observe(viewLifecycleOwner) { playlistTrackState ->
             if (allowToEmit) {
                 if (playlistTrackState.trackIsInPlaylist) {
                     val toastPhrase =
@@ -193,51 +225,17 @@ class PlayerFragment : Fragment() {
                     val toastPhrase =
                         getString(R.string.track_added) + " ${playlistTrackState.nameOfPlaylist}"
                     Toast.makeText(requireContext(), toastPhrase, Toast.LENGTH_SHORT).show()
-                    playerViewModel.getPlaylists()
+                    viewModel.getPlaylists()
                     bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
                 }
             }
-
-        }
-
-        playerViewModel.allowToCleanTimer = true
-    }
-
-    override fun onResume() {
-        super.onResume()
-        hideBottomNavigation(true)
-        playerViewModel.getPlaylists()
-        if (playerViewModel.allowToCleanTimer) {
-            binding.trackLengthValue.text = "00:00"
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        if (playerViewModel.viewState.value?.playerState == PlayerViewModel.STATE_PLAYING) {
-            playerViewModel.pausePlayer()
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        hideBottomNavigation(false)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        playerViewModel.releasePlayer()
-    }
-
-    private fun initialization() {
-        binding.backButton.setOnClickListener {
-            handleUiState(UiState.BackButtonClicked)
-        }
+    private fun setupRecyclerView() {
+        binding.playlistsBottomSheetRecyclerview.layoutManager =
+            LinearLayoutManager(requireContext())
+        binding.playlistsBottomSheetRecyclerview.adapter = adapter
     }
 
     private fun updateFavoriteButton(isFavorite: Boolean) {
@@ -306,18 +304,17 @@ class PlayerFragment : Fragment() {
     }
 
     private fun playbackControl() {
-        val state = playerViewModel.viewState.value
+        val state = viewModel.viewState.value
         when (state?.playerState) {
             PlayerViewModel.STATE_PLAYING -> {
-                playerViewModel.pausePlayer()
+                viewModel.pausePlayer()
             }
 
             PlayerViewModel.STATE_PREPARED, PlayerViewModel.STATE_PAUSED -> {
-                playerViewModel.startPlayer()
+                viewModel.startPlayer()
             }
         }
     }
-
 
     private fun handleUiState(state: UiState) {
         when (state) {
@@ -339,6 +336,28 @@ class PlayerFragment : Fragment() {
         }
     }
 
+    private fun clickOnItem(playlist: Playlist) {
+        allowToEmit = true
+        viewModel.checkAndAddTrackToPlaylist(playlist, track)
+    }
+
+    private fun addPlaylistsToBottomSheetRecyclerView(listOfPlaylists: List<Playlist>) {
+        adapter.setPlaylists(listOfPlaylists)
+    }
+
+    object DateTimeUtil {
+        fun formatTime(timeInMillis: Int): String {
+            val simpleDateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
+            return simpleDateFormat.format(timeInMillis)
+        }
+    }
+
+    private fun hideKeyboard() {
+        val inputMethodManager =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? android.view.inputmethod.InputMethodManager
+        inputMethodManager?.hideSoftInputFromWindow(requireView().windowToken, 0)
+    }
+
     sealed class UiState {
         data class TrackTimeAvailable(val time: Int) : UiState()
         data object TrackTimeUnavailable : UiState()
@@ -352,27 +371,4 @@ class PlayerFragment : Fragment() {
         data object CountryUnavailable : UiState()
         data object BackButtonClicked : UiState()
     }
-
-    private fun hideBottomNavigation(isHide: Boolean) {
-        bottomNavigationListener?.toggleBottomNavigationViewVisibility(!isHide)
-    }
-
-    private fun clickOnItem(playlist: Playlist) {
-        allowToEmit = true
-        playerViewModel.checkAndAddTrackToPlaylist(playlist, track)
-    }
-
-    private fun addPlaylistsToBottomSheetRecyclerView(listOfPlaylists: List<Playlist>) {
-        adapter.setPlaylists(listOfPlaylists)
-    }
-
-
-    object DateTimeUtil {
-        fun formatTime(timeInMillis: Int): String {
-            val simpleDateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
-            return simpleDateFormat.format(timeInMillis)
-        }
-    }
-
-
 }

@@ -7,10 +7,13 @@
     android:orientation="vertical"
     android:theme="@style/Theme.PlaylistMaker">
 
-    <com.google.android.material.button.MaterialButton
+    <Button
 
         android:id="@+id/new_playlist"
         style="@style/new_playlist_button"
+
+        android:fontFamily="@font/yandex_sans_text_bold"
+
         android:text="@string/new_playlist" />
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"

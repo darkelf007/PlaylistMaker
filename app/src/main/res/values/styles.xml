@@ -53,7 +53,6 @@
         <item name="android:textColor">@color/white_black</item>
         <item name="android:textSize">@dimen/text_size_14</item>
         <item name="android:letterSpacing">0</item>
-        <item name="fontFamily">@font/yandex_sans_text_medium</item>
         <item name="android:layout_marginTop">@dimen/dp_24</item>
 
     </style>
@@ -101,7 +100,7 @@
         <item name="backgroundTint">@drawable/create_playlist_button_selector</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:fontFamily">@font/yandex_sans_text_medium</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/text_size_16</item>
     </style>
 
     <style name="TextInputLayoutStyleNewPlaylist" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -125,10 +124,66 @@
         <item name="android:background">@color/white</item>
     </style>
 
-    <style name="SearchingActivityButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+    <style name="PlayerActivityButtonStyle" >
         <item name="backgroundTint">@color/dark_blue</item>
         <item name="cornerRadius">54dp</item>
+        <item name="android:textSize">@dimen/text_size_14</item>
+
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <!-- Playlist_info -->
+
+    <style name="PlaylistInfoCommonTextViewStyle">
+        <item name="android:fontFamily">@font/yandex_sans_text_regular</item>
+        <item name="android:background">@color/light_grey</item>
+        <item name="android:textSize">@dimen/text_size_18</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="PlaylistInfoBoldTextViewStyle">
+        <item name="android:fontFamily">@font/yandex_sans_text_bold</item>
+        <item name="android:textSize">@dimen/text_size_24</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="PlaylistInfoBottomSheetTextViewStyle">
+        <item name="android:fontFamily">@font/yandex_sans_text_regular</item>
+        <item name="android:textSize">@dimen/text_size_16</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="TrackListViewStyle">
+        <item name="android:textColor">@color/dark_grey</item>
+        <item name="tint">@color/dark_grey</item>
+    </style>
+
+
+
+    <style name="MyDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/white</item>
+        <item name="android:textSize">18sp</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+        <!-- Style for negative button -->
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+    </style>
+
+    <style name="NotificationTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/white</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <!-- text color for the button -->
+        <item name="android:textColor">@color/blue</item>
+        <!-- Background tint for the button -->
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+
+    <style name="NegativeButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <!-- text color for the button -->
+        <item name="android:textColor">@color/blue</item>
+        <!-- Background tint for the button -->
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
 </resources>

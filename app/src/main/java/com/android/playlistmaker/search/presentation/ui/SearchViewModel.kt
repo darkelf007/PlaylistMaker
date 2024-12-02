@@ -8,8 +8,13 @@ import androidx.lifecycle.viewModelScope
 import com.android.playlistmaker.search.domain.SearchInteractor
 import com.android.playlistmaker.search.domain.SearchTrack
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
@@ -18,14 +23,11 @@ class SearchViewModel(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    private var searchJob: Job? = null
 
     private val _showHistory = MutableLiveData<Boolean>()
     val showHistory: LiveData<Boolean> get() = _showHistory
 
-    fun evaluateShowHistory(hasFocus: Boolean, query: String) {
-        _showHistory.value =
-            hasFocus && query.isEmpty() && (searchHistory.value?.isNotEmpty() == true)
-    }
 
     private val _tracks = MutableLiveData<List<SearchTrack>>()
     val tracks: LiveData<List<SearchTrack>> get() = _tracks
@@ -44,9 +46,18 @@ class SearchViewModel(
     private val _navigateToPlayer = MutableLiveData<Event<SearchTrack>>()
     val navigateToPlayer: LiveData<Event<SearchTrack>> get() = _navigateToPlayer
 
+
     init {
         observeQuery()
         loadInitialData()
+        loadSearchHistory()
+    }
+
+    private fun loadSearchHistory() {
+        viewModelScope.launch {
+            val history = searchInteractor.getSearchHistory() ?: emptyList()
+            _searchHistory.value = history
+        }
     }
 
     private fun loadInitialData() {
@@ -54,18 +65,54 @@ class SearchViewModel(
             val initialQuery = _currentQuery.value ?: ""
             if (initialQuery.isNotEmpty()) {
                 search(initialQuery)
+            } else {
+                updateUiState(UiState.Idle)
             }
         }
     }
 
+    fun evaluateShowHistory(hasFocus: Boolean, query: String) {
+        val shouldShowHistory =
+            hasFocus && query.isEmpty() && (searchHistory.value?.isNotEmpty() == true)
+        _showHistory.value = shouldShowHistory
+        _uiState.value = when {
+            shouldShowHistory -> UiState.History(showHistory = true)
+            query.isEmpty() -> UiState.Idle
+            else -> _uiState.value
+        }
+    }
 
     private fun observeQuery() {
         viewModelScope.launch {
-            queryFlow.collect { query ->
-                search(query)
-            }
+            queryFlow
+                .debounce(600)
+                .distinctUntilChanged()
+                .flatMapLatest { query ->
+                    if (query.isNotBlank()) {
+                        updateUiState(UiState.Loading)
+                        searchInteractor.search(query)
+                            .flowOn(Dispatchers.IO)
+                            .catch { e ->
+                                updateUiState(UiState.Error(e.message ?: "Unknown Error"))
+                                emit(emptyList())
+                            }
+                    } else {
+                        flowOf<List<SearchTrack>>(emptyList())
+                    }
+                }
+                .collect { response ->
+                    if (currentQuery.value?.isNotBlank() == true) {
+                        if (response.isNotEmpty()) {
+                            _tracks.value = response
+                            updateUiState(UiState.Success)
+                        } else {
+                            updateUiState(UiState.Empty)
+                        }
+                    }
+                }
         }
     }
+
 
     fun search(query: String) {
         if (query.isBlank()) {
@@ -74,7 +121,8 @@ class SearchViewModel(
         }
 
         updateUiState(UiState.Loading)
-        viewModelScope.launch {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
             searchInteractor.search(query)
                 .flowOn(Dispatchers.IO)
                 .catch { e ->
@@ -99,8 +147,10 @@ class SearchViewModel(
         }
     }
 
-    private fun updateUiState(state: UiState) {
-        _uiState.value = state
+    fun updateUiState(state: UiState) {
+        if (_uiState.value != state) {
+            _uiState.value = state
+        }
     }
 
 
@@ -131,11 +181,14 @@ class SearchViewModel(
     fun updateQuery(query: String, hasFocus: Boolean) {
         _currentQuery.value = query
         savedStateHandle["current_query"] = query
+
         viewModelScope.launch {
             queryFlow.emit(query)
         }
+
         evaluateShowHistory(hasFocus, query)
     }
+
 
     fun showHistory() {
         viewModelScope.launch {

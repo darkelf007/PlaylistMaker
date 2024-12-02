@@ -21,6 +21,8 @@ import com.android.playlistmaker.player.data.repository.PlaylistTrackDatabaseRep
 import com.android.playlistmaker.player.domain.interactor.AudioPlayerDatabaseInteractorImpl
 import com.android.playlistmaker.player.domain.interfaces.PlayerUseCase
 import com.android.playlistmaker.player.domain.interfaces.PlaylistTrackDatabaseRepository
+import com.android.playlistmaker.playlist_info.data.CurrentPlaylistRepositoryImpl
+import com.android.playlistmaker.playlist_info.domain.CurrentPlaylistRepository
 import com.android.playlistmaker.settings.domain.GetThemeUseCase
 import com.android.playlistmaker.settings.domain.GetThemeUseCaseInterface
 import com.android.playlistmaker.settings.domain.SendSupportEmailUseCase
@@ -55,5 +57,7 @@ val repositoryModule = module {
 
     singleOf(::FileRepositoryImpl) bind FileRepository::class
     singleOf(::PlaylistRepositoryImpl) bind PlaylistRepository::class
+    singleOf(::CurrentPlaylistRepositoryImpl) bind CurrentPlaylistRepository::class
+
 
 }

@@ -4,5 +4,5 @@ import com.android.playlistmaker.search.domain.SearchTrack
 
 
 interface PlaylistTrackDatabaseRepository {
-    suspend fun insertTrackToPlaylistTrackDatabase(track: SearchTrack)
+    suspend fun insertTrackToPlaylistTrackDatabase(track: SearchTrack, playlistId: Long)
 }

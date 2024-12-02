@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.playlistmaker.databinding.PlaylistFragmentBinding
@@ -47,6 +47,8 @@ class PlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+
         adapter = PlaylistAdapter(requireContext()) { playlist ->
             if (clickDebounce()) {
                 clickOnItem(playlist)
@@ -81,22 +83,19 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun clickOnItem(playlist: Playlist) {
-        Toast.makeText(
-            requireContext(), "You clicked on playlist with id ${playlist.id}", Toast.LENGTH_SHORT
-        ).show()
+        val action = MediaFragmentDirections.actionMediaFragmentToPlaylistInfoFragment(playlist.id)
+        findNavController().navigate(action)
     }
 
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-
-            viewLifecycleOwner.lifecycleScope.launch {
+            lifecycleScope.launch {
                 delay(CLICK_DEBOUNCE_DELAY)
                 isClickAllowed = true
             }
         }
-
         return current
     }
 
@@ -119,7 +118,6 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun render(playlistState: PlaylistState) {
-
         when (playlistState) {
             is PlaylistState.Loading -> {
                 showLoader()

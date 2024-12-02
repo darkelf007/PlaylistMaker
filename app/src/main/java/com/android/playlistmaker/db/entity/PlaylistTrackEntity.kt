@@ -1,17 +1,20 @@
 package com.android.playlistmaker.db.entity
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
 
-@Entity(tableName = "playlist_track_table")
+@Entity(
+    tableName = "playlist_track_table",
+    primaryKeys = ["playlistId", "trackId"]
+)
 data class PlaylistTrackEntity(
-    @PrimaryKey
+    val playlistId: Long,
     val trackId: Int,
     val trackName: String?,
     val artistName: String?,
     val trackTime: String?,
     val artworkUrl: String?,
+    val artworkUrl60: String?,
     val collectionName: String?,
     val releaseDate: String?,
     val primaryGenreName: String?,

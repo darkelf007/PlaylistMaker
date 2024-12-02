@@ -9,6 +9,8 @@ import com.android.playlistmaker.new_playlist.data.Impl.PlaylistInteractorImpl
 import com.android.playlistmaker.new_playlist.domain.db.PlaylistInteractor
 import com.android.playlistmaker.player.domain.interactor.PlaylistTrackDatabaseInteractorImpl
 import com.android.playlistmaker.player.domain.interfaces.PlaylistTrackDatabaseInteractor
+import com.android.playlistmaker.playlist_info.data.CurrentPlaylistInteractorImpl
+import com.android.playlistmaker.playlist_info.domain.CurrentPlaylistInteractor
 import com.android.playlistmaker.search.data.repository.SearchInteractorImpl
 import com.android.playlistmaker.search.domain.SearchInteractor
 import com.android.playlistmaker.settings.domain.GetThemeUseCase
@@ -29,4 +31,8 @@ val interactorModule = module {
     singleOf(::PlaylistTrackDatabaseInteractorImpl) bind PlaylistTrackDatabaseInteractor::class
 
     singleOf(::PlaylistInteractorImpl) bind PlaylistInteractor::class
+
+    singleOf(::CurrentPlaylistInteractorImpl) bind CurrentPlaylistInteractor::class
+
+
 }

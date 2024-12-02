@@ -1,6 +1,7 @@
 package com.android.playlistmaker.player.presentation
 
 import android.content.Context
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -11,6 +12,7 @@ import com.android.playlistmaker.new_playlist.domain.models.Playlist
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import java.io.File
 
 
 class PlaylistBottomSheetAdapter(
@@ -55,21 +57,26 @@ class PlaylistBottomSheetHolder(
         itemView.findViewById(R.id.playlist_track_amount_textview)
 
     fun bind(playlist: Playlist) {
-        if (playlist.imageUri != null) {
-            Glide.with(context)
-                .load(playlist.imageUri)
-                .placeholder(R.drawable.placeholder)
-                .error(R.drawable.placeholder)
-                .apply(
-                    RequestOptions().transform(
-                        RoundedCorners(
-                            context.resources.getDimensionPixelSize(
-                                R.dimen.dp_8
-                            )
+        val filePath = playlist.filePath
+        if (filePath.isNotEmpty()) {
+            val file = File(
+                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                if (filePath.startsWith("myalbum/")) filePath else "myalbum/$filePath"
+            )
+            if (file.exists()) {
+                Glide.with(context)
+                    .load(file)
+                    .placeholder(R.drawable.placeholder)
+                    .error(R.drawable.placeholder)
+                    .apply(
+                        RequestOptions().transform(
+                            RoundedCorners(context.resources.getDimensionPixelSize(R.dimen.dp_8))
                         )
                     )
-                )
-                .into(playlistBottomSheetImageView)
+                    .into(playlistBottomSheetImageView)
+            } else {
+                playlistBottomSheetImageView.setImageResource(R.drawable.placeholder)
+            }
         } else {
             playlistBottomSheetImageView.setImageResource(R.drawable.placeholder)
         }
@@ -88,3 +95,4 @@ class PlaylistBottomSheetHolder(
         }
     }
 }
+
