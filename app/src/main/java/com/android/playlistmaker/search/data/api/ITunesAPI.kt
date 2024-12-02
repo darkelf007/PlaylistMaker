@@ -7,7 +7,6 @@ import retrofit2.http.Query
 interface iTunesAPI {
     @GET("/search?entity=song")
     suspend fun search(
-        @Query(value = "term", encoded = true) text: String,
-        @Query("limit") limit: Int = 30
+        @Query(value = "term", encoded = true) text: String
     ): TrackResponseData
 }

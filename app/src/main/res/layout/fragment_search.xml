@@ -92,9 +92,12 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/track_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:paddingVertical="@dimen/dp_8"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/border"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/search_view"
         tools:layout_editor_absoluteX="0dp"
         tools:listitem="@layout/layout_track_card" />
@@ -144,7 +147,8 @@
         app:layout_constraintBottom_toTopOf="@id/clear_search_history"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_history_text" />
+        app:layout_constraintTop_toBottomOf="@id/search_history_text"
+        />
 
     <Button
         android:id="@+id/clear_search_history"
